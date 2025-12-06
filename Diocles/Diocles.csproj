@@ -15,9 +15,11 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Jab" Version="0.12.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
       <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
     </ItemGroup>
 

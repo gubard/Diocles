@@ -1,8 +1,27 @@
-﻿using Inanna.Models;
+﻿using Avalonia.Controls;
+using Inanna.Models;
+using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public class RootToDosViewModel : ViewModelBase
+public class RootToDosViewModel : ViewModelBase, IHeader
 {
-    
+    private readonly IApplicationResourceService _appResourceService;
+
+    public RootToDosViewModel(IApplicationResourceService appResourceService)
+    {
+        _appResourceService = appResourceService;
+    }
+
+    public object Header
+    {
+        get => new TextBlock
+        {
+            Text = _appResourceService.GetResource<string>("Lang.ToDos"),
+            Classes =
+            {
+                "h2",
+            },
+        };
+    }
 }
