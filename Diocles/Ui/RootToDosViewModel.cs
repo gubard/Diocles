@@ -6,9 +6,9 @@ namespace Diocles.Ui;
 
 public class RootToDosViewModel : ViewModelBase, IHeader
 {
-    private readonly IApplicationResourceService _appResourceService;
+    private readonly IAppResourceService _appResourceService;
 
-    public RootToDosViewModel(IApplicationResourceService appResourceService)
+    public RootToDosViewModel(IAppResourceService appResourceService)
     {
         _appResourceService = appResourceService;
     }
