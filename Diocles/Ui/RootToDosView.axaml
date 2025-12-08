@@ -75,7 +75,7 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1" Classes="vertical">
-            <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
+            <ContentControl Content="{Binding ToDoListViewModel}" />
         </ScrollViewer>
 
         <Button Grid.Row="2"

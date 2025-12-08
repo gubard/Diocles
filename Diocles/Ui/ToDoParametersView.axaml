@@ -1,0 +1,81 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.ToDoParametersView"
+             x:DataType="ui:ToDoParametersViewModel">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.Name}" />
+                <TextBox Text="{Binding Name}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.OrderIndex}" />
+                <NumericUpDown Increment="1" Value="{Binding OrderIndex}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.Description}" />
+                <TextBox Text="{Binding Description}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.Type}" />
+                <ComboBox SelectedItem="{Binding Type}" ItemsSource="{Binding Types}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.IsBookmark}" />
+                <CheckBox IsChecked="{Binding IsBookmark}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.IsFavorite}" />
+                <CheckBox IsChecked="{Binding IsFavorite}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.TypeOfPeriodicity}" />
+                <ComboBox SelectedItem="{Binding TypeOfPeriodicity}" ItemsSource="{Binding TypeOfPeriodicitys}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.DaysOffset}" />
+                <NumericUpDown Increment="1" Value="{Binding DaysOffset}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.MonthsOffset}" />
+                <NumericUpDown Increment="1" Value="{Binding MonthsOffset}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.WeeksOffset}" />
+                <NumericUpDown Increment="1" Value="{Binding WeeksOffset}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.YearsOffset}" />
+                <NumericUpDown Increment="1" Value="{Binding YearsOffset}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.ChildrenType}" />
+                <ComboBox SelectedItem="{Binding ChildrenType}" ItemsSource="{Binding ChildrenTypes}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.IsRequiredCompleteInDueDate}" />
+                <CheckBox IsChecked="{Binding IsRequiredCompleteInDueDate}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.DescriptionType}" />
+                <ComboBox SelectedItem="{Binding DescriptionType}" ItemsSource="{Binding DescriptionTypes}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.Icon}" />
+                <TextBox Text="{Binding Icon}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.Color}" />
+                <TextBox Text="{Binding Color}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{StaticResource Lang.RemindDaysBefore}" />
+                <NumericUpDown Increment="1" Value="{Binding RemindDaysBefore}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

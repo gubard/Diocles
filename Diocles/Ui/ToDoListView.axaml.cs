@@ -2,9 +2,9 @@
 
 namespace Diocles.Ui;
 
-public partial class ToDoSubItemsView : UserControl
+public partial class ToDoListView : UserControl
 {
-    public ToDoSubItemsView()
+    public ToDoListView()
     {
         InitializeComponent();
     }

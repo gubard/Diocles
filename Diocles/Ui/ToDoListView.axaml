@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Diocles.Ui.ToDoSubItemsView"
-             x:DataType="ui:ToDoSubItemsViewModel">
+             x:Class="Diocles.Ui.ToDoListView"
+             x:DataType="ui:ToDoListViewModel">
     Welcome to Avalonia!
 </UserControl>

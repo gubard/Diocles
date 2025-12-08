@@ -1,8 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Avalonia.Collections;
+﻿using Avalonia.Collections;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Services;
+using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
@@ -11,17 +11,20 @@ namespace Diocles.Ui;
 public partial class RootToDosViewModel : ViewModelBase, IHeader
 {
     private readonly IAppResourceService _appResourceService;
+    private readonly IUiToDoService _uiToDoService;
 
     public RootToDosViewModel(IAppResourceService appResourceService,
-        ToDoSubItemsViewModel toDoSubItemsViewModel)
+        ToDoListViewModel toDoListViewModel,
+        IUiToDoService uiToDoService)
     {
         _appResourceService = appResourceService;
-        ToDoSubItemsViewModel = toDoSubItemsViewModel;
+        ToDoListViewModel = toDoListViewModel;
+        _uiToDoService = uiToDoService;
         Commands = new();
     }
 
     public AvaloniaList<InannaCommand> Commands { get; }
-    public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
+    public ToDoListViewModel ToDoListViewModel { get; }
 
     public object Header
     {
@@ -36,7 +39,18 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private async Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken ct)
     {
+        await WrapCommand(async () =>
+        {
+            var response = await _uiToDoService.GetAsync(new(), ct);
+
+            if (!await UiHelper.CheckValidationErrorsAsync(response))
+            {
+                return;
+            }
+            
+            ToDoListViewModel.UpdateItems();
+        });
     }
 }

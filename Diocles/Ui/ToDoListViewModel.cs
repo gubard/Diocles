@@ -2,7 +2,7 @@
 
 namespace Diocles.Ui;
 
-public class ToDoSubItemsViewModel : ViewModelBase
+public class ToDoListViewModel : ViewModelBase
 {
     public void UpdateItems()
     {
