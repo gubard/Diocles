@@ -1,22 +1,26 @@
-﻿using Avalonia.Collections;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Collections;
 using Avalonia.Controls;
+using CommunityToolkit.Mvvm.Input;
 using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public class RootToDosViewModel : ViewModelBase, IHeader
+public partial class RootToDosViewModel : ViewModelBase, IHeader
 {
     private readonly IAppResourceService _appResourceService;
 
-    public RootToDosViewModel(IAppResourceService appResourceService, ToDoSubItemsViewModel toDoSubItemsViewModel)
+    public RootToDosViewModel(IAppResourceService appResourceService,
+        ToDoSubItemsViewModel toDoSubItemsViewModel)
     {
         _appResourceService = appResourceService;
         ToDoSubItemsViewModel = toDoSubItemsViewModel;
         Commands = new();
     }
 
-    public AvaloniaList<SpravaCommand> Commands { get; }
+    public AvaloniaList<InannaCommand> Commands { get; }
     public ToDoSubItemsViewModel ToDoSubItemsViewModel { get; }
 
     public object Header
@@ -29,5 +33,10 @@ public class RootToDosViewModel : ViewModelBase, IHeader
                 "h2",
             },
         };
+    }
+
+    [RelayCommand]
+    private async Task InitializedAsync(CancellationToken cancellationToken)
+    {
     }
 }

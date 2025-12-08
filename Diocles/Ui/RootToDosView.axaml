@@ -8,6 +8,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.RootToDosView"
              x:DataType="ui:RootToDosViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <Grid RowDefinitions="Auto,*, Auto">
         <Grid ColumnDefinitions="*,Auto">
             <ScrollViewer Classes="horizontal"
@@ -29,7 +35,7 @@
                         </ItemsControl.ItemsPanel>
 
                         <ItemsControl.DataTemplates>
-                            <DataTemplate DataType="m:SpravaCommand">
+                            <DataTemplate DataType="m:InannaCommand">
                                 <Button Command="{Binding Command}"
                                         CommandParameter="{Binding Parameter}"
                                         Content="{Binding Content}" />
@@ -39,13 +45,13 @@
 
                     <Button Classes="adaptive-commands-button mode-press alignment-right">
                         <Button.DataTemplates>
-                            <DataTemplate x:DataType="m:SpravaCommand">
+                            <DataTemplate x:DataType="m:InannaCommand">
                                 <ContentControl Content="{Binding Content}" />
                             </DataTemplate>
                         </Button.DataTemplates>
 
                         <Button.Styles>
-                            <Style Selector="MenuItem" x:DataType="m:SpravaCommand">
+                            <Style Selector="MenuItem" x:DataType="m:InannaCommand">
                                 <Setter Property="Command" Value="{Binding Command}" />
                                 <Setter Property="CommandParameter"
                                         Value="{Binding $parent[ui:RootToDosView].DataContext}" />
