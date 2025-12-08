@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using Avalonia.Collections;
+﻿using Avalonia.Collections;
 using Avalonia.Controls;
 using Inanna.Models;
 using Inanna.Services;
