@@ -3,8 +3,77 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:m="clr-namespace:Inanna.Models;assembly=Inanna"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.RootToDosView"
              x:DataType="ui:RootToDosViewModel">
-    Welcome to Avalonia!
+    <Grid RowDefinitions="Auto,*, Auto">
+        <Grid ColumnDefinitions="*,Auto">
+            <ScrollViewer Classes="horizontal"
+                          HorizontalAlignment="Left">
+                <TextBlock Text="{DynamicResource Lang.Spravy}" Classes="h3" />
+            </ScrollViewer>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Panel
+                    IsVisible="{Binding Commands.Count, Converter={StaticResource Int32MoreThanConverter}, ConverterParameter=0}">
+                    <ItemsControl HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding Commands}"
+                                  Classes="adaptive-commands-items-control">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="m:SpravaCommand">
+                                <Button Command="{Binding Command}"
+                                        CommandParameter="{Binding Parameter}"
+                                        Content="{Binding Content}" />
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+
+                    <Button Classes="adaptive-commands-button mode-press alignment-right">
+                        <Button.DataTemplates>
+                            <DataTemplate x:DataType="m:SpravaCommand">
+                                <ContentControl Content="{Binding Content}" />
+                            </DataTemplate>
+                        </Button.DataTemplates>
+
+                        <Button.Styles>
+                            <Style Selector="MenuItem" x:DataType="m:SpravaCommand">
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="CommandParameter"
+                                        Value="{Binding $parent[ui:RootToDosView].DataContext}" />
+
+                                <Setter Property="Icon">
+                                    <Template>
+                                        <ContentControl Content="{Binding Content}" />
+                                    </Template>
+                                </Setter>
+                            </Style>
+                        </Button.Styles>
+
+                        <Button.Flyout>
+                            <MenuFlyout ItemsSource="{Binding Commands}" />
+                        </Button.Flyout>
+
+                        <ip:PackIconMaterialDesign Kind="MoreHoriz" />
+                    </Button>
+                </Panel>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Classes="vertical">
+            <ContentControl Content="{Binding ToDoSubItemsViewModel}" />
+        </ScrollViewer>
+
+        <Button Grid.Row="2"
+                Classes="alignment-stretch content-alignment-center h1"
+                Content="{DynamicResource Lang.Create}" />
+    </Grid>
 </UserControl>
