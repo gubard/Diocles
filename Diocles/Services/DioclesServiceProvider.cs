@@ -16,13 +16,15 @@ namespace Diocles.Services;
 [Transient(typeof(RootToDosViewModel))]
 [Transient(typeof(ToDoListViewModel))]
 [Transient(typeof(ToDoParametersFillerService))]
+[Singleton(typeof(IToDoCache), typeof(ToDoCache))]
 [Transient(typeof(IUiToDoService), Factory = nameof(GetUiCredentialService))]
 public interface IDioclesServiceProvider
 {
     public static IUiToDoService GetUiCredentialService(
         ToDoServiceOptions options, ITryPolicyService tryPolicyService,
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
-        ToDoParametersFillerService toDoParametersFillerService)
+        ToDoParametersFillerService toDoParametersFillerService,
+        IToDoCache toDoCache)
     {
         return new UiToDoService(new(new()
             {
@@ -35,6 +37,6 @@ public interface IDioclesServiceProvider
             new(new FileInfo(
                         $"./storage/Diocles/{appState.User.ThrowIfNull().Id}.db")
                    .InitDbContext(), new(DateTimeOffset.UtcNow.Offset),
-                toDoParametersFillerService), appState);
+                toDoParametersFillerService), appState, toDoCache);
     }
 }

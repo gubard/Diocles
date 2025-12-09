@@ -12,14 +12,16 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
 {
     private readonly IAppResourceService _appResourceService;
     private readonly IUiToDoService _uiToDoService;
+    private readonly IToDoCache _toDoCache;
 
     public RootToDosViewModel(IAppResourceService appResourceService,
         ToDoListViewModel toDoListViewModel,
-        IUiToDoService uiToDoService)
+        IUiToDoService uiToDoService, IToDoCache toDoCache)
     {
         _appResourceService = appResourceService;
         ToDoListViewModel = toDoListViewModel;
         _uiToDoService = uiToDoService;
+        _toDoCache = toDoCache;
         Commands = new();
     }
 
@@ -43,14 +45,15 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     {
         await WrapCommand(async () =>
         {
+            ToDoListViewModel.UpdateItems(_toDoCache.Roots);
             var response = await _uiToDoService.GetAsync(new(), ct);
 
             if (!await UiHelper.CheckValidationErrorsAsync(response))
             {
                 return;
             }
-            
-            ToDoListViewModel.UpdateItems();
+
+            ToDoListViewModel.UpdateItems(_toDoCache.Roots);
         });
     }
 }
