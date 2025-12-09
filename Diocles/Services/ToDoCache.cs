@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Gaia.Services;
 using Hestia.Contract.Models;
+using Inanna.Helpers;
 
 namespace Diocles.Services;
 
@@ -54,11 +55,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Children)
         {
             var notify = GeItem(id);
-            notify.Children.Clear();
-
-            notify.Children.AddRange(items.OrderBy(x => x.Item.OrderIndex)
+            notify.Children.UpdateOrder(items.OrderBy(x => x.Item.OrderIndex)
                .Select(item => UpdateFullToDo(item, fullUpdatedIds,
-                    shortUpdatedIds)));
+                    shortUpdatedIds)).ToArray());
         }
 
         foreach (var (_, items) in source.Leafs)
@@ -72,9 +71,8 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Parents)
         {
             var notify = GeItem(id);
-            notify.Parents.Clear();
-            notify.Parents.AddRange(items.Select(item =>
-                UpdateShortToDo(item, shortUpdatedIds)));
+            notify.Parents.UpdateOrder(items.Select(item =>
+                UpdateShortToDo(item, shortUpdatedIds)).ToArray());
         }
 
         foreach (var item in source.Items)
@@ -84,32 +82,29 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
         if (source.Selectors is not null)
         {
-            _roots.Clear();
-            _roots.AddRange(source.Selectors
+            _roots.UpdateOrder(source.Selectors
                .OrderBy(x => x.Item.OrderIndex).Select(x =>
-                    UpdateToDoSelector(x, shortUpdatedIds)));
+                    UpdateToDoSelector(x, shortUpdatedIds)).ToArray());
         }
 
         if (source.Favorites is not null)
         {
-            _favorites.Clear();
-            _favorites.AddRange(source.Favorites.Select(x =>
-                UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds)));
+            _favorites.UpdateOrder(source.Favorites.Select(x =>
+                UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds)).ToArray());
         }
 
         if (source.Bookmarks is not null)
         {
-            _bookmarks.Clear();
-            _bookmarks.AddRange(source.Bookmarks.Select(x =>
-                UpdateShortToDo(x, shortUpdatedIds)));
+            _bookmarks.UpdateOrder(source.Bookmarks.Select(x =>
+                UpdateShortToDo(x, shortUpdatedIds)).ToArray());
         }
 
         if (source.Roots is not null)
         {
-            _roots.Clear();
-            _roots.AddRange(source.Roots.OrderBy(x => x.Item.OrderIndex)
+            _roots.UpdateOrder(source.Roots.OrderBy(x => x.Item.OrderIndex)
                .Select(x =>
-                    UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds)));
+                    UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+               .ToArray());
         }
 
         foreach (var item in source.Search)
@@ -127,9 +122,8 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         HashSet<Guid> shortUpdatedIds)
     {
         var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
-        item.Children.Clear();
-        item.Children.AddRange(toDo.Children.OrderBy(x => x.Item.OrderIndex)
-           .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds)));
+        item.Children.UpdateOrder(toDo.Children.OrderBy(x => x.Item.OrderIndex)
+           .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds)).ToArray());
         return item;
     }
 
