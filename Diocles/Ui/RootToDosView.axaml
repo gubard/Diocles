@@ -44,12 +44,6 @@
                     </ItemsControl>
 
                     <Button Classes="adaptive-commands-button mode-press alignment-right">
-                        <Button.DataTemplates>
-                            <DataTemplate x:DataType="m:InannaCommand">
-                                <ContentControl Content="{Binding Content}" />
-                            </DataTemplate>
-                        </Button.DataTemplates>
-
                         <Button.Styles>
                             <Style Selector="MenuItem" x:DataType="m:InannaCommand">
                                 <Setter Property="Command" Value="{Binding Command}" />

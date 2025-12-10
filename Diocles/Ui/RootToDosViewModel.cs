@@ -34,6 +34,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
         Classes =
         {
             "h2",
+            "alignment-left-center",
         },
     };
 
