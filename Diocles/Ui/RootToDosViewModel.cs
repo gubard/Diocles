@@ -28,17 +28,14 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     public AvaloniaList<InannaCommand> Commands { get; }
     public ToDoListViewModel ToDoListViewModel { get; }
 
-    public object Header
+    public object Header => new TextBlock
     {
-        get => new TextBlock
+        Text = _appResourceService.GetResource<string>("Lang.ToDos"),
+        Classes =
         {
-            Text = _appResourceService.GetResource<string>("Lang.ToDos"),
-            Classes =
-            {
-                "h2",
-            },
-        };
-    }
+            "h2",
+        },
+    };
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)

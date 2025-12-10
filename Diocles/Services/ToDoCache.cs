@@ -25,20 +25,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     [ObservableProperty]
     public partial ToDoNotify? CurrentActive { get; set; }
 
-    public IEnumerable<ToDoNotify> Roots
-    {
-        get => _roots;
-    }
-
-    public IEnumerable<ToDoNotify> Favorites
-    {
-        get => _favorites;
-    }
-
-    public IEnumerable<ToDoNotify> Bookmarks
-    {
-        get => _bookmarks;
-    }
+    public IEnumerable<ToDoNotify> Roots => _roots;
+    public IEnumerable<ToDoNotify> Favorites => _favorites;
+    public IEnumerable<ToDoNotify> Bookmarks => _bookmarks;
 
     public void Update(HestiaGetResponse source)
     {
