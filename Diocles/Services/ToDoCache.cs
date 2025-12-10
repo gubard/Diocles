@@ -7,7 +7,7 @@ using Inanna.Helpers;
 
 namespace Diocles.Services;
 
-public interface IToDoCache : ICache<HestiaGetResponse>
+public interface IToDoCache : ICache<HestiaGetResponse>, ICache<HestiaPostRequest>
 {
     IEnumerable<ToDoNotify> Roots { get; }
     IEnumerable<ToDoNotify> Favorites { get; }
@@ -203,5 +203,10 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         }
 
         return _items[id];
+    }
+
+    public void Update(HestiaPostRequest source)
+    {
+        throw new NotImplementedException();
     }
 }
