@@ -26,7 +26,8 @@ public interface IDioclesServiceProvider
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
         ToDoParametersFillerService toDoParametersFillerService,
         IToDoCache toDoCache,
-        INavigator navigator)
+        INavigator navigator,
+        IStorageService storageService)
     {
         return new UiToDoService(new HttpToDoService(new()
             {
@@ -37,7 +38,7 @@ public interface IDioclesServiceProvider
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }, tryPolicyService, headersFactory),
             new EfToDoService(new FileInfo(
-                        $"./storage/Diocles/{appState.User.ThrowIfNull().Id}.db")
+                        $"{storageService.GetAppDirectory()}/Diocles/{appState.User.ThrowIfNull().Id}.db")
                    .InitDbContext(), new(DateTimeOffset.UtcNow.Offset),
                 toDoParametersFillerService), appState, toDoCache, navigator);
     }
