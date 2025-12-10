@@ -7,6 +7,7 @@ using Gaia.Services;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using Inanna.Models;
+using Inanna.Services;
 using Jab;
 using Nestor.Db.Sqlite.Helpers;
 
@@ -24,9 +25,10 @@ public interface IDioclesServiceProvider
         ToDoServiceOptions options, ITryPolicyService tryPolicyService,
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
         ToDoParametersFillerService toDoParametersFillerService,
-        IToDoCache toDoCache)
+        IToDoCache toDoCache,
+        INavigator navigator)
     {
-        return new UiToDoService(new(new()
+        return new UiToDoService(new HttpToDoService(new()
             {
                 BaseAddress = new(options.Url),
             }, new()
@@ -34,9 +36,9 @@ public interface IDioclesServiceProvider
                 TypeInfoResolver = HestiaJsonContext.Resolver,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }, tryPolicyService, headersFactory),
-            new(new FileInfo(
+            new EfToDoService(new FileInfo(
                         $"./storage/Diocles/{appState.User.ThrowIfNull().Id}.db")
                    .InitDbContext(), new(DateTimeOffset.UtcNow.Offset),
-                toDoParametersFillerService), appState, toDoCache);
+                toDoParametersFillerService), appState, toDoCache, navigator);
     }
 }
