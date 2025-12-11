@@ -156,6 +156,23 @@
                                 <NumericUpDown Increment="1" Value="{Binding RemindDaysBefore}" />
                             </StackPanel>
                         </Grid>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <StackPanel.IsVisible>
+                            <Binding Path="Type" Converter="{StaticResource AnyOfConverter}">
+                                <Binding.ConverterParameter>
+                                    <sc:ArrayList>
+                                        <m:ToDoType>Periodicity</m:ToDoType>
+                                        <m:ToDoType>PeriodicityOffset</m:ToDoType>
+                                        <m:ToDoType>Planned</m:ToDoType>
+                                        <m:ToDoType>Value</m:ToDoType>
+                                        <m:ToDoType>Step</m:ToDoType>
+                                        <m:ToDoType>Circle</m:ToDoType>
+                                    </sc:ArrayList>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </StackPanel.IsVisible>
 
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}"
                                       IsChecked="{Binding IsEditChildrenCompletionType}">
