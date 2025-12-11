@@ -72,7 +72,7 @@ public partial class ToDoNotify : ObservableObject
     public partial ushort YearsOffset { get; set; }
 
     [ObservableProperty]
-    public partial ToDoItemChildrenType ChildrenType { get; set; }
+    public partial ToDoChildrenType ChildrenType { get; set; }
 
     [ObservableProperty]
     public partial uint CurrentCircleOrderIndex { get; set; }

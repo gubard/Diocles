@@ -1,6 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Collections;
+using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Helpers;
 using Hestia.Contract.Models;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Generator;
 using Inanna.Models;
 using Inanna.Ui;
@@ -10,27 +13,23 @@ namespace Diocles.Ui;
 [EditNotify]
 public partial class ToDoParametersViewModel : ParametersViewModelBase
 {
+    private readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
+
     public ToDoParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
     {
+        _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank,];
     }
 
+    public IEnumerable<PackIconMaterialDesignKind> Icons => _icons;
+    
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial uint OrderIndex { get; set; }
 
     [ObservableProperty]
     public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial ToDoItemType Type { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsBookmark { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsFavorite { get; set; }
 
     [ObservableProperty]
     public partial DateOnly DueDate { get; set; }
@@ -60,7 +59,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial ushort YearsOffset { get; set; }
 
     [ObservableProperty]
-    public partial ToDoItemChildrenType ChildrenType { get; set; }
+    public partial ToDoChildrenType ChildrenType { get; set; }
 
     [ObservableProperty]
     public partial string Link { get; set; } = string.Empty;
@@ -72,10 +71,10 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial DescriptionType DescriptionType { get; set; }
 
     [ObservableProperty]
-    public partial string Icon { get; set; } = string.Empty;
+    public partial PackIconMaterialDesignKind Icon { get; set; }
 
     [ObservableProperty]
-    public partial string Color { get; set; } = string.Empty;
+    public partial Color Color { get; set; } = Colors.Transparent;
 
     [ObservableProperty]
     public partial Guid? ReferenceId { get; set; }
@@ -90,19 +89,10 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial bool IsEditName { get; set; }
 
     [ObservableProperty]
-    public partial bool IsEditOrderIndex { get; set; }
-
-    [ObservableProperty]
     public partial bool IsEditDescription { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditType { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsEditIsBookmark { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsEditIsFavorite { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditDueDate { get; set; }
@@ -166,8 +156,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
             Name = Name,
             Description = Description,
             Type = Type,
-            IsBookmark = IsBookmark,
-            IsFavorite = IsFavorite,
             DueDate = DueDate,
             TypeOfPeriodicity = TypeOfPeriodicity,
             AnnuallyDays = AnnuallyDaysToString(),
@@ -178,11 +166,11 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
             WeeksOffset = WeeksOffset,
             YearsOffset = YearsOffset,
             ChildrenType = ChildrenType,
-            Link = Link ?? string.Empty,
+            Link = Link,
             IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
             DescriptionType = DescriptionType,
-            Icon = Icon,
-            Color = Color,
+            Icon = Icon.ToString(),
+            Color = Color.ToString(),
             ReferenceId = ReferenceId,
             ParentId = ParentId,
             RemindDaysBefore = RemindDaysBefore,

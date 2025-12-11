@@ -3,79 +3,102 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
+             xmlns:h="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoParametersView"
              x:DataType="ui:ToDoParametersViewModel">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer Classes="vertical-scroll">
         <StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.Name}" />
-                <TextBox Text="{Binding Name}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.OrderIndex}" />
-                <NumericUpDown Increment="1" Value="{Binding OrderIndex}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.Description}" />
-                <TextBox Text="{Binding Description}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.Type}" />
-                <ComboBox SelectedItem="{Binding Type}" ItemsSource="{Binding Types}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.IsBookmark}" />
-                <CheckBox IsChecked="{Binding IsBookmark}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.IsFavorite}" />
-                <CheckBox IsChecked="{Binding IsFavorite}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.TypeOfPeriodicity}" />
-                <ComboBox SelectedItem="{Binding TypeOfPeriodicity}" ItemsSource="{Binding TypeOfPeriodicitys}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.DaysOffset}" />
-                <NumericUpDown Increment="1" Value="{Binding DaysOffset}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.MonthsOffset}" />
-                <NumericUpDown Increment="1" Value="{Binding MonthsOffset}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.WeeksOffset}" />
-                <NumericUpDown Increment="1" Value="{Binding WeeksOffset}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.YearsOffset}" />
-                <NumericUpDown Increment="1" Value="{Binding YearsOffset}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.ChildrenType}" />
-                <ComboBox SelectedItem="{Binding ChildrenType}" ItemsSource="{Binding ChildrenTypes}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.IsRequiredCompleteInDueDate}" />
-                <CheckBox IsChecked="{Binding IsRequiredCompleteInDueDate}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.DescriptionType}" />
-                <ComboBox SelectedItem="{Binding DescriptionType}" ItemsSource="{Binding DescriptionTypes}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.Icon}" />
-                <TextBox Text="{Binding Icon}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.Color}" />
-                <TextBox Text="{Binding Color}" />
-            </StackPanel>
-            <StackPanel>
-                <TextBlock Text="{StaticResource Lang.RemindDaysBefore}" />
-                <NumericUpDown Increment="1" Value="{Binding RemindDaysBefore}" />
-            </StackPanel>
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditType}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.Type}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.Type}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Type}" />
+            <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
+
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditName}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.Name}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.Name}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Name}" />
+            <TextBox Text="{Binding Name}" />
+
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditDescriptionType}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.DescriptionType}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.DescriptionType}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.DescriptionType}" />
+            <c:EnumSelectorControl SelectedEnum="{Binding DescriptionType}" />
+
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditDescription}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.Description}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.Description}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Description}" />
+            <TextBox Classes="text-aria" Text="{Binding Description}" />
+
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditColor}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.Color}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.Color}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Color}" />
+
+            <ListBox Classes="horizontal-wrap"
+                     SelectedItem="{Binding Color}"
+                     ItemsSource="{x:Static h:ColorData.ColorsA400}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Width="20"
+                                 Height="20" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditIcon}">
+                <ToggleSwitch.OffContent>
+                    <TextBlock Text="{StaticResource Lang.Icon}" />
+                </ToggleSwitch.OffContent>
+                <ToggleSwitch.OnContent>
+                    <TextBlock Text="{StaticResource Lang.Icon}" />
+                </ToggleSwitch.OnContent>
+            </ToggleSwitch>
+
+            <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Icon}" />
+
+            <ListBox Classes="horizontal-wrap" SelectedItem="{Binding Icon}" ItemsSource="{Binding Icons}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <ip:PackIconMaterialDesign Kind="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
