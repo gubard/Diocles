@@ -1,7 +1,6 @@
-﻿using Avalonia.Collections;
-using Avalonia.Controls;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Diocles.Services;
+using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -10,48 +9,73 @@ namespace Diocles.Ui;
 
 public partial class RootToDosViewModel : ViewModelBase, IHeader
 {
-    private readonly IAppResourceService _appResourceService;
     private readonly IUiToDoService _uiToDoService;
-    private readonly IToDoCache _toDoCache;
+    private readonly IStringFormater _stringFormater;
+    private readonly IDialogService _dialogService;
+    private readonly IAppResourceService _appResourceService;
 
-    public RootToDosViewModel(IAppResourceService appResourceService,
-        ToDoListViewModel toDoListViewModel,
-        IUiToDoService uiToDoService, IToDoCache toDoCache)
+    public RootToDosViewModel(IUiToDoService uiToDoService, IToDoCache toDoCache, IStringFormater stringFormater,
+        IDialogService dialogService, IAppResourceService appResourceService)
     {
-        _appResourceService = appResourceService;
-        ToDoListViewModel = toDoListViewModel;
+        List = new(toDoCache.Roots);
         _uiToDoService = uiToDoService;
-        _toDoCache = toDoCache;
-        Commands = new();
+        _stringFormater = stringFormater;
+        _dialogService = dialogService;
+        _appResourceService = appResourceService;
+        Header = new([]);
     }
 
-    public AvaloniaList<InannaCommand> Commands { get; }
-    public ToDoListViewModel ToDoListViewModel { get; }
-
-    public object Header => new TextBlock
-    {
-        Text = _appResourceService.GetResource<string>("Lang.ToDos"),
-        Classes =
-        {
-            "h2",
-            "alignment-left-center",
-        },
-    };
+    public ToDoListViewModel List { get; }
+    public RootToDosHeaderViewModel Header { get; }
+    object IHeader.Header => Header;
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
+        await WrapCommand(() => _uiToDoService.GetAsync(new(), ct));
+    }
+
+    [RelayCommand]
+    private async Task ShowCreateViewAsync(CancellationToken ct)
+    {
+        var credential = new ToDoParametersViewModel(ValidationMode.ValidateAll, false);
+
+        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
+            _stringFormater.Format(
+                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                _appResourceService.GetResource<string>("Lang.ToDo")),
+            credential,
+            new DialogButton(
+                _appResourceService.GetResource<string>("Lang.Create"),
+                CreateCommand,
+                credential, DialogButtonType.Primary), UiHelper.CancelButton)));
+    }
+
+    [RelayCommand]
+    private async Task CreateAsync(
+        ToDoParametersViewModel parameters,
+        CancellationToken ct)
+    {
         await WrapCommand(async () =>
         {
-            ToDoListViewModel.UpdateItems(_toDoCache.Roots);
-            var response = await _uiToDoService.GetAsync(new(), ct);
+            parameters.StartExecute();
 
-            if (!await UiHelper.CheckValidationErrorsAsync(response))
+            if (parameters.HasErrors)
             {
-                return;
+                return (IValidationErrors)EmptyValidationErrors.Instance;
             }
 
-            ToDoListViewModel.UpdateItems(_toDoCache.Roots);
+            var response = await _uiToDoService.PostAsync(new()
+            {
+                Creates =
+                [
+                    parameters.CreateToDo(),
+                ],
+            }, ct);
+
+            _dialogService.CloseMessageBox();
+
+            return response;
         });
     }
 }

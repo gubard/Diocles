@@ -1,0 +1,15 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.RootToDosHeaderView"
+             x:DataType="ui:RootToDosHeaderViewModel">
+    <Grid ColumnDefinitions="Auto,*,Auto">
+        <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
+        <TextBlock Grid.Column="1" Classes="h2 alignment-left-center" Text="{DynamicResource Lang.ToDos}" />
+        <ItemsControl Grid.Column="2" Classes="horizontal-stack" IsVisible="{Binding IsMulti}" ItemsSource="{Binding Commands}" />
+    </Grid>
+</UserControl>

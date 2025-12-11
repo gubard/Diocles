@@ -1,13 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Gaia.Helpers;
 using Hestia.Contract.Models;
 using Inanna.Generator;
 using Inanna.Models;
+using Inanna.Ui;
 
 namespace Diocles.Ui;
 
 [EditNotify]
-public partial class ToDoParametersViewModel : ViewModelBase
+public partial class ToDoParametersViewModel : ParametersViewModelBase
 {
+    public ToDoParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
+    {
+    }
+
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
 
@@ -57,7 +63,7 @@ public partial class ToDoParametersViewModel : ViewModelBase
     public partial ToDoItemChildrenType ChildrenType { get; set; }
 
     [ObservableProperty]
-    public partial Uri? Link { get; set; }
+    public partial string Link { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IsRequiredCompleteInDueDate { get; set; }
@@ -151,4 +157,50 @@ public partial class ToDoParametersViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial bool IsEditRemindDaysBefore { get; set; }
+
+    public CreateToDo CreateToDo()
+    {
+        return new()
+        {
+            Id = Guid.NewGuid(),
+            Name = Name,
+            Description = Description,
+            Type = Type,
+            IsBookmark = IsBookmark,
+            IsFavorite = IsFavorite,
+            DueDate = DueDate,
+            TypeOfPeriodicity = TypeOfPeriodicity,
+            AnnuallyDays = AnnuallyDaysToString(),
+            MonthlyDays = MonthlyDaysToString(),
+            WeeklyDays = WeeklyDaysToString(),
+            DaysOffset = DaysOffset,
+            MonthsOffset = MonthsOffset,
+            WeeksOffset = WeeksOffset,
+            YearsOffset = YearsOffset,
+            ChildrenType = ChildrenType,
+            Link = Link ?? string.Empty,
+            IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
+            DescriptionType = DescriptionType,
+            Icon = Icon,
+            Color = Color,
+            ReferenceId = ReferenceId,
+            ParentId = ParentId,
+            RemindDaysBefore = RemindDaysBefore,
+        };
+    }
+
+    private string AnnuallyDaysToString()
+    {
+        return AnnuallyDays.Select(x => $"{x.Day}.{x.Month}").JoinString(";");
+    }
+
+    private string MonthlyDaysToString()
+    {
+        return MonthlyDays.Select(x => $"{x}").JoinString(";");
+    }
+
+    private string WeeklyDaysToString()
+    {
+        return WeeklyDays.Select(x => $"{(int)x}").JoinString(";");
+    }
 }

@@ -5,8 +5,10 @@ namespace Diocles.Ui;
 
 public class ToDoListViewModel : ViewModelBase
 {
-    public void UpdateItems(IEnumerable<ToDoNotify> items)
+    public ToDoListViewModel(IEnumerable<ToDoNotify> items)
     {
-        
+        Items = items;
     }
+
+    public IEnumerable<ToDoNotify> Items { get; }
 }
