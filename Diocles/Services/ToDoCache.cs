@@ -139,7 +139,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.MonthsOffset = toDo.MonthsOffset;
         item.WeeksOffset = toDo.WeeksOffset;
         item.YearsOffset = toDo.YearsOffset;
-        item.ChildrenType = toDo.ChildrenType;
+        item.ChildrenCompletionType = toDo.ChildrenCompletionType;
         item.Link = toDo.Link;
         item.IsRequiredCompleteInDueDate =
             toDo.IsRequiredCompleteInDueDate;

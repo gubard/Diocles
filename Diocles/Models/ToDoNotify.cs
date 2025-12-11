@@ -30,7 +30,7 @@ public partial class ToDoNotify : ObservableObject
     public partial DateTimeOffset CreatedDateTime { get; set; }
 
     [ObservableProperty]
-    public partial ToDoItemType Type { get; set; }
+    public partial ToDoType Type { get; set; }
 
     [ObservableProperty]
     public partial bool IsBookmark { get; set; }
@@ -72,7 +72,7 @@ public partial class ToDoNotify : ObservableObject
     public partial ushort YearsOffset { get; set; }
 
     [ObservableProperty]
-    public partial ToDoChildrenType ChildrenType { get; set; }
+    public partial ChildrenCompletionType ChildrenCompletionType { get; set; }
 
     [ObservableProperty]
     public partial uint CurrentCircleOrderIndex { get; set; }

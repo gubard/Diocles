@@ -33,4 +33,8 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="System.Collections" />
+    </ItemGroup>
 </Project>

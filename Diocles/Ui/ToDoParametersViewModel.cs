@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Helpers;
+using Gaia.Models;
 using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Generator;
@@ -13,15 +14,39 @@ namespace Diocles.Ui;
 [EditNotify]
 public partial class ToDoParametersViewModel : ParametersViewModelBase
 {
-    private readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
+    private static readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
 
-    public ToDoParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
+    public static IEnumerable<PackIconMaterialDesignKind> Icons => _icons;
+
+    private readonly AvaloniaList<DayOfYear> _annuallyDays;
+    private readonly AvaloniaList<int> _monthlyDays;
+    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
+
+    static ToDoParametersViewModel()
     {
         _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank,];
     }
 
-    public IEnumerable<PackIconMaterialDesignKind> Icons => _icons;
-    
+    public ToDoParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
+    {
+        _annuallyDays = [new(1, Month.January),];
+        _annuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
+        _monthlyDays = [1,];
+        _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
+        _weeklyDays = [DayOfWeek.Monday,];
+        _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
+    }
+
+    public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
+    public IEnumerable<int> MonthlyDays => _monthlyDays;
+    public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
+
+    [ObservableProperty]
+    public partial bool IsBookmark { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsFavorite { get; set; }
+
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
 
@@ -29,22 +54,13 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial ToDoItemType Type { get; set; }
+    public partial ToDoType Type { get; set; }
 
     [ObservableProperty]
-    public partial DateOnly DueDate { get; set; }
+    public partial DateOnly DueDate { get; set; } = DateTime.Now.ToDateOnly();
 
     [ObservableProperty]
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
-
-    [ObservableProperty]
-    public partial DayOfYear[] AnnuallyDays { get; set; } = [];
-
-    [ObservableProperty]
-    public partial byte[] MonthlyDays { get; set; } = [];
-
-    [ObservableProperty]
-    public partial DayOfWeek[] WeeklyDays { get; set; } = [];
 
     [ObservableProperty]
     public partial ushort DaysOffset { get; set; }
@@ -59,13 +75,13 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial ushort YearsOffset { get; set; }
 
     [ObservableProperty]
-    public partial ToDoChildrenType ChildrenType { get; set; }
+    public partial ChildrenCompletionType ChildrenCompletionType { get; set; }
 
     [ObservableProperty]
     public partial string Link { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial bool IsRequiredCompleteInDueDate { get; set; }
+    public partial bool IsRequiredCompleteInDueDate { get; set; } = true;
 
     [ObservableProperty]
     public partial DescriptionType DescriptionType { get; set; }
@@ -80,10 +96,13 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial Guid? ReferenceId { get; set; }
 
     [ObservableProperty]
-    public partial Guid? ParentId { get; set; }
+    public partial uint RemindDaysBefore { get; set; }
 
     [ObservableProperty]
-    public partial uint RemindDaysBefore { get; set; }
+    public partial bool IsEditIsBookmark { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsEditIsFavorite { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditName { get; set; }
@@ -122,7 +141,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial bool IsEditYearsOffset { get; set; }
 
     [ObservableProperty]
-    public partial bool IsEditChildrenType { get; set; }
+    public partial bool IsEditChildrenCompletionType { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditLink { get; set; }
@@ -141,9 +160,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
 
     [ObservableProperty]
     public partial bool IsEditReferenceId { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsEditParentId { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditRemindDaysBefore { get; set; }
@@ -165,15 +181,16 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
             MonthsOffset = MonthsOffset,
             WeeksOffset = WeeksOffset,
             YearsOffset = YearsOffset,
-            ChildrenType = ChildrenType,
+            ChildrenCompletionType = ChildrenCompletionType,
             Link = Link,
             IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
             DescriptionType = DescriptionType,
             Icon = Icon.ToString(),
             Color = Color.ToString(),
             ReferenceId = ReferenceId,
-            ParentId = ParentId,
             RemindDaysBefore = RemindDaysBefore,
+            IsBookmark = IsBookmark,
+            IsFavorite = IsFavorite,
         };
     }
 
