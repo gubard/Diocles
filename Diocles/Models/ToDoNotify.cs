@@ -1,21 +1,37 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gaia.Models;
 using Hestia.Contract.Models;
+using Hestia.Contract.Services;
+using Inanna.Helpers;
 
 namespace Diocles.Models;
 
-public partial class ToDoNotify : ObservableObject
+public partial class ToDoNotify : ObservableObject, IToDo
 {
+    private readonly AvaloniaList<ToDoNotify> _children;
+    private readonly AvaloniaList<ToDoNotify> _parents;
+    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
+    private readonly AvaloniaList<int> _monthlyDays;
+    private readonly AvaloniaList<DayOfYear> _annuallyDays;
+
     public ToDoNotify(Guid id)
     {
         Id = id;
-        Children = [];
-        Parents = [];
+        _children = [];
+        _parents = [];
+        _weeklyDays = [];
+        _monthlyDays = [];
+        _annuallyDays = [];
     }
 
     public Guid Id { get; }
-    public AvaloniaList<ToDoNotify> Children { get; }
-    public AvaloniaList<ToDoNotify> Parents { get; }
+    public IEnumerable<ToDoNotify> Children => _children;
+    public IEnumerable<ToDoNotify> Parents => _parents;
+    public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
+    public IEnumerable<int> MonthlyDays => _monthlyDays;
+    public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
+    Guid? IToDo.ReferenceId => Reference?.Id;
 
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
@@ -46,15 +62,6 @@ public partial class ToDoNotify : ObservableObject
 
     [ObservableProperty]
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
-
-    [ObservableProperty]
-    public partial string WeeklyDays { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial string MonthlyDays { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial string AnnuallyDays { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial DateTimeOffset? LastCompleted { get; set; }
@@ -105,8 +112,33 @@ public partial class ToDoNotify : ObservableObject
     public partial ToDoNotify? Active { get; set; }
 
     [ObservableProperty]
-    public partial ToDoNotify? ReferenceId { get; set; }
+    public partial ToDoNotify? Reference { get; set; }
 
     [ObservableProperty]
     public partial ToDoNotify? ParentId { get; set; }
+
+    public void UpdateChildren(ToDoNotify[] children)
+    {
+        _children.UpdateOrder(children);
+    }
+
+    public void UpdateParents(ToDoNotify[] parents)
+    {
+        _parents.UpdateOrder(parents);
+    }
+
+    public void UpdateWeeklyDays(DayOfWeek[] weeklyDays)
+    {
+        _weeklyDays.UpdateOrder(weeklyDays);
+    }
+
+    public void UpdateMonthlyDays(int[] monthlyDays)
+    {
+        _monthlyDays.UpdateOrder(monthlyDays);
+    }
+
+    public void UpdateAnnualDays(DayOfYear[] annualDays)
+    {
+        _annuallyDays.UpdateOrder(annualDays);
+    }
 }

@@ -1,9 +1,11 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Diocles.Models;
 using Gaia.Helpers;
 using Gaia.Models;
 using Hestia.Contract.Models;
+using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Generator;
 using Inanna.Models;
@@ -12,7 +14,7 @@ using Inanna.Ui;
 namespace Diocles.Ui;
 
 [EditNotify]
-public partial class ToDoParametersViewModel : ParametersViewModelBase
+public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 {
     private static readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
 
@@ -21,14 +23,18 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     private readonly AvaloniaList<DayOfYear> _annuallyDays;
     private readonly AvaloniaList<int> _monthlyDays;
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
+    private readonly IToDoValidator _toDoValidator;
 
     static ToDoParametersViewModel()
     {
         _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank,];
     }
 
-    public ToDoParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
+    public ToDoParametersViewModel(IToDoValidator toDoValidator, ValidationMode validationMode, bool isShowEdit) : base(
+        validationMode, isShowEdit)
     {
+        _toDoValidator = toDoValidator;
+        InitValidation();
         _annuallyDays = [new(1, Month.January),];
         _annuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
         _monthlyDays = [1,];
@@ -91,9 +97,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
 
     [ObservableProperty]
     public partial Color Color { get; set; } = Colors.Transparent;
-
-    [ObservableProperty]
-    public partial Guid? ReferenceId { get; set; }
 
     [ObservableProperty]
     public partial uint RemindDaysBefore { get; set; }
@@ -159,53 +162,55 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase
     public partial bool IsEditColor { get; set; }
 
     [ObservableProperty]
-    public partial bool IsEditReferenceId { get; set; }
+    public partial bool IsEditReference { get; set; }
 
     [ObservableProperty]
     public partial bool IsEditRemindDaysBefore { get; set; }
+    
+    [ObservableProperty]
+    public partial ToDoNotify? Reference { get; set; }
+    
+    Guid? IToDo.ReferenceId => Reference?.Id;
 
     public CreateToDo CreateToDo()
     {
         return new()
         {
             Id = Guid.NewGuid(),
-            Name = Name,
-            Description = Description,
+            Name = Name.Trim(),
+            Description = Description.Trim(),
             Type = Type,
             DueDate = DueDate,
             TypeOfPeriodicity = TypeOfPeriodicity,
-            AnnuallyDays = AnnuallyDaysToString(),
-            MonthlyDays = MonthlyDaysToString(),
-            WeeklyDays = WeeklyDaysToString(),
+            AnnuallyDays = AnnuallyDays.ToArray(),
+            MonthlyDays = MonthlyDays.ToArray(),
+            WeeklyDays = WeeklyDays.ToArray(),
             DaysOffset = DaysOffset,
             MonthsOffset = MonthsOffset,
             WeeksOffset = WeeksOffset,
             YearsOffset = YearsOffset,
             ChildrenCompletionType = ChildrenCompletionType,
-            Link = Link,
+            Link = Link.Trim()[..1000],
             IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
             DescriptionType = DescriptionType,
             Icon = Icon.ToString(),
             Color = Color.ToString(),
-            ReferenceId = ReferenceId,
+            ReferenceId = Reference?.Id,
             RemindDaysBefore = RemindDaysBefore,
             IsBookmark = IsBookmark,
             IsFavorite = IsFavorite,
         };
     }
 
-    private string AnnuallyDaysToString()
+    private void InitValidation()
     {
-        return AnnuallyDays.Select(x => $"{x.Day}.{x.Month}").JoinString(";");
-    }
-
-    private string MonthlyDaysToString()
-    {
-        return MonthlyDays.Select(x => $"{x}").JoinString(";");
-    }
-
-    private string WeeklyDaysToString()
-    {
-        return WeeklyDays.Select(x => $"{(int)x}").JoinString(";");
+        SetValidation(nameof(Name), () => _toDoValidator.Validate(Name, nameof(Name)));
+        SetValidation(nameof(Description), () => _toDoValidator.Validate(Description, nameof(Description)));
+        SetValidation(nameof(DueDate), () => _toDoValidator.Validate(this, nameof(DueDate)));
+        SetValidation(nameof(Link), () => _toDoValidator.Validate(this, nameof(Link)));
+        SetValidation(nameof(AnnuallyDays), () => _toDoValidator.Validate(this, nameof(AnnuallyDays)));
+        SetValidation(nameof(MonthlyDays), () => _toDoValidator.Validate(this, nameof(MonthlyDays)));
+        SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
+        SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
     }
 }

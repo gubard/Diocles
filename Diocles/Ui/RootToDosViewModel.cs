@@ -13,15 +13,17 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     private readonly IStringFormater _stringFormater;
     private readonly IDialogService _dialogService;
     private readonly IAppResourceService _appResourceService;
+    private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
 
     public RootToDosViewModel(IUiToDoService uiToDoService, IToDoCache toDoCache, IStringFormater stringFormater,
-        IDialogService dialogService, IAppResourceService appResourceService)
+        IDialogService dialogService, IAppResourceService appResourceService, IDioclesViewModelFactory dioclesViewModelFactory)
     {
         List = new(toDoCache.Roots);
         _uiToDoService = uiToDoService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
         _appResourceService = appResourceService;
+        _dioclesViewModelFactory = dioclesViewModelFactory;
         Header = new([]);
     }
 
@@ -38,7 +40,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = new ToDoParametersViewModel(ValidationMode.ValidateAll, false);
+        var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
 
         await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
             _stringFormater.Format(

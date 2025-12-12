@@ -44,7 +44,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Children)
         {
             var notify = GeItem(id);
-            notify.Children.UpdateOrder(items.OrderBy(x => x.Item.OrderIndex)
+            notify.UpdateChildren(items.OrderBy(x => x.Parameters.OrderIndex)
                .Select(item => UpdateFullToDo(item, fullUpdatedIds,
                     shortUpdatedIds)).ToArray());
         }
@@ -60,7 +60,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Parents)
         {
             var notify = GeItem(id);
-            notify.Parents.UpdateOrder(items.Select(item =>
+            notify.UpdateParents(items.Select(item =>
                 UpdateShortToDo(item, shortUpdatedIds)).ToArray());
         }
 
@@ -90,7 +90,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
         if (source.Roots is not null)
         {
-            _roots.UpdateOrder(source.Roots.OrderBy(x => x.Item.OrderIndex)
+            _roots.UpdateOrder(source.Roots.OrderBy(x => x.Parameters.OrderIndex)
                .Select(x =>
                     UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
                .ToArray());
@@ -111,7 +111,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         HashSet<Guid> shortUpdatedIds)
     {
         var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
-        item.Children.UpdateOrder(toDo.Children.OrderBy(x => x.Item.OrderIndex)
+        item.UpdateChildren(toDo.Children.OrderBy(x => x.Item.OrderIndex)
            .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds)).ToArray());
         return item;
     }
@@ -124,9 +124,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         }
 
         var item = GeItem(toDo.Id);
-        item.AnnuallyDays = toDo.AnnuallyDays;
-        item.MonthlyDays = toDo.MonthlyDays;
-        item.WeeklyDays = toDo.WeeklyDays;
+        item.UpdateAnnualDays(toDo.AnnuallyDays.ToArray());
+        item.UpdateMonthlyDays(toDo.MonthlyDays.ToArray());
+        item.UpdateWeeklyDays(toDo.WeeklyDays.ToArray());
         item.Name = toDo.Name;
         item.OrderIndex = toDo.OrderIndex;
         item.Description = toDo.Description;
@@ -141,18 +141,13 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.YearsOffset = toDo.YearsOffset;
         item.ChildrenCompletionType = toDo.ChildrenCompletionType;
         item.Link = toDo.Link;
-        item.IsRequiredCompleteInDueDate =
-            toDo.IsRequiredCompleteInDueDate;
+        item.IsRequiredCompleteInDueDate = toDo.IsRequiredCompleteInDueDate;
         item.DescriptionType = toDo.DescriptionType;
         item.Icon = toDo.Icon;
         item.Color = toDo.Color;
         item.RemindDaysBefore = toDo.RemindDaysBefore;
-        item.ReferenceId = toDo.ReferenceId.HasValue
-            ? GeItem(toDo.ReferenceId.Value)
-            : null;
-        item.ParentId = toDo.ParentId.HasValue
-            ? GeItem(toDo.ParentId.Value)
-            : null;
+        item.Reference = toDo.ReferenceId.HasValue ? GeItem(toDo.ReferenceId.Value) : null;
+        item.ParentId = toDo.ParentId.HasValue ? GeItem(toDo.ParentId.Value) : null;
         updatedIds.Add(item.Id);
 
         return item;
@@ -161,15 +156,13 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     private ToDoNotify UpdateFullToDo(FullToDo toDo,
         HashSet<Guid> fullUpdatedIds, HashSet<Guid> shortUpdatedIds)
     {
-        if (fullUpdatedIds.Contains(toDo.Item.Id))
+        if (fullUpdatedIds.Contains(toDo.Parameters.Id))
         {
-            return GeItem(toDo.Item.Id);
+            return GeItem(toDo.Parameters.Id);
         }
 
-        var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
-        item.Active = toDo.Active is not null
-            ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
-            : null;
+        var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
+        item.Active = toDo.Active is not null ? UpdateShortToDo(toDo.Active, shortUpdatedIds) : null;
         item.IsCan = toDo.IsCan;
         item.Status = toDo.Status;
         fullUpdatedIds.Add(item.Id);

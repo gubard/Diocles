@@ -18,6 +18,8 @@ namespace Diocles.Services;
 [Transient(typeof(ToDoListViewModel))]
 [Transient(typeof(ToDoParametersFillerService))]
 [Singleton(typeof(IToDoCache), typeof(ToDoCache))]
+[Transient(typeof(IToDoValidator), typeof(ToDoValidator))]
+[Transient(typeof(IDioclesViewModelFactory), typeof(DioclesViewModelFactory))]
 [Transient(typeof(IUiToDoService), Factory = nameof(GetUiCredentialService))]
 public interface IDioclesServiceProvider
 {
