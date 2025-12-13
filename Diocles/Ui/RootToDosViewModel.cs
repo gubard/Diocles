@@ -16,7 +16,8 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
 
     public RootToDosViewModel(IUiToDoService uiToDoService, IToDoCache toDoCache, IStringFormater stringFormater,
-        IDialogService dialogService, IAppResourceService appResourceService, IDioclesViewModelFactory dioclesViewModelFactory)
+        IDialogService dialogService, IAppResourceService appResourceService,
+        IDioclesViewModelFactory dioclesViewModelFactory)
     {
         List = new(toDoCache.Roots);
         _uiToDoService = uiToDoService;
@@ -34,7 +35,10 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(() => _uiToDoService.GetAsync(new(), ct));
+        await WrapCommand(() => _uiToDoService.GetAsync(new()
+        {
+            IsRoots = true,
+        }, ct));
     }
 
     [RelayCommand]

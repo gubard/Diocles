@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
+using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Models;
 using Hestia.Contract.Models;
@@ -30,8 +31,8 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank,];
     }
 
-    public ToDoParametersViewModel(IToDoValidator toDoValidator, ValidationMode validationMode, bool isShowEdit) : base(
-        validationMode, isShowEdit)
+    public ToDoParametersViewModel(IToDoValidator toDoValidator, IDioclesViewModelFactory factory,
+        ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
     {
         _toDoValidator = toDoValidator;
         InitValidation();
@@ -41,11 +42,21 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
         _weeklyDays = [DayOfWeek.Monday,];
         _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
+        Tree = factory.Create();
+
+        Tree.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Tree.Selected))
+            {
+                Reference = Tree.Selected;
+            }
+        };
     }
 
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
+    public ToDoTreeViewModel Tree { get; }
 
     [ObservableProperty]
     public partial bool IsBookmark { get; set; }
@@ -69,7 +80,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
 
     [ObservableProperty]
-    public partial ushort DaysOffset { get; set; }
+    public partial ushort DaysOffset { get; set; } = 1;
 
     [ObservableProperty]
     public partial ushort MonthsOffset { get; set; }
@@ -166,10 +177,10 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 
     [ObservableProperty]
     public partial bool IsEditRemindDaysBefore { get; set; }
-    
+
     [ObservableProperty]
     public partial ToDoNotify? Reference { get; set; }
-    
+
     Guid? IToDo.ReferenceId => Reference?.Id;
 
     public CreateToDo CreateToDo()
@@ -190,7 +201,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
             WeeksOffset = WeeksOffset,
             YearsOffset = YearsOffset,
             ChildrenCompletionType = ChildrenCompletionType,
-            Link = Link.Trim()[..1000],
+            Link = Link.Trim(),
             IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
             DescriptionType = DescriptionType,
             Icon = Icon.ToString(),
