@@ -15,7 +15,6 @@ namespace Diocles.Services;
 
 [ServiceProviderModule]
 [Transient(typeof(RootToDosViewModel))]
-[Transient(typeof(ToDoListViewModel))]
 [Transient(typeof(ToDoParametersFillerService))]
 [Singleton(typeof(IToDoCache), typeof(ToDoCache))]
 [Transient(typeof(IToDoValidator), typeof(ToDoValidator))]
@@ -29,8 +28,11 @@ public interface IDioclesServiceProvider
         ToDoParametersFillerService toDoParametersFillerService,
         IToDoCache toDoCache,
         INavigator navigator,
-        IStorageService storageService)
+        IStorageService storageService,
+        IToDoValidator toDoValidator)
     {
+        var user = appState.User.ThrowIfNull();
+
         return new UiToDoService(new HttpToDoService(new()
             {
                 BaseAddress = new(options.Url),
@@ -40,8 +42,8 @@ public interface IDioclesServiceProvider
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }, tryPolicyService, headersFactory),
             new EfToDoService(new FileInfo(
-                        $"{storageService.GetAppDirectory()}/Diocles/{appState.User.ThrowIfNull().Id}.db")
-                   .InitDbContext(), new(DateTimeOffset.UtcNow.Offset),
-                toDoParametersFillerService), appState, toDoCache, navigator);
+                        $"{storageService.GetAppDirectory()}/Diocles/{user.Id}.db")
+                   .InitDbContext(), new(DateTimeOffset.UtcNow.Offset, user.Id),
+                toDoParametersFillerService, toDoValidator), appState, toDoCache, navigator);
     }
 }

@@ -9,9 +9,9 @@ namespace Diocles.Services;
 
 public interface IToDoCache : ICache<HestiaGetResponse>, ICache<HestiaPostRequest>
 {
-    IEnumerable<ToDoNotify> Roots { get; }
-    IEnumerable<ToDoNotify> Favorites { get; }
-    IEnumerable<ToDoNotify> Bookmarks { get; }
+    IAvaloniaReadOnlyList<ToDoNotify> Roots { get; }
+    IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
+    IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
     ToDoNotify? CurrentActive { get; }
 }
 
@@ -25,9 +25,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     [ObservableProperty]
     public partial ToDoNotify? CurrentActive { get; set; }
 
-    public IEnumerable<ToDoNotify> Roots => _roots;
-    public IEnumerable<ToDoNotify> Favorites => _favorites;
-    public IEnumerable<ToDoNotify> Bookmarks => _bookmarks;
+    public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
+    public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
+    public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => _bookmarks;
 
     public void Update(HestiaGetResponse source)
     {
@@ -43,7 +43,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
         foreach (var (id, items) in source.Children)
         {
-            var notify = GeItem(id);
+            var notify = GetItem(id);
             notify.UpdateChildren(items.OrderBy(x => x.Parameters.OrderIndex)
                .Select(item => UpdateFullToDo(item, fullUpdatedIds,
                     shortUpdatedIds)).ToArray());
@@ -59,7 +59,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
         foreach (var (id, items) in source.Parents)
         {
-            var notify = GeItem(id);
+            var notify = GetItem(id);
             notify.UpdateParents(items.Select(item =>
                 UpdateShortToDo(item, shortUpdatedIds)).ToArray());
         }
@@ -120,10 +120,10 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     {
         if (updatedIds.Contains(toDo.Id))
         {
-            return GeItem(toDo.Id);
+            return GetItem(toDo.Id);
         }
 
-        var item = GeItem(toDo.Id);
+        var item = GetItem(toDo.Id);
         item.UpdateAnnualDays(toDo.AnnuallyDays.ToArray());
         item.UpdateMonthlyDays(toDo.MonthlyDays.ToArray());
         item.UpdateWeeklyDays(toDo.WeeklyDays.ToArray());
@@ -146,8 +146,13 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.Icon = toDo.Icon;
         item.Color = toDo.Color;
         item.RemindDaysBefore = toDo.RemindDaysBefore;
-        item.Reference = toDo.ReferenceId.HasValue ? GeItem(toDo.ReferenceId.Value) : null;
-        item.ParentId = toDo.ParentId.HasValue ? GeItem(toDo.ParentId.Value) : null;
+        item.Reference = toDo.ReferenceId.HasValue ? GetItem(toDo.ReferenceId.Value) : null;
+
+        if (item.Parent?.Id != toDo.ParentId)
+        {
+            ChangeParent(item, toDo.ParentId);
+        }
+
         updatedIds.Add(item.Id);
 
         return item;
@@ -158,7 +163,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     {
         if (fullUpdatedIds.Contains(toDo.Parameters.Id))
         {
-            return GeItem(toDo.Parameters.Id);
+            return GetItem(toDo.Parameters.Id);
         }
 
         var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
@@ -170,7 +175,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         return item;
     }
 
-    private ToDoNotify GeItem(Guid id)
+    private ToDoNotify GetItem(Guid id)
     {
         if (_items.TryGetValue(id, out var value))
         {
@@ -189,6 +194,270 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
     public void Update(HestiaPostRequest source)
     {
-        throw new NotImplementedException();
+        var shortUpdatedIds = new HashSet<Guid>();
+
+        foreach (var create in source.Creates)
+        {
+            UpdateShortToDo(create, shortUpdatedIds);
+        }
+
+        foreach (var edit in source.Edits)
+        {
+            var items = edit.Ids.Select(GetItem).ToArray();
+
+            if (edit.IsEditName)
+            {
+                foreach (var item in items)
+                {
+                    item.Name = edit.Name;
+                }
+            }
+
+            if (edit.IsEditDescription)
+            {
+                foreach (var item in items)
+                {
+                    item.Description = edit.Description;
+                }
+            }
+
+            if (edit.IsEditType)
+            {
+                foreach (var item in items)
+                {
+                    item.Type = edit.Type;
+                }
+            }
+
+            if (edit.IsEditIsBookmark)
+            {
+                foreach (var item in items)
+                {
+                    item.IsBookmark = edit.IsBookmark;
+                }
+            }
+
+            if (edit.IsEditIsFavorite)
+            {
+                foreach (var item in items)
+                {
+                    item.IsFavorite = edit.IsFavorite;
+                }
+            }
+
+            if (edit.IsEditDueDate)
+            {
+                foreach (var item in items)
+                {
+                    item.DueDate = edit.DueDate;
+                }
+            }
+
+            if (edit.IsEditTypeOfPeriodicity)
+            {
+                foreach (var item in items)
+                {
+                    item.TypeOfPeriodicity = edit.TypeOfPeriodicity;
+                }
+            }
+
+            if (edit.IsEditAnnuallyDays)
+            {
+                var days = edit.AnnuallyDays.ToArray();
+
+                foreach (var item in items)
+                {
+                    item.UpdateAnnualDays(days);
+                }
+            }
+
+            if (edit.IsEditMonthlyDays)
+            {
+                var days = edit.MonthlyDays.Select(x => (int)x).ToArray();
+
+                foreach (var item in items)
+                {
+                    item.UpdateMonthlyDays(days);
+                }
+            }
+
+            if (edit.IsEditWeeklyDays)
+            {
+                var days = edit.WeeklyDays.ToArray();
+
+                foreach (var item in items)
+                {
+                    item.UpdateWeeklyDays(days);
+                }
+            }
+
+            if (edit.IsEditDaysOffset)
+            {
+                foreach (var item in items)
+                {
+                    item.DaysOffset = edit.DaysOffset;
+                }
+            }
+
+            if (edit.IsEditMonthsOffset)
+            {
+                foreach (var item in items)
+                {
+                    item.MonthsOffset = edit.MonthsOffset;
+                }
+            }
+
+            if (edit.IsEditWeeksOffset)
+            {
+                foreach (var item in items)
+                {
+                    item.WeeksOffset = edit.WeeksOffset;
+                }
+            }
+
+            if (edit.IsEditYearsOffset)
+            {
+                foreach (var item in items)
+                {
+                    item.YearsOffset = edit.YearsOffset;
+                }
+            }
+
+            if (edit.IsEditChildrenCompletionType)
+            {
+                foreach (var item in items)
+                {
+                    item.ChildrenCompletionType = edit.ChildrenCompletionType;
+                }
+            }
+
+            if (edit.IsEditLink)
+            {
+                foreach (var item in items)
+                {
+                    item.Link = edit.Link;
+                }
+            }
+
+            if (edit.IsEditIsRequiredCompleteInDueDate)
+            {
+                foreach (var item in items)
+                {
+                    item.IsRequiredCompleteInDueDate = edit.IsRequiredCompleteInDueDate;
+                }
+            }
+
+            if (edit.IsEditDescriptionType)
+            {
+                foreach (var item in items)
+                {
+                    item.DescriptionType = edit.DescriptionType;
+                }
+            }
+
+            if (edit.IsEditIcon)
+            {
+                foreach (var item in items)
+                {
+                    item.Icon = edit.Icon;
+                }
+            }
+
+            if (edit.IsEditColor)
+            {
+                foreach (var item in items)
+                {
+                    item.Color = edit.Color;
+                }
+            }
+
+            if (edit.IsEditRemindDaysBefore)
+            {
+                foreach (var item in items)
+                {
+                    item.RemindDaysBefore = edit.RemindDaysBefore;
+                }
+            }
+
+            if (edit.IsEditReference || edit.IsEditReferenceId)
+            {
+                var reference = edit.ReferenceId.HasValue ? GetItem(edit.ReferenceId.Value) : null;
+
+                foreach (var item in items)
+                {
+                    item.Reference = reference;
+                }
+            }
+
+            if (edit.IsEditParentId)
+            {
+                foreach (var item in items)
+                {
+                    ChangeParent(item, edit.ParentId);
+                }
+            }
+        }
+
+        foreach (var changeOrder in source.ChangeOrder)
+        {
+            var item = GetItem(changeOrder.StartId);
+            var siblings = item.Parent is not null ? (AvaloniaList<ToDoNotify>)item.Children : _roots;
+            var index = siblings.IndexOf(item);
+
+            if (index == -1)
+            {
+                continue;
+            }
+
+            var insertItems = changeOrder.InsertIds.Select(GetItem);
+
+            foreach (var insertItem in insertItems)
+            {
+                siblings.Insert(index, insertItem);
+            }
+        }
+
+        foreach (var deleteId in source.DeleteIds)
+        {
+            var deleteItem = GetItem(deleteId);
+            _items.Remove(deleteId);
+
+            if (deleteItem.Parent is not null)
+            {
+                deleteItem.Parent.RemoveChild(deleteItem);
+            }
+            else
+            {
+                _roots.Remove(deleteItem);
+            }
+        }
+    }
+
+    private void ChangeParent(ToDoNotify item, Guid? newParentId)
+    {
+        if (newParentId == item.Parent?.Id)
+        {
+            return;
+        }
+
+        if (item.Parent is not null)
+        {
+            item.Parent.RemoveChild(item);
+        }
+        else
+        {
+            _roots.Remove(item);
+        }
+
+        item.Parent = newParentId.HasValue ? GetItem(newParentId.Value) : null;
+
+        if (item.Parent is not null)
+        {
+            item.Parent.AddChild(item);
+        }
+        else
+        {
+            _roots.Add(item);
+        }
     }
 }

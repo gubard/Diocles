@@ -183,7 +183,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 
     Guid? IToDo.ReferenceId => Reference?.Id;
 
-    public CreateToDo CreateToDo()
+    public ShortToDo CreateToDo()
     {
         return new()
         {

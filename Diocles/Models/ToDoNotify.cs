@@ -115,7 +115,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial ToDoNotify? Reference { get; set; }
 
     [ObservableProperty]
-    public partial ToDoNotify? ParentId { get; set; }
+    public partial ToDoNotify? Parent { get; set; }
 
     public void UpdateChildren(ToDoNotify[] children)
     {
@@ -140,5 +140,15 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public void UpdateAnnualDays(DayOfYear[] annualDays)
     {
         _annuallyDays.UpdateOrder(annualDays);
+    }
+
+    public void AddChild(ToDoNotify child)
+    {
+        _children.Add(child);
+    }
+    
+    public void RemoveChild(ToDoNotify child)
+    {
+        _children.Remove(child);
     }
 }

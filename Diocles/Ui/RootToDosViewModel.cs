@@ -7,7 +7,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ViewModelBase, IHeader
+public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
 {
     private readonly IUiToDoService _uiToDoService;
     private readonly IStringFormater _stringFormater;
@@ -35,10 +35,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(() => _uiToDoService.GetAsync(new()
-        {
-            IsRoots = true,
-        }, ct));
+        await RefreshAsync(ct);
     }
 
     [RelayCommand]
@@ -83,5 +80,21 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader
 
             return response;
         });
+    }
+
+    public ValueTask RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommand(() => _uiToDoService.GetAsync(new()
+        {
+            IsRoots = true,
+        }, ct));
+    }
+
+    public void Refresh()
+    {
+        WrapCommand(() => _uiToDoService.Get(new()
+        {
+            IsRoots = true,
+        }));
     }
 }

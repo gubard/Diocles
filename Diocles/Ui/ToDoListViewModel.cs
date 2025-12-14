@@ -1,14 +1,15 @@
-﻿using Diocles.Models;
+﻿using Avalonia.Collections;
+using Diocles.Models;
 using Inanna.Models;
 
 namespace Diocles.Ui;
 
 public class ToDoListViewModel : ViewModelBase
 {
-    public ToDoListViewModel(IEnumerable<ToDoNotify> items)
+    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items)
     {
         Items = items;
     }
 
-    public IEnumerable<ToDoNotify> Items { get; }
+    public IAvaloniaReadOnlyList<ToDoNotify> Items { get; }
 }

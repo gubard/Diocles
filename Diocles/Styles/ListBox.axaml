@@ -1,0 +1,11 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:Diocles.Models">
+    <Style Selector="ListBox.todo-view">
+        <Setter Property="ItemTemplate">
+            <DataTemplate DataType="models:ToDoNotify">
+                <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+        </Setter>
+    </Style>
+</Styles>
