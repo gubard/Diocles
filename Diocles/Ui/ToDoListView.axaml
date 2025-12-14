@@ -3,17 +3,196 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
+             xmlns:m="clr-namespace:Diocles.Models"
+             xmlns:h="clr-namespace:Inanna.Helpers;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoListView"
              x:DataType="ui:ToDoListViewModel">
-    <Expander>
-        <Expander.Header>
-            <StackPanel Classes="horizontal">
-                <TextBlock Text="{DynamicResource Lang.Tasks}" />
-                <TextBlock Text="{Binding  Items.Count}" />
-            </StackPanel>
-        </Expander.Header>
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel>
+            <TextBlock Text="{DynamicResource Lang.GroupBy}" />
+            <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
+        </StackPanel>
 
-        <ItemsControl IsVisible="{Binding }" Classes="todo-view" ItemsSource="{Binding Items}" />
-    </Expander>
+        <ScrollViewer Grid.Row="1" Classes="vertical-scroll">
+            <Panel>
+                <Panel
+                    IsVisible="{Binding Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                    <Expander
+                        IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Tasks}" />
+                                <TextBlock Text="{Binding  Items.Count}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Items}" />
+                    </Expander>
+                </Panel>
+                <StackPanel
+                    IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
+                    <Expander
+                        IsVisible="{Binding CircleCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Circle}" />
+                                <TextBlock Text="{Binding  CircleCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Circle}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding GroupCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Group}" />
+                                <TextBlock Text="{Binding  GroupCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Group}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding PeriodicityCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Periodicity}" />
+                                <TextBlock Text="{Binding  PeriodicityCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Periodicity}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding PeriodicityOffsetCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.PeriodicityOffset}" />
+                                <TextBlock Text="{Binding  PeriodicityOffsetCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding FixedDateCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.FixedDate}" />
+                                <TextBlock Text="{Binding  FixedDateCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding FixedDate}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding ReferenceCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Reference}" />
+                                <TextBlock Text="{Binding  ReferenceCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Reference}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding StepCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Step}" />
+                                <TextBlock Text="{Binding  StepCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Step}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding ValueCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Value}" />
+                                <TextBlock Text="{Binding  ValueCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Value}" />
+                    </Expander>
+                </StackPanel>
+
+                <StackPanel
+                    IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Status}}">
+                    <Expander
+                        IsVisible="{Binding MissCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Miss}" />
+                                <TextBlock Text="{Binding  MissCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Miss}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding ReadyForCompleteCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.ReadyForComplete}" />
+                                <TextBlock Text="{Binding  ReadyForCompleteCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding PlannedCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Planned}" />
+                                <TextBlock Text="{Binding  PlannedCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Planned}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding CompletedCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.Completed}" />
+                                <TextBlock Text="{Binding  CompletedCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding Completed}" />
+                    </Expander>
+
+                    <Expander
+                        IsVisible="{Binding ComingSoonCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                        <Expander.Header>
+                            <StackPanel Classes="horizontal alignment-center">
+                                <TextBlock Text="{DynamicResource Lang.ComingSoon}" />
+                                <TextBlock Text="{Binding  ComingSoonCount}" />
+                            </StackPanel>
+                        </Expander.Header>
+
+                        <ItemsControl Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
+                    </Expander>
+                </StackPanel>
+            </Panel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

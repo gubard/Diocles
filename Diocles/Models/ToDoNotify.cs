@@ -103,7 +103,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial uint RemindDaysBefore { get; set; }
 
     [ObservableProperty]
-    public partial ToDoItemStatus Status { get; set; }
+    public partial ToDoStatus Status { get; set; }
 
     [ObservableProperty]
     public partial ToDoItemIsCan IsCan { get; set; }
