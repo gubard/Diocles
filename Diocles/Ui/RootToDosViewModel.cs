@@ -84,17 +84,31 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
 
     public ValueTask RefreshAsync(CancellationToken ct)
     {
-        return WrapCommand(() => _uiToDoService.GetAsync(new()
+        return WrapCommand(async () =>
         {
-            IsRoots = true,
-        }, ct));
+            var response = await _uiToDoService.GetAsync(new()
+            {
+                IsRoots = true,
+            }, ct);
+
+            List.Refresh();
+
+            return response;
+        });
     }
 
     public void Refresh()
     {
-        WrapCommand(() => _uiToDoService.Get(new()
+        WrapCommand(() =>
         {
-            IsRoots = true,
-        }));
+            var response = _uiToDoService.Get(new()
+            {
+                IsRoots = true,
+            });
+
+            List.Refresh();
+
+            return response;
+        });
     }
 }

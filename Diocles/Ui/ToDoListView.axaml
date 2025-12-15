@@ -10,21 +10,28 @@
              x:Class="Diocles.Ui.ToDoListView"
              x:DataType="ui:ToDoListViewModel">
     <Grid RowDefinitions="Auto,*">
-        <StackPanel>
-            <TextBlock Text="{DynamicResource Lang.GroupBy}" />
-            <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
+        <StackPanel Classes="horizontal">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Lang.GroupBy}" />
+                <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Lang.OrderBy}" />
+                <c:EnumSelectorControl SelectedEnum="{Binding OrderBy}" />
+            </StackPanel>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" Classes="vertical-scroll">
             <Panel>
                 <StackPanel
-                    IsVisible="{Binding Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
+                    IsVisible="{Binding ItemsCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
                     <Expander
                         IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
                         <Expander.Header>
                             <StackPanel Classes="horizontal alignment-center">
                                 <TextBlock Text="{DynamicResource Lang.Tasks}" />
-                                <TextBlock Text="{Binding  Items.Count}" />
+                                <TextBlock Text="{Binding  ItemsCount}" />
                             </StackPanel>
                         </Expander.Header>
 

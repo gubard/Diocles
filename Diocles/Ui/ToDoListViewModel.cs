@@ -1,4 +1,5 @@
-﻿using Avalonia.Collections;
+﻿using System.ComponentModel;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Hestia.Contract.Models;
@@ -9,43 +10,24 @@ namespace Diocles.Ui;
 public partial class ToDoListViewModel : ViewModelBase
 {
     [ObservableProperty] private ToDoGroupBy _groupBy;
+    [ObservableProperty] private ToDoOrderBy _orderBy;
+    private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
 
     public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items)
     {
-        Items = items;
-
-        items.CollectionChanged += (_, _) =>
-        {
-            OnPropertyChanged(nameof(Circle));
-            OnPropertyChanged(nameof(CircleCount));
-            OnPropertyChanged(nameof(Group));
-            OnPropertyChanged(nameof(GroupCount));
-            OnPropertyChanged(nameof(Periodicity));
-            OnPropertyChanged(nameof(PeriodicityCount));
-            OnPropertyChanged(nameof(PeriodicityOffset));
-            OnPropertyChanged(nameof(PeriodicityOffsetCount));
-            OnPropertyChanged(nameof(FixedDate));
-            OnPropertyChanged(nameof(FixedDateCount));
-            OnPropertyChanged(nameof(Reference));
-            OnPropertyChanged(nameof(ReferenceCount));
-            OnPropertyChanged(nameof(Step));
-            OnPropertyChanged(nameof(StepCount));
-            OnPropertyChanged(nameof(Value));
-            OnPropertyChanged(nameof(ValueCount));
-            OnPropertyChanged(nameof(Miss));
-            OnPropertyChanged(nameof(MissCount));
-            OnPropertyChanged(nameof(ReadyForComplete));
-            OnPropertyChanged(nameof(ReadyForCompleteCount));
-            OnPropertyChanged(nameof(Planned));
-            OnPropertyChanged(nameof(PlannedCount));
-            OnPropertyChanged(nameof(Completed));
-            OnPropertyChanged(nameof(CompletedCount));
-            OnPropertyChanged(nameof(ComingSoon));
-            OnPropertyChanged(nameof(ComingSoonCount));
-        };
+        _items = items;
+        items.CollectionChanged += (_, _) => Refresh();
     }
 
-    public IAvaloniaReadOnlyList<ToDoNotify> Items { get; }
+    public IEnumerable<ToDoNotify> Items => OrderBy switch
+    {
+        ToDoOrderBy.OrderIndex => _items,
+        ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
+        ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
+        _ => throw new ArgumentOutOfRangeException(),
+    };
+
+    public int ItemsCount => _items.Count;
     public IEnumerable<ToDoNotify> Circle => Items.Where(x => x.Type == ToDoType.Circle);
     public int CircleCount => Circle.Count();
     public IEnumerable<ToDoNotify> Group => Items.Where(x => x.Type == ToDoType.Group);
@@ -72,4 +54,46 @@ public partial class ToDoListViewModel : ViewModelBase
     public int MissCount => Miss.Count();
     public IEnumerable<ToDoNotify> ReadyForComplete => Items.Where(x => x.Status == ToDoStatus.ReadyForComplete);
     public int ReadyForCompleteCount => ReadyForComplete.Count();
+
+    public void Refresh()
+    {
+        OnPropertyChanged(nameof(Items));
+        OnPropertyChanged(nameof(ItemsCount));
+        OnPropertyChanged(nameof(Circle));
+        OnPropertyChanged(nameof(CircleCount));
+        OnPropertyChanged(nameof(Group));
+        OnPropertyChanged(nameof(GroupCount));
+        OnPropertyChanged(nameof(Periodicity));
+        OnPropertyChanged(nameof(PeriodicityCount));
+        OnPropertyChanged(nameof(PeriodicityOffset));
+        OnPropertyChanged(nameof(PeriodicityOffsetCount));
+        OnPropertyChanged(nameof(FixedDate));
+        OnPropertyChanged(nameof(FixedDateCount));
+        OnPropertyChanged(nameof(Reference));
+        OnPropertyChanged(nameof(ReferenceCount));
+        OnPropertyChanged(nameof(Step));
+        OnPropertyChanged(nameof(StepCount));
+        OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(ValueCount));
+        OnPropertyChanged(nameof(Miss));
+        OnPropertyChanged(nameof(MissCount));
+        OnPropertyChanged(nameof(ReadyForComplete));
+        OnPropertyChanged(nameof(ReadyForCompleteCount));
+        OnPropertyChanged(nameof(Planned));
+        OnPropertyChanged(nameof(PlannedCount));
+        OnPropertyChanged(nameof(Completed));
+        OnPropertyChanged(nameof(CompletedCount));
+        OnPropertyChanged(nameof(ComingSoon));
+        OnPropertyChanged(nameof(ComingSoonCount));
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(OrderBy))
+        {
+            Refresh();
+        }
+    }
 }
