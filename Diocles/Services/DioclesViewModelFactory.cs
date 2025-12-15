@@ -14,6 +14,7 @@ public interface IDioclesViewModelFactory
             ToDoParametersViewModel
         >,
         IFactory<ToDoTreeViewModel>,
+        IFactory<RootToDosViewModel>,
         IFactory<ToDoNotify, ToDosViewModel>,
         IFactory<ToDoNotify, EditToDoViewModel>,
         IFactory<ToDoNotify, EditToDoHeaderViewModel>
@@ -21,6 +22,8 @@ public interface IDioclesViewModelFactory
     ToDosViewModel CreateToDos(ToDoNotify item);
     EditToDoViewModel CreateEditToDo(ToDoNotify item);
     EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item);
+    RootToDosViewModel CreateRootToDos();
+    ToDoTreeViewModel CreateToDoTree();
 }
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
@@ -59,7 +62,7 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDoTreeViewModel Create()
     {
-        return new(_toDoCache, _uiToDoService);
+        return CreateToDoTree();
     }
 
     ToDosViewModel IFactory<ToDoNotify, ToDosViewModel>.Create(ToDoNotify input)
@@ -95,6 +98,23 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(item);
     }
 
+    public RootToDosViewModel CreateRootToDos()
+    {
+        return new(
+            _uiToDoService,
+            _toDoCache,
+            _stringFormater,
+            _dialogService,
+            _appResourceService,
+            this
+        );
+    }
+
+    public ToDoTreeViewModel CreateToDoTree()
+    {
+        return new(_toDoCache, _uiToDoService);
+    }
+
     public ToDoParametersViewModel Create(
         (ToDoNotify item, ValidationMode validationMode, bool isShowEdit) input
     )
@@ -105,5 +125,10 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     public EditToDoHeaderViewModel Create(ToDoNotify input)
     {
         return CreateEditToDoHeader(input);
+    }
+
+    RootToDosViewModel IFactory<RootToDosViewModel>.Create()
+    {
+        return CreateRootToDos();
     }
 }

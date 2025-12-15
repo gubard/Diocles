@@ -82,7 +82,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
         _weeklyDays = [DayOfWeek.Monday];
         _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
-        Tree = factory.Create();
+        Tree = factory.CreateToDoTree();
 
         Tree.PropertyChanged += (_, e) =>
         {

@@ -4,14 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:h="clr-namespace:Diocles.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDosHeaderView"
              x:DataType="ui:ToDosHeaderViewModel">
     <Grid ColumnDefinitions="Auto,*,Auto">
-        <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
+        <StackPanel Classes="horizontal">
+            <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
+            <Button Content="{ip:MaterialDesign ArrowForward}"
+                    Command="{x:Static h:DioclesCommands.OpenCurrentToDoCommand}" />
+        </StackPanel>
+
         <TextBlock Grid.Column="1" Classes="h2 align-left-center" Text="{Binding Item.Name}" />
         <ItemsControl Grid.Column="2"
-                      Classes="horizontal-stack" 
+                      Classes="horizontal-stack"
                       IsVisible="{Binding IsMulti}"
                       ItemsSource="{Binding Commands}" />
     </Grid>
