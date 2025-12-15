@@ -2,6 +2,7 @@
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
+using Hestia.Contract.Models;
 using Inanna.Helpers;
 using Inanna.Services;
 
@@ -19,16 +20,21 @@ public static class DioclesCommands
             (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
         );
 
-        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
-            async (item, ct) => await uiToDoService.PostAsync(new() { DeleteIds = [item.Id] }, ct)
+        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+            (item, ct) => uiToDoService.PostAsync(new() { DeleteIds = [item.Id] }, ct)
         );
 
         OpenEditCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) => navigator.NavigateToAsync(factory.CreateEditToDo(item), ct)
+        );
+
+        SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+            (item, ct) => uiToDoService.PostAsync(new() { SwitchCompleteIds = [item.Id] }, ct)
         );
     }
 
     public static readonly ICommand OpenToDosCommand;
     public static readonly ICommand DeleteToDoCommand;
     public static readonly ICommand OpenEditCommand;
+    public static readonly ICommand SwitchToDoCommand;
 }

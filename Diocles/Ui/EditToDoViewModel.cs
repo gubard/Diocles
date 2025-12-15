@@ -37,10 +37,9 @@ public partial class EditToDoViewModel : ViewModelBase, IHeader
     {
         await WrapCommand(async () =>
         {
-            var response = await _uiToDoService.PostAsync(
-                new() { Edits = [Parameters.CreateEditToDos()] },
-                ct
-            );
+            var edit = Parameters.CreateEditToDos();
+            edit.Ids = [_header.Item.Id];
+            var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
 
             _notificationService.ShowNotification(
                 new TextBlock
