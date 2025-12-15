@@ -8,3 +8,4 @@ using Inanna.Generator;
 [assembly: ViewPair(typeof(ToDoTreeView), typeof(ToDoTreeViewModel))]
 [assembly: ViewPair(typeof(ToDosHeaderView), typeof(ToDosHeaderViewModel))]
 [assembly: ViewPair(typeof(ToDosView), typeof(ToDosViewModel))]
+[assembly: ViewPair(typeof(EditToDoView), typeof(EditToDoViewModel))]

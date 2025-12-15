@@ -10,7 +10,12 @@ namespace Diocles.Services;
 public interface IDioclesViewModelFactory
     : IFactory<(ValidationMode validationMode, bool isShowEdit), ToDoParametersViewModel>,
         IFactory<ToDoTreeViewModel>,
-        IFactory<ToDoNotify, ToDosViewModel>;
+        IFactory<ToDoNotify, ToDosViewModel>,
+        IFactory<ToDoNotify, EditToDoViewModel>
+{
+    ToDosViewModel CreateToDos(ToDoNotify item);
+    EditToDoViewModel CreateEditToDo(ToDoNotify item);
+}
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
 {
@@ -48,10 +53,20 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(_toDoCache, _uiToDoService);
     }
 
-    public ToDosViewModel Create(ToDoNotify input)
+    ToDosViewModel IFactory<ToDoNotify, ToDosViewModel>.Create(ToDoNotify input)
+    {
+        return CreateToDos(input);
+    }
+
+    EditToDoViewModel IFactory<ToDoNotify, EditToDoViewModel>.Create(ToDoNotify input)
+    {
+        return CreateEditToDo(input);
+    }
+
+    public ToDosViewModel CreateToDos(ToDoNotify item)
     {
         return new(
-            input,
+            item,
             _uiToDoService,
             _toDoCache,
             _stringFormater,
@@ -59,5 +74,10 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
             _appResourceService,
             this
         );
+    }
+
+    public EditToDoViewModel CreateEditToDo(ToDoNotify item)
+    {
+        return new(item);
     }
 }

@@ -107,7 +107,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial ToDoStatus Status { get; set; }
 
     [ObservableProperty]
-    public partial ToDoItemIsCan IsCan { get; set; }
+    public partial ToDoIsCan IsCan { get; set; }
 
     [ObservableProperty]
     public partial ToDoNotify? Active { get; set; }
