@@ -44,9 +44,12 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Children)
         {
             var notify = GetItem(id);
-            notify.UpdateChildren(items.OrderBy(x => x.Parameters.OrderIndex)
-               .Select(item => UpdateFullToDo(item, fullUpdatedIds,
-                    shortUpdatedIds)).ToArray());
+            notify.UpdateChildren(
+                items
+                    .OrderBy(x => x.Parameters.OrderIndex)
+                    .Select(item => UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds))
+                    .ToArray()
+            );
         }
 
         foreach (var (_, items) in source.Leafs)
@@ -60,8 +63,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var (id, items) in source.Parents)
         {
             var notify = GetItem(id);
-            notify.UpdateParents(items.Select(item =>
-                UpdateShortToDo(item, shortUpdatedIds)).ToArray());
+            notify.UpdateParents(
+                items.Select(item => UpdateShortToDo(item, shortUpdatedIds)).ToArray()
+            );
         }
 
         foreach (var item in source.Items)
@@ -71,29 +75,38 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
         if (source.Selectors is not null)
         {
-            _roots.UpdateOrder(source.Selectors
-               .OrderBy(x => x.Item.OrderIndex).Select(x =>
-                    UpdateToDoSelector(x, shortUpdatedIds)).ToArray());
+            _roots.UpdateOrder(
+                source
+                    .Selectors.OrderBy(x => x.Item.OrderIndex)
+                    .Select(x => UpdateToDoSelector(x, shortUpdatedIds))
+                    .ToArray()
+            );
         }
 
         if (source.Favorites is not null)
         {
-            _favorites.UpdateOrder(source.Favorites.Select(x =>
-                UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds)).ToArray());
+            _favorites.UpdateOrder(
+                source
+                    .Favorites.Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+                    .ToArray()
+            );
         }
 
         if (source.Bookmarks is not null)
         {
-            _bookmarks.UpdateOrder(source.Bookmarks.Select(x =>
-                UpdateShortToDo(x, shortUpdatedIds)).ToArray());
+            _bookmarks.UpdateOrder(
+                source.Bookmarks.Select(x => UpdateShortToDo(x, shortUpdatedIds)).ToArray()
+            );
         }
 
         if (source.Roots is not null)
         {
-            _roots.UpdateOrder(source.Roots.OrderBy(x => x.Parameters.OrderIndex)
-               .Select(x =>
-                    UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
-               .ToArray());
+            _roots.UpdateOrder(
+                source
+                    .Roots.OrderBy(x => x.Parameters.OrderIndex)
+                    .Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+                    .ToArray()
+            );
         }
 
         foreach (var item in source.Search)
@@ -107,12 +120,14 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         }
     }
 
-    private ToDoNotify UpdateToDoSelector(ToDoSelector toDo,
-        HashSet<Guid> shortUpdatedIds)
+    private ToDoNotify UpdateToDoSelector(ToDoSelector toDo, HashSet<Guid> shortUpdatedIds)
     {
         var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
-        item.UpdateChildren(toDo.Children.OrderBy(x => x.Item.OrderIndex)
-           .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds)).ToArray());
+        item.UpdateChildren(
+            toDo.Children.OrderBy(x => x.Item.OrderIndex)
+                .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds))
+                .ToArray()
+        );
         return item;
     }
 
@@ -158,8 +173,11 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         return item;
     }
 
-    private ToDoNotify UpdateFullToDo(FullToDo toDo,
-        HashSet<Guid> fullUpdatedIds, HashSet<Guid> shortUpdatedIds)
+    private ToDoNotify UpdateFullToDo(
+        FullToDo toDo,
+        HashSet<Guid> fullUpdatedIds,
+        HashSet<Guid> shortUpdatedIds
+    )
     {
         if (fullUpdatedIds.Contains(toDo.Parameters.Id))
         {
@@ -167,7 +185,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         }
 
         var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
-        item.Active = toDo.Active is not null ? UpdateShortToDo(toDo.Active, shortUpdatedIds) : null;
+        item.Active = toDo.Active is not null
+            ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
+            : null;
         item.IsCan = toDo.IsCan;
         item.Status = toDo.Status;
         fullUpdatedIds.Add(item.Id);
@@ -401,7 +421,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         foreach (var changeOrder in source.ChangeOrder)
         {
             var item = GetItem(changeOrder.StartId);
-            var siblings = item.Parent is not null ? (AvaloniaList<ToDoNotify>)item.Children : _roots;
+            var siblings = item.Parent is not null
+                ? (AvaloniaList<ToDoNotify>)item.Children
+                : _roots;
             var index = siblings.IndexOf(item);
 
             if (index == -1)

@@ -28,19 +28,24 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 
     static ToDoParametersViewModel()
     {
-        _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank,];
+        _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank];
     }
 
-    public ToDoParametersViewModel(IToDoValidator toDoValidator, IDioclesViewModelFactory factory,
-        ValidationMode validationMode, bool isShowEdit) : base(validationMode, isShowEdit)
+    public ToDoParametersViewModel(
+        IToDoValidator toDoValidator,
+        IDioclesViewModelFactory factory,
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
+        : base(validationMode, isShowEdit)
     {
         _toDoValidator = toDoValidator;
         InitValidation();
-        _annuallyDays = [new(1, Month.January),];
+        _annuallyDays = [new(1, Month.January)];
         _annuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
-        _monthlyDays = [1,];
+        _monthlyDays = [1];
         _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
-        _weeklyDays = [DayOfWeek.Monday,];
+        _weeklyDays = [DayOfWeek.Monday];
         _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         Tree = factory.Create();
 
@@ -216,11 +221,20 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
     private void InitValidation()
     {
         SetValidation(nameof(Name), () => _toDoValidator.Validate(Name, nameof(Name)));
-        SetValidation(nameof(Description), () => _toDoValidator.Validate(Description, nameof(Description)));
+        SetValidation(
+            nameof(Description),
+            () => _toDoValidator.Validate(Description, nameof(Description))
+        );
         SetValidation(nameof(DueDate), () => _toDoValidator.Validate(this, nameof(DueDate)));
         SetValidation(nameof(Link), () => _toDoValidator.Validate(this, nameof(Link)));
-        SetValidation(nameof(AnnuallyDays), () => _toDoValidator.Validate(this, nameof(AnnuallyDays)));
-        SetValidation(nameof(MonthlyDays), () => _toDoValidator.Validate(this, nameof(MonthlyDays)));
+        SetValidation(
+            nameof(AnnuallyDays),
+            () => _toDoValidator.Validate(this, nameof(AnnuallyDays))
+        );
+        SetValidation(
+            nameof(MonthlyDays),
+            () => _toDoValidator.Validate(this, nameof(MonthlyDays))
+        );
         SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
         SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
     }

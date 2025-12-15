@@ -8,7 +8,9 @@ namespace Diocles.Ui;
 public partial class ToDosHeaderViewModel : ViewModelBase
 {
     private readonly AvaloniaList<InannaCommand> _commands;
-    [ObservableProperty] private bool _isMulti;
+
+    [ObservableProperty]
+    private bool _isMulti;
 
     public ToDosHeaderViewModel(ToDoNotify item, AvaloniaList<InannaCommand> commands)
     {

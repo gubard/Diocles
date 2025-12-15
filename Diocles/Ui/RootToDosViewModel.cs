@@ -15,9 +15,14 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
     private readonly IAppResourceService _appResourceService;
     private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
 
-    public RootToDosViewModel(IUiToDoService uiToDoService, IToDoCache toDoCache, IStringFormater stringFormater,
-        IDialogService dialogService, IAppResourceService appResourceService,
-        IDioclesViewModelFactory dioclesViewModelFactory)
+    public RootToDosViewModel(
+        IUiToDoService uiToDoService,
+        IToDoCache toDoCache,
+        IStringFormater stringFormater,
+        IDialogService dialogService,
+        IAppResourceService appResourceService,
+        IDioclesViewModelFactory dioclesViewModelFactory
+    )
     {
         List = new(toDoCache.Roots);
         _uiToDoService = uiToDoService;
@@ -43,21 +48,28 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
 
-        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(
-                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _appResourceService.GetResource<string>("Lang.ToDo")),
-            credential,
-            new DialogButton(
-                _appResourceService.GetResource<string>("Lang.Create"),
-                CreateCommand,
-                credential, DialogButtonType.Primary), UiHelper.CancelButton)));
+        await WrapCommand(() =>
+            _dialogService.ShowMessageBoxAsync(
+                new(
+                    _stringFormater.Format(
+                        _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                        _appResourceService.GetResource<string>("Lang.ToDo")
+                    ),
+                    credential,
+                    new DialogButton(
+                        _appResourceService.GetResource<string>("Lang.Create"),
+                        CreateCommand,
+                        credential,
+                        DialogButtonType.Primary
+                    ),
+                    UiHelper.CancelButton
+                )
+            )
+        );
     }
 
     [RelayCommand]
-    private async Task CreateAsync(
-        ToDoParametersViewModel parameters,
-        CancellationToken ct)
+    private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
@@ -68,13 +80,10 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
                 return (IValidationErrors)EmptyValidationErrors.Instance;
             }
 
-            var response = await _uiToDoService.PostAsync(new()
-            {
-                Creates =
-                [
-                    parameters.CreateToDo(),
-                ],
-            }, ct);
+            var response = await _uiToDoService.PostAsync(
+                new() { Creates = [parameters.CreateToDo()] },
+                ct
+            );
 
             _dialogService.CloseMessageBox();
 
@@ -86,10 +95,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         return WrapCommand(async () =>
         {
-            var response = await _uiToDoService.GetAsync(new()
-            {
-                IsRoots = true,
-            }, ct);
+            var response = await _uiToDoService.GetAsync(new() { IsRoots = true }, ct);
 
             List.Refresh();
 
@@ -101,10 +107,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         WrapCommand(() =>
         {
-            var response = _uiToDoService.Get(new()
-            {
-                IsRoots = true,
-            });
+            var response = _uiToDoService.Get(new() { IsRoots = true });
 
             List.Refresh();
 

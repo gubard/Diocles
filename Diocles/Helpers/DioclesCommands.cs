@@ -12,10 +12,12 @@ public static class DioclesCommands
     static DioclesCommands()
     {
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
-        var dioclesViewModelFactory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
+        var dioclesViewModelFactory =
+            DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
 
-        OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>((item, ct) =>
-            navigator.NavigateToAsync(dioclesViewModelFactory.Create(item), ct));
+        OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) => navigator.NavigateToAsync(dioclesViewModelFactory.Create(item), ct)
+        );
     }
 
     public static readonly ICommand OpenToDosCommand;

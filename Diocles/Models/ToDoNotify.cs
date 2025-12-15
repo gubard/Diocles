@@ -147,7 +147,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     {
         _children.Add(child);
     }
-    
+
     public void RemoveChild(ToDoNotify child)
     {
         _children.Remove(child);

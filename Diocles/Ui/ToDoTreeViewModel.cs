@@ -10,7 +10,8 @@ public partial class ToDoTreeViewModel : ViewModelBase
 {
     private readonly IUiToDoService _uiToDoService;
 
-    [ObservableProperty] private ToDoNotify? _selected;
+    [ObservableProperty]
+    private ToDoNotify? _selected;
 
     public ToDoTreeViewModel(IToDoCache toDoCache, IUiToDoService uiToDoService)
     {
@@ -23,9 +24,6 @@ public partial class ToDoTreeViewModel : ViewModelBase
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(() => _uiToDoService.GetAsync(new()
-        {
-            IsSelectors = true,
-        }, ct));
+        await WrapCommand(() => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct));
     }
 }

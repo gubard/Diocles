@@ -9,8 +9,11 @@ namespace Diocles.Ui;
 
 public partial class ToDoListViewModel : ViewModelBase
 {
-    [ObservableProperty] private ToDoGroupBy _groupBy;
-    [ObservableProperty] private ToDoOrderBy _orderBy;
+    [ObservableProperty]
+    private ToDoGroupBy _groupBy;
+
+    [ObservableProperty]
+    private ToDoOrderBy _orderBy;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
 
     public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items)
@@ -19,13 +22,14 @@ public partial class ToDoListViewModel : ViewModelBase
         items.CollectionChanged += (_, _) => Refresh();
     }
 
-    public IEnumerable<ToDoNotify> Items => OrderBy switch
-    {
-        ToDoOrderBy.OrderIndex => _items,
-        ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
-        ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
-        _ => throw new ArgumentOutOfRangeException(),
-    };
+    public IEnumerable<ToDoNotify> Items =>
+        OrderBy switch
+        {
+            ToDoOrderBy.OrderIndex => _items,
+            ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
+            ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
+            _ => throw new ArgumentOutOfRangeException(),
+        };
 
     public int ItemsCount => _items.Count;
     public IEnumerable<ToDoNotify> Circle => Items.Where(x => x.Type == ToDoType.Circle);
@@ -34,7 +38,8 @@ public partial class ToDoListViewModel : ViewModelBase
     public int GroupCount => Group.Count();
     public IEnumerable<ToDoNotify> Periodicity => Items.Where(x => x.Type == ToDoType.Periodicity);
     public int PeriodicityCount => Periodicity.Count();
-    public IEnumerable<ToDoNotify> PeriodicityOffset => Items.Where(x => x.Type == ToDoType.PeriodicityOffset);
+    public IEnumerable<ToDoNotify> PeriodicityOffset =>
+        Items.Where(x => x.Type == ToDoType.PeriodicityOffset);
     public int PeriodicityOffsetCount => PeriodicityOffset.Count();
     public IEnumerable<ToDoNotify> FixedDate => Items.Where(x => x.Type == ToDoType.FixedDate);
     public int FixedDateCount => FixedDate.Count();
@@ -44,7 +49,8 @@ public partial class ToDoListViewModel : ViewModelBase
     public int StepCount => Step.Count();
     public IEnumerable<ToDoNotify> Value => Items.Where(x => x.Type == ToDoType.Value);
     public int ValueCount => Value.Count();
-    public IEnumerable<ToDoNotify> ComingSoon => Items.Where(x => x.Status == ToDoStatus.ComingSoon);
+    public IEnumerable<ToDoNotify> ComingSoon =>
+        Items.Where(x => x.Status == ToDoStatus.ComingSoon);
     public int ComingSoonCount => ComingSoon.Count();
     public IEnumerable<ToDoNotify> Planned => Items.Where(x => x.Status == ToDoStatus.Planned);
     public int PlannedCount => Planned.Count();
@@ -52,7 +58,8 @@ public partial class ToDoListViewModel : ViewModelBase
     public int CompletedCount => Completed.Count();
     public IEnumerable<ToDoNotify> Miss => Items.Where(x => x.Status == ToDoStatus.Miss);
     public int MissCount => Miss.Count();
-    public IEnumerable<ToDoNotify> ReadyForComplete => Items.Where(x => x.Status == ToDoStatus.ReadyForComplete);
+    public IEnumerable<ToDoNotify> ReadyForComplete =>
+        Items.Where(x => x.Status == ToDoStatus.ReadyForComplete);
     public int ReadyForCompleteCount => ReadyForComplete.Count();
 
     public void Refresh()

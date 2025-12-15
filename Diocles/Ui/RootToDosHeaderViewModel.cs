@@ -7,7 +7,9 @@ namespace Diocles.Ui;
 public sealed partial class RootToDosHeaderViewModel : ViewModelBase
 {
     private readonly AvaloniaList<InannaCommand> _commands;
-    [ObservableProperty] private bool _isMulti;
+
+    [ObservableProperty]
+    private bool _isMulti;
 
     public RootToDosHeaderViewModel(IEnumerable<InannaCommand> commands)
     {

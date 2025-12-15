@@ -16,10 +16,15 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     private readonly IAppResourceService _appResourceService;
     private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
 
-    public ToDosViewModel(ToDoNotify item, IUiToDoService uiToDoService, IToDoCache toDoCache,
+    public ToDosViewModel(
+        ToDoNotify item,
+        IUiToDoService uiToDoService,
+        IToDoCache toDoCache,
         IStringFormater stringFormater,
-        IDialogService dialogService, IAppResourceService appResourceService,
-        IDioclesViewModelFactory dioclesViewModelFactory)
+        IDialogService dialogService,
+        IAppResourceService appResourceService,
+        IDioclesViewModelFactory dioclesViewModelFactory
+    )
     {
         List = new(item.Children);
         _uiToDoService = uiToDoService;
@@ -45,21 +50,28 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
 
-        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(
-                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _appResourceService.GetResource<string>("Lang.ToDo")),
-            credential,
-            new DialogButton(
-                _appResourceService.GetResource<string>("Lang.Create"),
-                CreateCommand,
-                credential, DialogButtonType.Primary), UiHelper.CancelButton)));
+        await WrapCommand(() =>
+            _dialogService.ShowMessageBoxAsync(
+                new(
+                    _stringFormater.Format(
+                        _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                        _appResourceService.GetResource<string>("Lang.ToDo")
+                    ),
+                    credential,
+                    new DialogButton(
+                        _appResourceService.GetResource<string>("Lang.Create"),
+                        CreateCommand,
+                        credential,
+                        DialogButtonType.Primary
+                    ),
+                    UiHelper.CancelButton
+                )
+            )
+        );
     }
 
     [RelayCommand]
-    private async Task CreateAsync(
-        ToDoParametersViewModel parameters,
-        CancellationToken ct)
+    private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
@@ -73,13 +85,7 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
             var create = parameters.CreateToDo();
             create.ParentId = Header.Item.Id;
 
-            var response = await _uiToDoService.PostAsync(new()
-            {
-                Creates =
-                [
-                    create,
-                ],
-            }, ct);
+            var response = await _uiToDoService.PostAsync(new() { Creates = [create] }, ct);
 
             _dialogService.CloseMessageBox();
 
@@ -91,11 +97,10 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         return WrapCommand(async () =>
         {
-            var response = await _uiToDoService.GetAsync(new()
-            {
-                ChildrenIds = [Header.Item.Id,],
-                ParentIds = [Header.Item.Id,],
-            }, ct);
+            var response = await _uiToDoService.GetAsync(
+                new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] },
+                ct
+            );
 
             List.Refresh();
 
@@ -107,11 +112,9 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         WrapCommand(() =>
         {
-            var response = _uiToDoService.Get(new()
-            {
-                ChildrenIds = [Header.Item.Id,],
-                ParentIds = [Header.Item.Id,],
-            });
+            var response = _uiToDoService.Get(
+                new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] }
+            );
 
             List.Refresh();
 

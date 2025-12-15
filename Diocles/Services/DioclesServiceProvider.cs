@@ -23,27 +23,41 @@ namespace Diocles.Services;
 public interface IDioclesServiceProvider
 {
     public static IUiToDoService GetUiCredentialService(
-        ToDoServiceOptions options, ITryPolicyService tryPolicyService,
-        IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
+        ToDoServiceOptions options,
+        ITryPolicyService tryPolicyService,
+        IFactory<Memory<HttpHeader>> headersFactory,
+        AppState appState,
         ToDoParametersFillerService toDoParametersFillerService,
         IToDoCache toDoCache,
         INavigator navigator,
         IStorageService storageService,
-        IToDoValidator toDoValidator)
+        IToDoValidator toDoValidator
+    )
     {
         var user = appState.User.ThrowIfNull();
 
-        return new UiToDoService(new HttpToDoService(new()
-            {
-                BaseAddress = new(options.Url),
-            }, new()
-            {
-                TypeInfoResolver = HestiaJsonContext.Resolver,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            }, tryPolicyService, headersFactory),
-            new EfToDoService(new FileInfo(
-                        $"{storageService.GetAppDirectory()}/Diocles/{user.Id}.db")
-                   .InitDbContext(), new(DateTimeOffset.UtcNow.Offset, user.Id),
-                toDoParametersFillerService, toDoValidator), appState, toDoCache, navigator);
+        return new UiToDoService(
+            new HttpToDoService(
+                new() { BaseAddress = new(options.Url) },
+                new()
+                {
+                    TypeInfoResolver = HestiaJsonContext.Resolver,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                },
+                tryPolicyService,
+                headersFactory
+            ),
+            new EfToDoService(
+                new FileInfo(
+                    $"{storageService.GetAppDirectory()}/Diocles/{user.Id}.db"
+                ).InitDbContext(),
+                new(DateTimeOffset.UtcNow.Offset, user.Id),
+                toDoParametersFillerService,
+                toDoValidator
+            ),
+            appState,
+            toDoCache,
+            navigator
+        );
     }
 }

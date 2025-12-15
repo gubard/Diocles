@@ -7,9 +7,10 @@ using Inanna.Services;
 
 namespace Diocles.Services;
 
-public interface
-    IDioclesViewModelFactory : IFactory<(ValidationMode validationMode, bool isShowEdit), ToDoParametersViewModel>,
-    IFactory<ToDoTreeViewModel>, IFactory<ToDoNotify, ToDosViewModel>;
+public interface IDioclesViewModelFactory
+    : IFactory<(ValidationMode validationMode, bool isShowEdit), ToDoParametersViewModel>,
+        IFactory<ToDoTreeViewModel>,
+        IFactory<ToDoNotify, ToDosViewModel>;
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
 {
@@ -20,8 +21,14 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IDialogService _dialogService;
     private readonly IAppResourceService _appResourceService;
 
-    public DioclesViewModelFactory(IToDoValidator toDoValidator, IToDoCache toDoCache, IUiToDoService uiToDoService,
-        IStringFormater stringFormater, IDialogService dialogService, IAppResourceService appResourceService)
+    public DioclesViewModelFactory(
+        IToDoValidator toDoValidator,
+        IToDoCache toDoCache,
+        IUiToDoService uiToDoService,
+        IStringFormater stringFormater,
+        IDialogService dialogService,
+        IAppResourceService appResourceService
+    )
     {
         _toDoValidator = toDoValidator;
         _toDoCache = toDoCache;
@@ -31,7 +38,7 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _appResourceService = appResourceService;
     }
 
-    public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit ) value)
+    public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) value)
     {
         return new(_toDoValidator, this, value.validationMode, value.isShowEdit);
     }
@@ -43,6 +50,14 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDosViewModel Create(ToDoNotify input)
     {
-        return new(input, _uiToDoService, _toDoCache, _stringFormater, _dialogService, _appResourceService, this);
+        return new(
+            input,
+            _uiToDoService,
+            _toDoCache,
+            _stringFormater,
+            _dialogService,
+            _appResourceService,
+            this
+        );
     }
 }
