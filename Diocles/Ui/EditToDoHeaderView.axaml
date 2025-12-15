@@ -4,10 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Diocles.Ui.EditToDoView"
-             x:DataType="ui:EditToDoViewModel">
-    <Grid RowDefinitions="*,Auto">
-        <ContentControl Content="{Binding Parameters}" />
-        <Button Grid.Row="1" Classes="align-right" Command="{Binding SaveCommand}" Content="{DynamicResource Lang.Save}" />
-    </Grid>
+             x:Class="Diocles.Ui.EditToDoHeaderView"
+             x:DataType="ui:EditToDoHeaderViewModel">
+    <TextBlock Text="{Binding Item.Name}" Classes="h2 align-left-center" />
 </UserControl>

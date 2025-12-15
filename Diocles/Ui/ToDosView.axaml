@@ -20,19 +20,19 @@
     </Interaction.Behaviors>
 
     <Grid RowDefinitions="Auto,*,Auto">
-        <c:PathControl Classes="alignment-center"
+        <c:PathControl Classes="align-center"
                        ItemsSource="{Binding Header.Item.Parents}">
             <c:PathControl.ItemTemplate>
                 <s:SelectorDataTemplate>
                     <DataTemplate DataType="{x:Type m:ToDoNotify}">
-                        <Button Classes="alignment-center"
+                        <Button Classes="align-center"
                                 Content="{Binding Name}"
                                 Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
                                 CommandParameter="{Binding}" />
                     </DataTemplate>
 
                     <DataTemplate DataType="{x:Type in:HomeMark}">
-                        <Button Classes="alignment-center"
+                        <Button Classes="align-center"
                                 Content="{ip:MaterialDesign Home}"
                                 Command="{x:Static hi:InannaCommands.NavigateToCommand}"
                                 CommandParameter="{x:Type ui:RootToDosViewModel}" />
@@ -44,7 +44,7 @@
         <ContentControl Grid.Row="1" Content="{Binding List}" />
 
         <Button Grid.Row="2"
-                Classes="alignment-stretch content-alignment-center h1"
+                Classes="align-stretch content-align-center h1"
                 Content="{DynamicResource Lang.Create}"
                 Command="{Binding ShowCreateViewCommand}" />
     </Grid>

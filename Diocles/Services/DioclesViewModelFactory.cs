@@ -15,10 +15,12 @@ public interface IDioclesViewModelFactory
         >,
         IFactory<ToDoTreeViewModel>,
         IFactory<ToDoNotify, ToDosViewModel>,
-        IFactory<ToDoNotify, EditToDoViewModel>
+        IFactory<ToDoNotify, EditToDoViewModel>,
+        IFactory<ToDoNotify, EditToDoHeaderViewModel>
 {
     ToDosViewModel CreateToDos(ToDoNotify item);
     EditToDoViewModel CreateEditToDo(ToDoNotify item);
+    EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item);
 }
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
@@ -29,6 +31,7 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IStringFormater _stringFormater;
     private readonly IDialogService _dialogService;
     private readonly IAppResourceService _appResourceService;
+    private readonly INotificationService _notificationService;
 
     public DioclesViewModelFactory(
         IToDoValidator toDoValidator,
@@ -36,7 +39,8 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         IUiToDoService uiToDoService,
         IStringFormater stringFormater,
         IDialogService dialogService,
-        IAppResourceService appResourceService
+        IAppResourceService appResourceService,
+        INotificationService notificationService
     )
     {
         _toDoValidator = toDoValidator;
@@ -45,6 +49,7 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _stringFormater = stringFormater;
         _dialogService = dialogService;
         _appResourceService = appResourceService;
+        _notificationService = notificationService;
     }
 
     public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) input)
@@ -82,7 +87,12 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public EditToDoViewModel CreateEditToDo(ToDoNotify item)
     {
-        return new(item, this);
+        return new(item, this, _uiToDoService, _notificationService, _appResourceService);
+    }
+
+    public EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item)
+    {
+        return new(item);
     }
 
     public ToDoParametersViewModel Create(
@@ -90,5 +100,10 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     )
     {
         return new(input.item, input.validationMode, input.isShowEdit, _toDoValidator, this);
+    }
+
+    public EditToDoHeaderViewModel Create(ToDoNotify input)
+    {
+        return CreateEditToDoHeader(input);
     }
 }

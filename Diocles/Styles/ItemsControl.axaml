@@ -7,13 +7,13 @@
     <Style Selector="ItemsControl.todo-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
-                <Button Classes="alignment-stretch"
+                <Button Classes="align-stretch"
                         CommandParameter="{Binding}"
                         Command="{x:Static h:DioclesCommands.OpenToDosCommand}">
                     <Grid ColumnDefinitions="Auto,*,Auto">
                         <CheckBox IsChecked="{Binding IsCompleted}"
                                   IsVisible="{Binding IsCan, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.None}}" />
-                        <TextBlock Grid.Column="1" Text="{Binding Name}" Classes="text-wrap alignment-left-center" />
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" Classes="text-wrap align-left-center" />
 
                         <StackPanel Grid.Column="2" Classes="horizontal">
                             <Button Content="{ip:MaterialDesign Edit}"

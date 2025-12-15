@@ -9,7 +9,7 @@
              x:DataType="ui:RootToDosHeaderViewModel">
     <Grid ColumnDefinitions="Auto,*,Auto">
         <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
-        <TextBlock Grid.Column="1" Classes="h2 alignment-left-center" Text="{DynamicResource Lang.ToDos}" />
+        <TextBlock Grid.Column="1" Classes="h2 align-left-center" Text="{DynamicResource Lang.ToDos}" />
         <ItemsControl Grid.Column="2" Classes="horizontal-stack" IsVisible="{Binding IsMulti}" ItemsSource="{Binding Commands}" />
     </Grid>
 </UserControl>

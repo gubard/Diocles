@@ -9,6 +9,7 @@ using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Generator;
+using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Ui;
 
@@ -45,9 +46,9 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         Type = item.Type;
         DueDate = item.DueDate;
         TypeOfPeriodicity = item.TypeOfPeriodicity;
-        _annuallyDays.AddRange(item.AnnuallyDays);
-        _monthlyDays.AddRange(item.MonthlyDays);
-        _weeklyDays.AddRange(item.WeeklyDays);
+        _annuallyDays.UpdateOrder(item.AnnuallyDays.ToArray());
+        _monthlyDays.UpdateOrder(item.MonthlyDays.ToArray());
+        _weeklyDays.UpdateOrder(item.WeeklyDays.ToArray());
         DaysOffset = item.DaysOffset;
         MonthsOffset = item.MonthsOffset;
         WeeksOffset = item.WeeksOffset;
@@ -75,7 +76,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
     {
         _toDoValidator = toDoValidator;
         InitValidation();
-        _annuallyDays = [new(1, Month.January)];
+        _annuallyDays = [new() { Day = 1, Month = Month.January }];
         _annuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
         _monthlyDays = [1];
         _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
