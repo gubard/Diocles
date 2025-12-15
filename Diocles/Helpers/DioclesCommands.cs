@@ -37,13 +37,16 @@ public static class DioclesCommands
         {
             var response = await uiToDoService.GetAsync(new() { IsCurrentActive = true }, ct);
 
-            if (toDoCache.CurrentActive is null)
+            if (toDoCache.CurrentActive?.Parent is null)
             {
                 await navigator.NavigateToAsync(factory.CreateRootToDos(), ct);
             }
             else
             {
-                await navigator.NavigateToAsync(factory.CreateToDos(toDoCache.CurrentActive), ct);
+                await navigator.NavigateToAsync(
+                    factory.CreateToDos(toDoCache.CurrentActive.Parent),
+                    ct
+                );
             }
 
             return response;

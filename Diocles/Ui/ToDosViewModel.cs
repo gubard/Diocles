@@ -19,7 +19,6 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     public ToDosViewModel(
         ToDoNotify item,
         IUiToDoService uiToDoService,
-        IToDoCache toDoCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,

@@ -80,7 +80,6 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(
             item,
             _uiToDoService,
-            _toDoCache,
             _stringFormater,
             _dialogService,
             _appResourceService,
