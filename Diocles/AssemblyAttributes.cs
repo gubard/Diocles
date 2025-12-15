@@ -6,3 +6,5 @@ using Inanna.Generator;
 [assembly: ViewPair(typeof(RootToDosHeaderView), typeof(RootToDosHeaderViewModel))]
 [assembly: ViewPair(typeof(ToDoParametersView), typeof(ToDoParametersViewModel))]
 [assembly: ViewPair(typeof(ToDoTreeView), typeof(ToDoTreeViewModel))]
+[assembly: ViewPair(typeof(ToDosHeaderView), typeof(ToDosHeaderViewModel))]
+[assembly: ViewPair(typeof(ToDosView), typeof(ToDosViewModel))]

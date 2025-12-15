@@ -4,13 +4,14 @@ using Gaia.Models;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using Inanna.Helpers;
+using Inanna.Models;
 
 namespace Diocles.Models;
 
 public partial class ToDoNotify : ObservableObject, IToDo
 {
     private readonly AvaloniaList<ToDoNotify> _children;
-    private readonly AvaloniaList<ToDoNotify> _parents;
+    private readonly AvaloniaList<object> _parents;
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
     private readonly AvaloniaList<int> _monthlyDays;
     private readonly AvaloniaList<DayOfYear> _annuallyDays;
@@ -26,8 +27,8 @@ public partial class ToDoNotify : ObservableObject, IToDo
     }
 
     public Guid Id { get; }
-    public IEnumerable<ToDoNotify> Children => _children;
-    public IEnumerable<ToDoNotify> Parents => _parents;
+    public IAvaloniaReadOnlyList<ToDoNotify> Children => _children;
+    public IEnumerable<object> Parents => _parents;
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
@@ -124,7 +125,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
 
     public void UpdateParents(ToDoNotify[] parents)
     {
-        _parents.UpdateOrder(parents);
+        _parents.UpdateOrder(HomeMark.IEnumerableInstance.Concat(parents).ToArray());
     }
 
     public void UpdateWeeklyDays(DayOfWeek[] weeklyDays)

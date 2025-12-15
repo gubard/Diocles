@@ -1,0 +1,51 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
+             xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
+             xmlns:m="clr-namespace:Diocles.Models"
+             xmlns:h="clr-namespace:Diocles.Helpers"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:in="clr-namespace:Inanna.Models;assembly=Inanna"
+             xmlns:hi="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.ToDosView"
+             x:DataType="ui:ToDosViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <c:PathControl Classes="alignment-center"
+                       ItemsSource="{Binding Header.Item.Parents}">
+            <c:PathControl.ItemTemplate>
+                <s:SelectorDataTemplate>
+                    <DataTemplate DataType="{x:Type m:ToDoNotify}">
+                        <Button Classes="alignment-center"
+                                Content="{Binding Name}"
+                                Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+
+                    <DataTemplate DataType="{x:Type in:HomeMark}">
+                        <Button Classes="alignment-center"
+                                Content="{ip:MaterialDesign Home}"
+                                Command="{x:Static hi:InannaCommands.NavigateToCommand}"
+                                CommandParameter="{x:Type ui:RootToDosViewModel}" />
+                    </DataTemplate>
+                </s:SelectorDataTemplate>
+            </c:PathControl.ItemTemplate>
+        </c:PathControl>
+
+        <ContentControl Grid.Row="1" Content="{Binding List}" />
+
+        <Button Grid.Row="2"
+                Classes="alignment-stretch content-alignment-center h1"
+                Content="{DynamicResource Lang.Create}"
+                Command="{Binding ShowCreateViewCommand}" />
+    </Grid>
+</UserControl>
