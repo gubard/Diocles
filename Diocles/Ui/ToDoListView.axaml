@@ -17,7 +17,7 @@
 
         <ScrollViewer Grid.Row="1" Classes="vertical-scroll">
             <Panel>
-                <Panel
+                <StackPanel
                     IsVisible="{Binding Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32Zero}}">
                     <Expander
                         IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
@@ -30,7 +30,8 @@
 
                         <ItemsControl Classes="todo-view" ItemsSource="{Binding Items}" />
                     </Expander>
-                </Panel>
+                </StackPanel>
+
                 <StackPanel
                     IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
                     <Expander
