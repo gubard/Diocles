@@ -59,9 +59,6 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial DateOnly DueDate { get; set; }
 
     [ObservableProperty]
-    public partial bool IsCompleted { get; set; }
-
-    [ObservableProperty]
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
 
     [ObservableProperty]

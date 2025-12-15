@@ -12,13 +12,13 @@
                         Command="{x:Static h:DioclesCommands.OpenToDosCommand}">
                     <Grid ColumnDefinitions="Auto,*,Auto">
                         <ToggleButton Classes="h1"
-                                      IsChecked="{Binding IsCompleted}"
+                                      IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}"
                                       IsVisible="{Binding IsCan, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.None}}"
                                       CommandParameter="{Binding}"
                                       Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
                             <ip:PackIconMaterialDesign Kind="Check"
                                                        Classes="h2 align-center"
-                                                       IsVisible="{Binding IsCompleted}" />
+                                                       IsVisible="{Binding IsCan, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}" />
                         </ToggleButton>
 
                         <TextBlock Grid.Column="1" Text="{Binding Name}" Classes="text-wrap align-left-center" />
