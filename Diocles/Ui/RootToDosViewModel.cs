@@ -81,7 +81,7 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
             }
 
             var response = await _uiToDoService.PostAsync(
-                new() { Creates = [parameters.CreateToDo()] },
+                new() { Creates = [parameters.CreateShortToDo()] },
                 ct
             );
 

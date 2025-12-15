@@ -9,6 +9,10 @@ namespace Diocles.Services;
 
 public interface IDioclesViewModelFactory
     : IFactory<(ValidationMode validationMode, bool isShowEdit), ToDoParametersViewModel>,
+        IFactory<
+            (ToDoNotify item, ValidationMode validationMode, bool isShowEdit),
+            ToDoParametersViewModel
+        >,
         IFactory<ToDoTreeViewModel>,
         IFactory<ToDoNotify, ToDosViewModel>,
         IFactory<ToDoNotify, EditToDoViewModel>
@@ -43,9 +47,9 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _appResourceService = appResourceService;
     }
 
-    public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) value)
+    public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) input)
     {
-        return new(_toDoValidator, this, value.validationMode, value.isShowEdit);
+        return new(input.validationMode, input.isShowEdit, _toDoValidator, this);
     }
 
     public ToDoTreeViewModel Create()
@@ -78,6 +82,13 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public EditToDoViewModel CreateEditToDo(ToDoNotify item)
     {
-        return new(item);
+        return new(item, this);
+    }
+
+    public ToDoParametersViewModel Create(
+        (ToDoNotify item, ValidationMode validationMode, bool isShowEdit) input
+    )
+    {
+        return new(input.item, input.validationMode, input.isShowEdit, _toDoValidator, this);
     }
 }

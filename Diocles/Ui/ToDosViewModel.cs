@@ -82,7 +82,7 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
                 return (IValidationErrors)EmptyValidationErrors.Instance;
             }
 
-            var create = parameters.CreateToDo();
+            var create = parameters.CreateShortToDo();
             create.ParentId = Header.Item.Id;
 
             var response = await _uiToDoService.PostAsync(new() { Creates = [create] }, ct);

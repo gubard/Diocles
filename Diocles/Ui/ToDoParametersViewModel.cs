@@ -32,10 +32,44 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
     }
 
     public ToDoParametersViewModel(
-        IToDoValidator toDoValidator,
-        IDioclesViewModelFactory factory,
+        ToDoNotify item,
         ValidationMode validationMode,
-        bool isShowEdit
+        bool isShowEdit,
+        IToDoValidator toDoValidator,
+        IDioclesViewModelFactory factory
+    )
+        : this(validationMode, isShowEdit, toDoValidator, factory)
+    {
+        Name = item.Name;
+        Description = item.Description;
+        Type = item.Type;
+        DueDate = item.DueDate;
+        TypeOfPeriodicity = item.TypeOfPeriodicity;
+        _annuallyDays.AddRange(item.AnnuallyDays);
+        _monthlyDays.AddRange(item.MonthlyDays);
+        _weeklyDays.AddRange(item.WeeklyDays);
+        DaysOffset = item.DaysOffset;
+        MonthsOffset = item.MonthsOffset;
+        WeeksOffset = item.WeeksOffset;
+        YearsOffset = item.YearsOffset;
+        ChildrenCompletionType = item.ChildrenCompletionType;
+        Link = item.Link;
+        IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
+        DescriptionType = item.DescriptionType;
+        Icon = Enum.Parse<PackIconMaterialDesignKind>(item.Icon);
+        Color = Color.Parse(item.Color);
+        Reference = item.Reference;
+        RemindDaysBefore = item.RemindDaysBefore;
+        IsBookmark = item.IsBookmark;
+        IsFavorite = item.IsFavorite;
+        ResetEdit();
+    }
+
+    public ToDoParametersViewModel(
+        ValidationMode validationMode,
+        bool isShowEdit,
+        IToDoValidator toDoValidator,
+        IDioclesViewModelFactory factory
     )
         : base(validationMode, isShowEdit)
     {
@@ -188,7 +222,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 
     Guid? IToDo.ReferenceId => Reference?.Id;
 
-    public ShortToDo CreateToDo()
+    public ShortToDo CreateShortToDo()
     {
         return new()
         {
@@ -215,6 +249,57 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
             RemindDaysBefore = RemindDaysBefore,
             IsBookmark = IsBookmark,
             IsFavorite = IsFavorite,
+        };
+    }
+
+    public EditToDos CreateEditToDos()
+    {
+        return new()
+        {
+            AnnuallyDays = AnnuallyDays.ToArray(),
+            IsEditAnnuallyDays = IsEditAnnuallyDays,
+            ChildrenCompletionType = ChildrenCompletionType,
+            IsEditChildrenCompletionType = IsEditChildrenCompletionType,
+            Color = Color.ToString(),
+            IsEditColor = IsEditColor,
+            DaysOffset = DaysOffset,
+            IsEditDaysOffset = IsEditDaysOffset,
+            Description = Description.Trim(),
+            IsEditDescription = IsEditDescription,
+            DescriptionType = DescriptionType,
+            IsEditDescriptionType = IsEditDescriptionType,
+            DueDate = DueDate,
+            IsEditDueDate = IsEditDueDate,
+            Icon = Icon.ToString(),
+            IsEditIcon = IsEditIcon,
+            IsBookmark = IsBookmark,
+            IsEditIsBookmark = IsEditIsBookmark,
+            IsFavorite = IsFavorite,
+            IsEditIsFavorite = IsEditIsFavorite,
+            IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
+            IsEditIsRequiredCompleteInDueDate = IsEditIsRequiredCompleteInDueDate,
+            Link = Link.Trim(),
+            IsEditLink = IsEditLink,
+            MonthlyDays = MonthlyDays.Select(x => (byte)x).ToArray(),
+            IsEditMonthlyDays = IsEditMonthlyDays,
+            MonthsOffset = MonthsOffset,
+            IsEditMonthsOffset = IsEditMonthsOffset,
+            Name = Name.Trim(),
+            IsEditName = IsEditName,
+            ReferenceId = Reference?.Id,
+            IsEditReference = IsEditReference,
+            RemindDaysBefore = RemindDaysBefore,
+            IsEditRemindDaysBefore = IsEditRemindDaysBefore,
+            Type = Type,
+            IsEditType = IsEditType,
+            TypeOfPeriodicity = TypeOfPeriodicity,
+            IsEditTypeOfPeriodicity = IsEditTypeOfPeriodicity,
+            WeeklyDays = WeeklyDays.ToArray(),
+            IsEditWeeklyDays = IsEditWeeklyDays,
+            WeeksOffset = WeeksOffset,
+            IsEditWeeksOffset = IsEditWeeksOffset,
+            YearsOffset = YearsOffset,
+            IsEditYearsOffset = IsEditYearsOffset,
         };
     }
 
