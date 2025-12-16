@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gaia.Helpers;
 using Gaia.Models;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
@@ -122,7 +123,8 @@ public partial class ToDoNotify : ObservableObject, IToDo
 
     public void UpdateParents(ToDoNotify[] parents)
     {
-        _parents.UpdateOrder(HomeMark.IEnumerableInstance.Concat(parents).ToArray());
+        var allParents = HomeMark.Instance.Cast<object>().ToEnumerable().Concat(parents).ToArray();
+        _parents.UpdateOrder(allParents);
     }
 
     public void UpdateWeeklyDays(DayOfWeek[] weeklyDays)
