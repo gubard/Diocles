@@ -18,6 +18,7 @@ public partial class ToDoListViewModel : ViewModelBase
 
     public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items)
     {
+        _groupBy = ToDoGroupBy.Status;
         _items = items;
         items.CollectionChanged += (_, _) => Refresh();
     }

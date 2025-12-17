@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:m="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
+             xmlns:dm="clr-namespace:Diocles.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoTreeView"
              x:DataType="ui:ToDoTreeViewModel">
@@ -13,6 +15,13 @@
     </Interaction.Behaviors>
 
     <TreeView ItemsSource="{Binding Roots}" SelectedItem="{Binding Selected}">
+        <TreeView.Styles>
+            <Style Selector="TabItem" x:DataType="dm:ToDoNotify">
+                <Setter Property="IsVisible"
+                        Value="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}" />
+            </Style>
+        </TreeView.Styles>
+
         <TreeView.ItemTemplate>
             <TreeDataTemplate ItemsSource="{Binding Children}">
                 <TextBlock Text="{Binding Name}" />

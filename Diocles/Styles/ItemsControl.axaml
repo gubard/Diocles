@@ -21,7 +21,16 @@
                                                        IsVisible="{Binding IsCan, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}" />
                         </ToggleButton>
 
-                        <TextBlock Grid.Column="1" Text="{Binding Name}" Classes="text-wrap align-left-center" />
+                        <Grid Grid.Column="1" RowDefinitions="Auto,Auto" Classes="align-left-center">
+                            <TextBlock Text="{Binding Name}" Classes="text-wrap" />
+                            <Button Grid.Row="1"
+                                    Classes="align-stretch"
+                                    Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
+                                    CommandParameter="{Binding Active}"
+                                    IsVisible="{Binding Active, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Null}}">
+                                <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center" />
+                            </Button>
+                        </Grid>
 
                         <StackPanel Grid.Column="2" Classes="horizontal">
                             <Button Content="{ip:MaterialDesign Edit}"

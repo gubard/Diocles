@@ -57,12 +57,15 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         Link = item.Link;
         IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
         DescriptionType = item.DescriptionType;
-        Icon = Enum.Parse<PackIconMaterialDesignKind>(item.Icon);
         Color = Color.Parse(item.Color);
         Reference = item.Reference;
         RemindDaysBefore = item.RemindDaysBefore;
         IsBookmark = item.IsBookmark;
         IsFavorite = item.IsFavorite;
+
+        Icon = Enum.TryParse<PackIconMaterialDesignKind>(item.Icon, out var icon)
+            ? icon
+            : PackIconMaterialDesignKind.None;
         ResetEdit();
     }
 
