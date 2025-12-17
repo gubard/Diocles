@@ -24,6 +24,6 @@ public partial class ToDoTreeViewModel : ViewModelBase
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(() => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct));
+        await WrapCommandAsync(() => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct), ct);
     }
 }

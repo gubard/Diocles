@@ -49,62 +49,71 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     {
         var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
 
-        await WrapCommand(() =>
-            _dialogService.ShowMessageBoxAsync(
-                new(
-                    _stringFormater.Format(
-                        _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                        _appResourceService.GetResource<string>("Lang.ToDo")
-                    ),
-                    credential,
-                    new DialogButton(
-                        _appResourceService.GetResource<string>("Lang.Create"),
-                        CreateCommand,
+        await WrapCommandAsync(
+            () =>
+                _dialogService.ShowMessageBoxAsync(
+                    new(
+                        _stringFormater.Format(
+                            _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                            _appResourceService.GetResource<string>("Lang.ToDo")
+                        ),
                         credential,
-                        DialogButtonType.Primary
+                        new DialogButton(
+                            _appResourceService.GetResource<string>("Lang.Create"),
+                            CreateCommand,
+                            credential,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
                     ),
-                    UiHelper.CancelButton
-                )
-            )
+                    ct
+                ),
+            ct
         );
     }
 
     [RelayCommand]
     private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            parameters.StartExecute();
-
-            if (parameters.HasErrors)
+        await WrapCommandAsync(
+            async () =>
             {
-                return (IValidationErrors)EmptyValidationErrors.Instance;
-            }
+                parameters.StartExecute();
 
-            var create = parameters.CreateShortToDo();
-            create.ParentId = Header.Item.Id;
+                if (parameters.HasErrors)
+                {
+                    return (IValidationErrors)EmptyValidationErrors.Instance;
+                }
 
-            var response = await _uiToDoService.PostAsync(new() { Creates = [create] }, ct);
+                var create = parameters.CreateShortToDo();
+                create.ParentId = Header.Item.Id;
 
-            _dialogService.CloseMessageBox();
+                var response = await _uiToDoService.PostAsync(new() { Creates = [create] }, ct);
 
-            return response;
-        });
+                _dialogService.CloseMessageBox();
+
+                return response;
+            },
+            ct
+        );
     }
 
     public ValueTask RefreshAsync(CancellationToken ct)
     {
-        return WrapCommand(async () =>
-        {
-            var response = await _uiToDoService.GetAsync(
-                new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] },
-                ct
-            );
+        return WrapCommandAsync(
+            async () =>
+            {
+                var response = await _uiToDoService.GetAsync(
+                    new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] },
+                    ct
+                );
 
-            List.Refresh();
+                List.Refresh();
 
-            return response;
-        });
+                return response;
+            },
+            ct
+        );
     }
 
     public void Refresh()

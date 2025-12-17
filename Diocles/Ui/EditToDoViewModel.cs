@@ -35,22 +35,25 @@ public partial class EditToDoViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            var edit = Parameters.CreateEditToDos();
-            edit.Ids = [_header.Item.Id];
-            var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
+        await WrapCommandAsync(
+            async () =>
+            {
+                var edit = Parameters.CreateEditToDos();
+                edit.Ids = [_header.Item.Id];
+                var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
 
-            _notificationService.ShowNotification(
-                new TextBlock
-                {
-                    Text = _appResourceService.GetResource<string>("Lang.Saved"),
-                    Classes = { "h2", "align-center" },
-                },
-                NotificationType.None
-            );
+                _notificationService.ShowNotification(
+                    new TextBlock
+                    {
+                        Text = _appResourceService.GetResource<string>("Lang.Saved"),
+                        Classes = { "h2", "align-center" },
+                    },
+                    NotificationType.None
+                );
 
-            return response;
-        });
+                return response;
+            },
+            ct
+        );
     }
 }
