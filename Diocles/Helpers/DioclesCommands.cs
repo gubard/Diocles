@@ -2,10 +2,8 @@
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
-using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
-using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Helpers;
@@ -14,9 +12,6 @@ public static class DioclesCommands
 {
     static DioclesCommands()
     {
-        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
-        var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
-        var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         var uiToDoService = DiHelper.ServiceProvider.GetService<IUiToDoService>();
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoCache>();

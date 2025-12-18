@@ -1,5 +1,4 @@
-﻿using System.Collections.Frozen;
-using Avalonia.Collections;
+﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
