@@ -3,7 +3,8 @@
         xmlns:m="clr-namespace:Diocles.Models"
         xmlns:h="clr-namespace:Diocles.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
-        xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract">
+        xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
+        xmlns:services="clr-namespace:Diocles.Services">
     <Style Selector="ItemsControl.todo-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
@@ -25,7 +26,7 @@
                             <TextBlock Classes="text-wrap field h5" Text="{Binding Name}" />
                             <Button Grid.Row="1"
                                     Classes="align-stretch"
-                                    Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
+                                    Command="{x:Static h:DioclesCommands.OpenParentCommand}"
                                     CommandParameter="{Binding Active}"
                                     IsVisible="{Binding Active, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Null}}">
                                 <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center small" />
@@ -35,7 +36,7 @@
                         <StackPanel Grid.Column="2" Classes="horizontal">
                             <Button Content="{ip:MaterialDesign Edit}"
                                     CommandParameter="{Binding}"
-                                    Command="{x:Static h:DioclesCommands.OpenEditCommand}" />
+                                    Command="{Binding $parent[services:IToDosView].ViewModel.ShowEditCommand}" />
                             <Button Classes="danger"
                                     Content="{ip:MaterialDesign Delete}"
                                     CommandParameter="{Binding}"

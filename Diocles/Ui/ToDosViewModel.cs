@@ -2,39 +2,36 @@
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
+using Hestia.Contract.Models;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
+public partial class ToDosViewModel : ToDosViewModelBase, IHeader
 {
-    private readonly IUiToDoService _uiToDoService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IDialogService _dialogService;
-    private readonly IAppResourceService _appResourceService;
-    private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
-
     public ToDosViewModel(
         ToDoNotify item,
         IUiToDoService uiToDoService,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        IDioclesViewModelFactory dioclesViewModelFactory
+        IDioclesViewModelFactory factory
     )
+        : base(
+            dialogService,
+            appResourceService,
+            stringFormater,
+            factory,
+            uiToDoService,
+            item.Children
+        )
     {
-        List = new(item.Children);
-        _uiToDoService = uiToDoService;
-        _stringFormater = stringFormater;
-        _dialogService = dialogService;
-        _appResourceService = appResourceService;
-        _dioclesViewModelFactory = dioclesViewModelFactory;
         Header = new(item, []);
     }
 
-    public ToDoListViewModel List { get; }
     public ToDosHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
@@ -47,27 +44,27 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
+        var credential = Factory.Create((ValidationMode.ValidateAll, false));
 
         await WrapCommandAsync(
             () =>
-                _dialogService.ShowMessageBoxAsync(
-                    new(
-                        _stringFormater.Format(
-                            _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                            _appResourceService.GetResource<string>("Lang.ToDo")
-                        ),
-                        credential,
-                        new DialogButton(
-                            _appResourceService.GetResource<string>("Lang.Create"),
-                            CreateCommand,
-                            credential,
-                            DialogButtonType.Primary
-                        ),
-                        UiHelper.CancelButton
-                    ),
-                    ct
-                ),
+            {
+                var header = StringFormater.Format(
+                    AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                    AppResourceService.GetResource<string>("Lang.ToDo")
+                );
+
+                var button = new DialogButton(
+                    AppResourceService.GetResource<string>("Lang.Create"),
+                    CreateCommand,
+                    credential,
+                    DialogButtonType.Primary
+                );
+
+                var dialog = new DialogViewModel(header, credential, button, UiHelper.CancelButton);
+
+                return DialogService.ShowMessageBoxAsync(dialog, ct);
+            },
             ct
         );
     }
@@ -87,10 +84,8 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
 
                 var create = parameters.CreateShortToDo();
                 create.ParentId = Header.Item.Id;
-
-                var response = await _uiToDoService.PostAsync(new() { Creates = [create] }, ct);
-
-                _dialogService.CloseMessageBox();
+                var response = await UiToDoService.PostAsync(new() { Creates = [create] }, ct);
+                DialogService.CloseMessageBox();
 
                 return response;
             },
@@ -98,35 +93,8 @@ public partial class ToDosViewModel : ViewModelBase, IHeader, IRefresh
         );
     }
 
-    public ValueTask RefreshAsync(CancellationToken ct)
+    protected override HestiaGetRequest CreateRefreshRequest()
     {
-        return WrapCommandAsync(
-            async () =>
-            {
-                var response = await _uiToDoService.GetAsync(
-                    new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] },
-                    ct
-                );
-
-                List.Refresh();
-
-                return response;
-            },
-            ct
-        );
-    }
-
-    public void Refresh()
-    {
-        WrapCommand(() =>
-        {
-            var response = _uiToDoService.Get(
-                new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] }
-            );
-
-            List.Refresh();
-
-            return response;
-        });
+        return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
     }
 }

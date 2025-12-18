@@ -1,39 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Diocles.Services;
 using Gaia.Services;
+using Hestia.Contract.Models;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
+public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
 {
-    private readonly IUiToDoService _uiToDoService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IDialogService _dialogService;
-    private readonly IAppResourceService _appResourceService;
-    private readonly IDioclesViewModelFactory _dioclesViewModelFactory;
-
     public RootToDosViewModel(
         IUiToDoService uiToDoService,
         IToDoCache toDoCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        IDioclesViewModelFactory dioclesViewModelFactory
+        IDioclesViewModelFactory factory
     )
+        : base(
+            dialogService,
+            appResourceService,
+            stringFormater,
+            factory,
+            uiToDoService,
+            toDoCache.Roots
+        )
     {
-        List = new(toDoCache.Roots);
-        _uiToDoService = uiToDoService;
-        _stringFormater = stringFormater;
-        _dialogService = dialogService;
-        _appResourceService = appResourceService;
-        _dioclesViewModelFactory = dioclesViewModelFactory;
         Header = new([]);
     }
 
-    public ToDoListViewModel List { get; }
     public RootToDosHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
@@ -46,19 +42,19 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = _dioclesViewModelFactory.Create((ValidationMode.ValidateAll, false));
+        var credential = Factory.Create((ValidationMode.ValidateAll, false));
 
         await WrapCommandAsync(
             () =>
-                _dialogService.ShowMessageBoxAsync(
+                DialogService.ShowMessageBoxAsync(
                     new(
-                        _stringFormater.Format(
-                            _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                            _appResourceService.GetResource<string>("Lang.ToDo")
+                        StringFormater.Format(
+                            AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                            AppResourceService.GetResource<string>("Lang.ToDo")
                         ),
                         credential,
                         new DialogButton(
-                            _appResourceService.GetResource<string>("Lang.Create"),
+                            AppResourceService.GetResource<string>("Lang.Create"),
                             CreateCommand,
                             credential,
                             DialogButtonType.Primary
@@ -84,12 +80,9 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
                     return (IValidationErrors)EmptyValidationErrors.Instance;
                 }
 
-                var response = await _uiToDoService.PostAsync(
-                    new() { Creates = [parameters.CreateShortToDo()] },
-                    ct
-                );
-
-                _dialogService.CloseMessageBox();
+                var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
+                var response = await UiToDoService.PostAsync(request, ct);
+                DialogService.CloseMessageBox();
 
                 return response;
             },
@@ -97,30 +90,8 @@ public partial class RootToDosViewModel : ViewModelBase, IHeader, IRefresh
         );
     }
 
-    public ValueTask RefreshAsync(CancellationToken ct)
+    protected override HestiaGetRequest CreateRefreshRequest()
     {
-        return WrapCommandAsync(
-            async () =>
-            {
-                var response = await _uiToDoService.GetAsync(new() { IsRoots = true }, ct);
-
-                List.Refresh();
-
-                return response;
-            },
-            ct
-        );
-    }
-
-    public void Refresh()
-    {
-        WrapCommand(() =>
-        {
-            var response = _uiToDoService.Get(new() { IsRoots = true });
-
-            List.Refresh();
-
-            return response;
-        });
+        return new() { IsRoots = true };
     }
 }

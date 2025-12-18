@@ -30,10 +30,6 @@ public static class DioclesCommands
             (item, ct) => uiToDoService.PostAsync(new() { DeleteIds = [item.Id] }, ct)
         );
 
-        OpenEditCommand = UiHelper.CreateCommand<ToDoNotify>(
-            (item, ct) => navigator.NavigateToAsync(factory.CreateEditToDo(item), ct)
-        );
-
         SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
             (item, ct) => uiToDoService.PostAsync(new() { SwitchCompleteIds = [item.Id] }, ct)
         );
@@ -57,32 +53,17 @@ public static class DioclesCommands
             return response;
         });
 
-        ShowEditCommand = UiHelper.CreateCommand<ToDoNotify>(
+        OpenParentCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>
-                dialogService.ShowMessageBoxAsync(
-                    new(
-                        stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.EditItem"),
-                            item.Name
-                        ),
-                        factory.CreateEditToDoHeader(item),
-                        new DialogButton(
-                            appResourceService.GetResource<string>("Lang.Edit"),
-                            OpenEditCommand,
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        UiHelper.CancelButton
-                    ),
-                    ct
-                )
+                item.Parent is null
+                    ? navigator.NavigateToAsync(factory.CreateRootToDos(), ct)
+                    : navigator.NavigateToAsync(factory.CreateToDos(item.Parent), ct)
         );
     }
 
     public static readonly ICommand OpenToDosCommand;
+    public static readonly ICommand OpenParentCommand;
     public static readonly ICommand DeleteToDoCommand;
-    public static readonly ICommand OpenEditCommand;
-    public static readonly ICommand ShowEditCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
 }
