@@ -46,7 +46,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh
         await WrapCommandAsync(
             () =>
             {
-                var edit = Factory.Create((ValidationMode.ValidateOnlyEdited, false));
+                var edit = Factory.Create((item, ValidationMode.ValidateOnlyEdited, false));
                 _editItem = item;
 
                 return DialogService.ShowMessageBoxAsync(
