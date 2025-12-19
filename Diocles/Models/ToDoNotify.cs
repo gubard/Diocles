@@ -5,6 +5,7 @@ using Gaia.Helpers;
 using Gaia.Models;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 
@@ -85,7 +86,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial DescriptionType DescriptionType { get; set; }
 
     [ObservableProperty]
-    public partial string Icon { get; set; } = string.Empty;
+    public partial PackIconMaterialDesignKind Icon { get; set; } = PackIconMaterialDesignKind.None;
 
     [ObservableProperty]
     public partial Color Color { get; set; } = Colors.Transparent;

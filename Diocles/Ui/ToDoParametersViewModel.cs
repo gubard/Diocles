@@ -62,10 +62,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         RemindDaysBefore = item.RemindDaysBefore;
         IsBookmark = item.IsBookmark;
         IsFavorite = item.IsFavorite;
-
-        Icon = Enum.TryParse<PackIconMaterialDesignKind>(item.Icon, out var icon)
-            ? icon
-            : PackIconMaterialDesignKind.None;
+        Icon = item.Icon;
         ResetEdit();
     }
 

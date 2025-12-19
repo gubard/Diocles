@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Gaia.Services;
 using Hestia.Contract.Models;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 
 namespace Diocles.Services;
@@ -159,11 +160,14 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.Link = toDo.Link;
         item.IsRequiredCompleteInDueDate = toDo.IsRequiredCompleteInDueDate;
         item.DescriptionType = toDo.DescriptionType;
-        item.Icon = toDo.Icon;
         item.Color = Color.TryParse(toDo.Color, out var color) ? color : Colors.Transparent;
         item.RemindDaysBefore = toDo.RemindDaysBefore;
         item.Reference = toDo.ReferenceId.HasValue ? GetItem(toDo.ReferenceId.Value) : null;
 
+        item.Icon = Enum.TryParse<PackIconMaterialDesignKind>(toDo.Icon, out var icon)
+            ? icon
+            : PackIconMaterialDesignKind.None;
+        
         if (item.Parent?.Id != toDo.ParentId)
         {
             ChangeParent(item, toDo.ParentId);
@@ -380,7 +384,9 @@ public partial class ToDoCache : ObservableObject, IToDoCache
             {
                 foreach (var item in items)
                 {
-                    item.Icon = edit.Icon;
+                    item.Icon = Enum.TryParse<PackIconMaterialDesignKind>(edit.Icon, out var icon)
+                        ? icon
+                        : PackIconMaterialDesignKind.None;
                 }
             }
 
