@@ -373,7 +373,7 @@
 
                     <ListBox Classes="horizontal-wrap"
                              SelectedItem="{Binding Color}"
-                             ItemsSource="{x:Static h:ColorData.ColorsA400}">
+                             ItemsSource="{x:Static h:MaterialDesignColors.ColorsA400}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Ellipse Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Width="20"
