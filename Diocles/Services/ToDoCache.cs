@@ -1,4 +1,5 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Gaia.Services;
@@ -159,7 +160,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.IsRequiredCompleteInDueDate = toDo.IsRequiredCompleteInDueDate;
         item.DescriptionType = toDo.DescriptionType;
         item.Icon = toDo.Icon;
-        item.Color = toDo.Color;
+        item.Color = Color.TryParse(toDo.Color, out var color) ? color : Colors.Transparent;
         item.RemindDaysBefore = toDo.RemindDaysBefore;
         item.Reference = toDo.ReferenceId.HasValue ? GetItem(toDo.ReferenceId.Value) : null;
 
@@ -387,7 +388,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
             {
                 foreach (var item in items)
                 {
-                    item.Color = edit.Color;
+                    item.Color = Color.Parse(edit.Color);
                 }
             }
 

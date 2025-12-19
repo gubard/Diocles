@@ -1,4 +1,5 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Helpers;
 using Gaia.Models;
@@ -45,9 +46,6 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial DateTimeOffset CreatedDateTime { get; set; }
-
-    [ObservableProperty]
     public partial ToDoType Type { get; set; }
 
     [ObservableProperty]
@@ -61,9 +59,6 @@ public partial class ToDoNotify : ObservableObject, IToDo
 
     [ObservableProperty]
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
-
-    [ObservableProperty]
-    public partial DateTimeOffset? LastCompleted { get; set; }
 
     [ObservableProperty]
     public partial ushort DaysOffset { get; set; }
@@ -81,9 +76,6 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial ChildrenCompletionType ChildrenCompletionType { get; set; }
 
     [ObservableProperty]
-    public partial uint CurrentCircleOrderIndex { get; set; }
-
-    [ObservableProperty]
     public partial string Link { get; set; } = string.Empty;
 
     [ObservableProperty]
@@ -96,7 +88,7 @@ public partial class ToDoNotify : ObservableObject, IToDo
     public partial string Icon { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial string Color { get; set; } = string.Empty;
+    public partial Color Color { get; set; } = Colors.Transparent;
 
     [ObservableProperty]
     public partial uint RemindDaysBefore { get; set; }

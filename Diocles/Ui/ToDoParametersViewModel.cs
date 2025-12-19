@@ -57,7 +57,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         Link = item.Link;
         IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
         DescriptionType = item.DescriptionType;
-        Color = Color.Parse(item.Color);
+        Color = item.Color;
         Reference = item.Reference;
         RemindDaysBefore = item.RemindDaysBefore;
         IsBookmark = item.IsBookmark;
