@@ -85,6 +85,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh
                 var edit = viewModel.CreateEditToDos();
                 edit.Ids = [_editItem.Id];
                 await UiToDoService.PostAsync(new() { Edits = [edit] }, ct);
+                DialogService.CloseMessageBox();
             },
             ct
         );
