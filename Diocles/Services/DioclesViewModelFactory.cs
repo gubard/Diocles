@@ -1,4 +1,5 @@
-﻿using Diocles.Models;
+﻿using Avalonia.Collections;
+using Diocles.Models;
 using Diocles.Ui;
 using Gaia.Services;
 using Hestia.Contract.Services;
@@ -15,6 +16,7 @@ public interface IDioclesViewModelFactory
         >,
         IFactory<ToDoTreeViewModel>,
         IFactory<RootToDosViewModel>,
+        IFactory<IAvaloniaReadOnlyList<ToDoNotify>, ToDoListViewModel>,
         IFactory<ToDoNotify, ToDosViewModel>,
         IFactory<ToDoNotify, EditToDoViewModel>,
         IFactory<ToDoNotify, EditToDoHeaderViewModel>
@@ -129,5 +131,10 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     RootToDosViewModel IFactory<RootToDosViewModel>.Create()
     {
         return CreateRootToDos();
+    }
+
+    public ToDoListViewModel Create(IAvaloniaReadOnlyList<ToDoNotify> input)
+    {
+        return new(input, _toDoCache);
     }
 }

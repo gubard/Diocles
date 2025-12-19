@@ -33,7 +33,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh
         StringFormater = stringFormater;
         Factory = factory;
         UiToDoService = uiToDoService;
-        List = new(items);
+        List = factory.Create(items);
     }
 
     public ToDoListViewModel List { get; }

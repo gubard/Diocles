@@ -167,7 +167,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         item.Icon = Enum.TryParse<PackIconMaterialDesignKind>(toDo.Icon, out var icon)
             ? icon
             : PackIconMaterialDesignKind.None;
-        
+
         if (item.Parent?.Id != toDo.ParentId)
         {
             ChangeParent(item, toDo.ParentId);

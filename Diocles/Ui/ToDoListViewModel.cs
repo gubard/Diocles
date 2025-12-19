@@ -2,6 +2,7 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
+using Diocles.Services;
 using Hestia.Contract.Models;
 using Inanna.Models;
 
@@ -15,9 +16,11 @@ public partial class ToDoListViewModel : ViewModelBase
     [ObservableProperty]
     private ToDoOrderBy _orderBy;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
+    private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
 
-    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items)
+    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoCache toDoCache)
     {
+        _favorites = toDoCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
         _items = items;
         items.CollectionChanged += (_, _) => Refresh();
@@ -32,6 +35,7 @@ public partial class ToDoListViewModel : ViewModelBase
             _ => throw new ArgumentOutOfRangeException(),
         };
 
+    public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
     public int ItemsCount => _items.Count;
     public IEnumerable<ToDoNotify> Circle => Items.Where(x => x.Type == ToDoType.Circle);
     public int CircleCount => Circle.Count();
