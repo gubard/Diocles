@@ -9,6 +9,7 @@ using Hestia.Contract.Services;
 using Inanna.Models;
 using Inanna.Services;
 using Jab;
+using Nestor.Db.Services;
 using Nestor.Db.Sqlite.Helpers;
 
 namespace Diocles.Services;
@@ -31,7 +32,8 @@ public interface IDioclesServiceProvider
         IToDoCache toDoCache,
         INavigator navigator,
         IStorageService storageService,
-        IToDoValidator toDoValidator
+        IToDoValidator toDoValidator,
+        IMigrator migrator
     )
     {
         var user = appState.User.ThrowIfNull();
@@ -50,7 +52,7 @@ public interface IDioclesServiceProvider
             new EfToDoService(
                 new FileInfo(
                     $"{storageService.GetAppDirectory()}/Diocles/{user.Id}.db"
-                ).InitDbContext(),
+                ).InitDbContext(migrator),
                 new(DateTimeOffset.UtcNow.Offset, user.Id),
                 toDoParametersFillerService,
                 toDoValidator
