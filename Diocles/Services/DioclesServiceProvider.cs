@@ -50,9 +50,9 @@ public interface IDioclesServiceProvider
                 headersFactory
             ),
             new EfToDoService(
-                new FileInfo(
-                    $"{storageService.GetAppDirectory()}/Diocles/{user.Id}.db"
-                ).InitDbContext(migrator),
+                new FileInfo($"{storageService.GetAppDirectory()}/{user.Id}.db").InitDbContext(
+                    migrator
+                ),
                 new(DateTimeOffset.UtcNow.Offset, user.Id),
                 toDoParametersFillerService,
                 toDoValidator
