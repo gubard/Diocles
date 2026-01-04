@@ -32,7 +32,7 @@ public partial class ToDoListViewModel : ViewModelBase
             ToDoOrderBy.OrderIndex => _items,
             ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
             ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),
         };
 
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;

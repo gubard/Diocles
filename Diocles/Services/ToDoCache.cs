@@ -6,6 +6,7 @@ using Gaia.Services;
 using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
+using Inanna.Services;
 
 namespace Diocles.Services;
 
@@ -30,6 +31,13 @@ public partial class ToDoCache : ObservableObject, IToDoCache
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => _bookmarks;
+
+    private readonly INavigator _navigator;
+
+    public ToDoCache(INavigator navigator)
+    {
+        _navigator = navigator;
+    }
 
     public void Update(HestiaGetResponse source)
     {
@@ -120,101 +128,8 @@ public partial class ToDoCache : ObservableObject, IToDoCache
         {
             UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds);
         }
-    }
 
-    private ToDoNotify UpdateToDoSelector(ToDoSelector toDo, HashSet<Guid> shortUpdatedIds)
-    {
-        var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
-        item.UpdateChildren(
-            toDo.Children.OrderBy(x => x.Item.OrderIndex)
-                .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds))
-                .ToArray()
-        );
-        return item;
-    }
-
-    private ToDoNotify UpdateShortToDo(ShortToDo toDo, HashSet<Guid> updatedIds)
-    {
-        if (updatedIds.Contains(toDo.Id))
-        {
-            return GetItem(toDo.Id);
-        }
-
-        var item = GetItem(toDo.Id);
-        item.UpdateAnnualDays(toDo.AnnuallyDays.ToArray());
-        item.UpdateMonthlyDays(toDo.MonthlyDays.ToArray());
-        item.UpdateWeeklyDays(toDo.WeeklyDays.ToArray());
-        item.Name = toDo.Name;
-        item.OrderIndex = toDo.OrderIndex;
-        item.Description = toDo.Description;
-        item.Type = toDo.Type;
-        item.IsBookmark = toDo.IsBookmark;
-        item.IsFavorite = toDo.IsFavorite;
-        item.DueDate = toDo.DueDate;
-        item.TypeOfPeriodicity = toDo.TypeOfPeriodicity;
-        item.DaysOffset = toDo.DaysOffset;
-        item.MonthsOffset = toDo.MonthsOffset;
-        item.WeeksOffset = toDo.WeeksOffset;
-        item.YearsOffset = toDo.YearsOffset;
-        item.ChildrenCompletionType = toDo.ChildrenCompletionType;
-        item.Link = toDo.Link;
-        item.IsRequiredCompleteInDueDate = toDo.IsRequiredCompleteInDueDate;
-        item.DescriptionType = toDo.DescriptionType;
-        item.Color = Color.TryParse(toDo.Color, out var color) ? color : Colors.Transparent;
-        item.RemindDaysBefore = toDo.RemindDaysBefore;
-        item.Reference = toDo.ReferenceId.HasValue ? GetItem(toDo.ReferenceId.Value) : null;
-
-        item.Icon = Enum.TryParse<PackIconMaterialDesignKind>(toDo.Icon, out var icon)
-            ? icon
-            : PackIconMaterialDesignKind.None;
-
-        if (item.Parent?.Id != toDo.ParentId)
-        {
-            ChangeParent(item, toDo.ParentId);
-        }
-
-        updatedIds.Add(item.Id);
-
-        return item;
-    }
-
-    private ToDoNotify UpdateFullToDo(
-        FullToDo toDo,
-        HashSet<Guid> fullUpdatedIds,
-        HashSet<Guid> shortUpdatedIds
-    )
-    {
-        if (fullUpdatedIds.Contains(toDo.Parameters.Id))
-        {
-            return GetItem(toDo.Parameters.Id);
-        }
-
-        var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
-        item.Active = toDo.Active is not null
-            ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
-            : null;
-        item.IsCan = toDo.IsCan;
-        item.Status = toDo.Status;
-        fullUpdatedIds.Add(item.Id);
-
-        return item;
-    }
-
-    private ToDoNotify GetItem(Guid id)
-    {
-        if (_items.TryGetValue(id, out var value))
-        {
-            return value;
-        }
-
-        var result = new ToDoNotify(id);
-
-        if (_items.TryAdd(id, result))
-        {
-            return result;
-        }
-
-        return _items[id];
+        _navigator.RefreshUiCurrentView();
     }
 
     public void Update(HestiaPostRequest source)
@@ -460,6 +375,124 @@ public partial class ToDoCache : ObservableObject, IToDoCache
                 _roots.Remove(deleteItem);
             }
         }
+
+        foreach (var id in source.SwitchCompleteIds)
+        {
+            var item = GetItem(id);
+
+            switch (item.IsCan)
+            {
+                case ToDoIsCan.None:
+                    break;
+                case ToDoIsCan.CanComplete:
+                    item.Status = ToDoStatus.Completed;
+                    break;
+                case ToDoIsCan.CanIncomplete:
+                    item.Status = ToDoStatus.ReadyForComplete;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(item.IsCan), item.IsCan, null);
+            }
+        }
+
+        _navigator.RefreshUiCurrentView();
+    }
+
+    private ToDoNotify UpdateToDoSelector(ToDoSelector toDo, HashSet<Guid> shortUpdatedIds)
+    {
+        var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
+
+        item.UpdateChildren(
+            toDo.Children.OrderBy(x => x.Item.OrderIndex)
+                .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds))
+                .ToArray()
+        );
+
+        return item;
+    }
+
+    private ToDoNotify UpdateShortToDo(ShortToDo toDo, HashSet<Guid> updatedIds)
+    {
+        if (updatedIds.Contains(toDo.Id))
+        {
+            return GetItem(toDo.Id);
+        }
+
+        var item = GetItem(toDo.Id);
+        item.UpdateAnnualDays(toDo.AnnuallyDays.ToArray());
+        item.UpdateMonthlyDays(toDo.MonthlyDays.ToArray());
+        item.UpdateWeeklyDays(toDo.WeeklyDays.ToArray());
+        item.Name = toDo.Name;
+        item.OrderIndex = toDo.OrderIndex;
+        item.Description = toDo.Description;
+        item.Type = toDo.Type;
+        item.IsBookmark = toDo.IsBookmark;
+        item.IsFavorite = toDo.IsFavorite;
+        item.DueDate = toDo.DueDate;
+        item.TypeOfPeriodicity = toDo.TypeOfPeriodicity;
+        item.DaysOffset = toDo.DaysOffset;
+        item.MonthsOffset = toDo.MonthsOffset;
+        item.WeeksOffset = toDo.WeeksOffset;
+        item.YearsOffset = toDo.YearsOffset;
+        item.ChildrenCompletionType = toDo.ChildrenCompletionType;
+        item.Link = toDo.Link;
+        item.IsRequiredCompleteInDueDate = toDo.IsRequiredCompleteInDueDate;
+        item.DescriptionType = toDo.DescriptionType;
+        item.Color = Color.TryParse(toDo.Color, out var color) ? color : Colors.Transparent;
+        item.RemindDaysBefore = toDo.RemindDaysBefore;
+        item.Reference = toDo.ReferenceId.HasValue ? GetItem(toDo.ReferenceId.Value) : null;
+
+        item.Icon = Enum.TryParse<PackIconMaterialDesignKind>(toDo.Icon, out var icon)
+            ? icon
+            : PackIconMaterialDesignKind.None;
+
+        if (item.Parent?.Id != toDo.ParentId)
+        {
+            ChangeParent(item, toDo.ParentId);
+        }
+
+        updatedIds.Add(item.Id);
+
+        return item;
+    }
+
+    private ToDoNotify UpdateFullToDo(
+        FullToDo toDo,
+        HashSet<Guid> fullUpdatedIds,
+        HashSet<Guid> shortUpdatedIds
+    )
+    {
+        if (fullUpdatedIds.Contains(toDo.Parameters.Id))
+        {
+            return GetItem(toDo.Parameters.Id);
+        }
+
+        var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
+        item.Active = toDo.Active is not null
+            ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
+            : null;
+        item.IsCan = toDo.IsCan;
+        item.Status = toDo.Status;
+        fullUpdatedIds.Add(item.Id);
+
+        return item;
+    }
+
+    private ToDoNotify GetItem(Guid id)
+    {
+        if (_items.TryGetValue(id, out var value))
+        {
+            return value;
+        }
+
+        var result = new ToDoNotify(id);
+
+        if (_items.TryAdd(id, result))
+        {
+            return result;
+        }
+
+        return _items[id];
     }
 
     private void ChangeParent(ToDoNotify item, Guid? newParentId)

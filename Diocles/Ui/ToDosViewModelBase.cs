@@ -10,7 +10,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh
+public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRefreshUi
 {
     private ToDoNotify? _editItem;
     protected readonly IDialogService DialogService;
@@ -93,26 +93,16 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh
 
     public ValueTask RefreshAsync(CancellationToken ct)
     {
-        return WrapCommandAsync(
-            async () =>
-            {
-                var response = await UiToDoService.GetAsync(CreateRefreshRequest(), ct);
-                List.Refresh();
-
-                return response;
-            },
-            ct
-        );
+        return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
     }
 
     public void Refresh()
     {
-        WrapCommand(() =>
-        {
-            var response = UiToDoService.Get(CreateRefreshRequest());
-            List.Refresh();
+        WrapCommand(() => UiToDoService.Get(CreateRefreshRequest()));
+    }
 
-            return response;
-        });
+    public void RefreshUi()
+    {
+        List.Refresh();
     }
 }
