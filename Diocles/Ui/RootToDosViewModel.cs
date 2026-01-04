@@ -70,24 +70,26 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
     [RelayCommand]
     private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
-            {
-                parameters.StartExecute();
+        await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct);
+    }
 
-                if (parameters.HasErrors)
-                {
-                    return (IValidationErrors)EmptyValidationErrors.Instance;
-                }
+    private async ValueTask<IValidationErrors> CreateCore(
+        ToDoParametersViewModel parameters,
+        CancellationToken ct
+    )
+    {
+        parameters.StartExecute();
 
-                var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
-                var response = await UiToDoService.PostAsync(request, ct);
-                DialogService.CloseMessageBox();
+        if (parameters.HasErrors)
+        {
+            return new EmptyValidationErrors();
+        }
 
-                return response;
-            },
-            ct
-        );
+        var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
+        var response = await UiToDoService.PostAsync(request, ct);
+        DialogService.CloseMessageBox();
+
+        return response;
     }
 
     protected override HestiaGetRequest CreateRefreshRequest()

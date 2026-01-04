@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
+using Hestia.Contract.Models;
 using Inanna.Models;
 using Inanna.Services;
 
@@ -35,25 +36,24 @@ public partial class EditToDoViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
+        await WrapCommandAsync(() => SaveCore(ct).ConfigureAwait(false), ct);
+    }
+
+    private async ValueTask<HestiaPostResponse> SaveCore(CancellationToken ct)
+    {
+        var edit = Parameters.CreateEditToDos();
+        edit.Ids = [_header.Item.Id];
+        var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
+
+        _notificationService.ShowNotification(
+            new TextBlock
             {
-                var edit = Parameters.CreateEditToDos();
-                edit.Ids = [_header.Item.Id];
-                var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
-
-                _notificationService.ShowNotification(
-                    new TextBlock
-                    {
-                        Text = _appResourceService.GetResource<string>("Lang.Saved"),
-                        Classes = { "h2", "align-center" },
-                    },
-                    NotificationType.None
-                );
-
-                return response;
+                Text = _appResourceService.GetResource<string>("Lang.Saved"),
+                Classes = { "h2", "align-center" },
             },
-            ct
+            NotificationType.None
         );
+
+        return response;
     }
 }

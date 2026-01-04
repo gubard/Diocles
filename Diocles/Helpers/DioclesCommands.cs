@@ -29,7 +29,7 @@ public static class DioclesCommands
             (item, ct) => uiToDoService.PostAsync(new() { SwitchCompleteIds = [item.Id] }, ct)
         );
 
-        OpenCurrentToDoCommand = UiHelper.CreateCommand(async ct =>
+        async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
             var response = await uiToDoService.GetAsync(new() { IsCurrentActive = true }, ct);
 
@@ -46,7 +46,11 @@ public static class DioclesCommands
             }
 
             return response;
-        });
+        }
+
+        OpenCurrentToDoCommand = UiHelper.CreateCommand(ct =>
+            OpenCurrentToDoAsync(ct).ConfigureAwait(false)
+        );
 
         OpenParentCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>

@@ -1,4 +1,5 @@
-﻿using Avalonia.Collections;
+﻿using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
@@ -74,24 +75,28 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
     [RelayCommand]
     private async Task EditAsync(ToDoParametersViewModel viewModel, CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
-            {
-                if (_editItem is null)
-                {
-                    return;
-                }
-
-                var edit = viewModel.CreateEditToDos();
-                edit.Ids = [_editItem.Id];
-                await UiToDoService.PostAsync(new() { Edits = [edit] }, ct);
-                DialogService.CloseMessageBox();
-            },
-            ct
-        );
+        await WrapCommandAsync(() => EditCore(viewModel, ct).ConfigureAwait(false), ct);
     }
 
-    public ValueTask RefreshAsync(CancellationToken ct)
+    private async ValueTask<IValidationErrors> EditCore(
+        ToDoParametersViewModel viewModel,
+        CancellationToken ct
+    )
+    {
+        if (_editItem is null)
+        {
+            return new EmptyValidationErrors();
+        }
+
+        var edit = viewModel.CreateEditToDos();
+        edit.Ids = [_editItem.Id];
+        var response = await UiToDoService.PostAsync(new() { Edits = [edit] }, ct);
+        DialogService.CloseMessageBox();
+
+        return response;
+    }
+
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
         return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
     }
