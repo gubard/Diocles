@@ -10,7 +10,6 @@ using Inanna.Models;
 using Inanna.Services;
 using Jab;
 using Nestor.Db.Services;
-using Nestor.Db.Sqlite.Helpers;
 
 namespace Diocles.Services;
 
@@ -20,46 +19,4 @@ namespace Diocles.Services;
 [Singleton(typeof(IToDoCache), typeof(ToDoCache))]
 [Transient(typeof(IToDoValidator), typeof(ToDoValidator))]
 [Transient(typeof(IDioclesViewModelFactory), typeof(DioclesViewModelFactory))]
-[Transient(typeof(IUiToDoService), Factory = nameof(GetUiCredentialService))]
-public interface IDioclesServiceProvider
-{
-    public static IUiToDoService GetUiCredentialService(
-        ToDoServiceOptions options,
-        ITryPolicyService tryPolicyService,
-        IFactory<Memory<HttpHeader>> headersFactory,
-        AppState appState,
-        ToDoParametersFillerService toDoParametersFillerService,
-        IToDoCache toDoCache,
-        INavigator navigator,
-        IStorageService storageService,
-        IToDoValidator toDoValidator,
-        IMigrator migrator
-    )
-    {
-        var user = appState.User.ThrowIfNull();
-
-        return new UiToDoService(
-            new HttpToDoService(
-                new() { BaseAddress = new(options.Url) },
-                new()
-                {
-                    TypeInfoResolver = HestiaJsonContext.Resolver,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                },
-                tryPolicyService,
-                headersFactory
-            ),
-            new EfToDoService(
-                new FileInfo($"{storageService.GetAppDirectory()}/{user.Id}.db").InitDbContext(
-                    migrator
-                ),
-                new(DateTimeOffset.UtcNow.Offset, user.Id),
-                toDoParametersFillerService,
-                toDoValidator
-            ),
-            appState,
-            toDoCache,
-            navigator
-        );
-    }
-}
+public interface IDioclesServiceProvider;
