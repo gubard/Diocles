@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
@@ -90,7 +91,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader
         var create = parameters.CreateShortToDo();
         create.ParentId = Header.Item.Id;
         var response = await UiToDoService.PostAsync(new() { Creates = [create] }, ct);
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }

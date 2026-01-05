@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
@@ -91,7 +92,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         var edit = viewModel.CreateEditToDos();
         edit.Ids = [_editItem.Id];
         var response = await UiToDoService.PostAsync(new() { Edits = [edit] }, ct);
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }

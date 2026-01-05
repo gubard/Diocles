@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
@@ -87,7 +88,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
 
         var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
         var response = await UiToDoService.PostAsync(request, ct);
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }
