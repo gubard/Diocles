@@ -87,7 +87,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
         }
 
         var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
-        var response = await UiToDoService.PostAsync(request, ct);
+        var response = await UiToDoService.PostAsync(Guid.NewGuid(), request, ct);
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;

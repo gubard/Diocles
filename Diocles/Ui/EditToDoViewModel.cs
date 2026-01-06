@@ -43,7 +43,7 @@ public partial class EditToDoViewModel : ViewModelBase, IHeader
     {
         var edit = Parameters.CreateEditToDos();
         edit.Ids = [_header.Item.Id];
-        var response = await _uiToDoService.PostAsync(new() { Edits = [edit] }, ct);
+        var response = await _uiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
 
         _notificationService.ShowNotification(
             new TextBlock

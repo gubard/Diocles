@@ -90,7 +90,11 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader
 
         var create = parameters.CreateShortToDo();
         create.ParentId = Header.Item.Id;
-        var response = await UiToDoService.PostAsync(new() { Creates = [create] }, ct);
+        var response = await UiToDoService.PostAsync(
+            Guid.NewGuid(),
+            new() { Creates = [create] },
+            ct
+        );
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;

@@ -22,11 +22,13 @@ public static class DioclesCommands
         );
 
         DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
-            (item, ct) => uiToDoService.PostAsync(new() { DeleteIds = [item.Id] }, ct)
+            (item, ct) =>
+                uiToDoService.PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, ct)
         );
 
         SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
-            (item, ct) => uiToDoService.PostAsync(new() { SwitchCompleteIds = [item.Id] }, ct)
+            (item, ct) =>
+                uiToDoService.PostAsync(Guid.NewGuid(), new() { SwitchCompleteIds = [item.Id] }, ct)
         );
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
