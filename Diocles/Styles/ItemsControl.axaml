@@ -26,6 +26,7 @@
 
                         <Grid Grid.Column="1" Classes="align-left-center" RowDefinitions="Auto,Auto">
                             <TextBlock Classes="text-wrap field h5" Text="{Binding Name}" />
+
                             <Button Grid.Row="1"
                                     Classes="align-stretch"
                                     Command="{x:Static h:DioclesCommands.OpenParentCommand}"
@@ -35,15 +36,23 @@
                             </Button>
                         </Grid>
 
-                        <StackPanel Grid.Column="2" Classes="horizontal">
+                        <Grid Grid.Column="2" RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,Auto">
                             <Button Content="{ip:MaterialDesign Edit}"
                                     CommandParameter="{Binding}"
                                     Command="{Binding $parent[services:IToDosView].ViewModel.ShowEditCommand}" />
-                            <Button Classes="danger"
+                            <Button Grid.Column="1" Classes="danger"
                                     Content="{ip:MaterialDesign Delete}"
                                     CommandParameter="{Binding}"
                                     Command="{x:Static h:DioclesCommands.DeleteToDoCommand}" />
-                        </StackPanel>
+
+                            <Button Grid.Row="1" Command="{x:Static h:DioclesCommands.SwitchFavoriteCommand}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel>
+                                    <ip:PackIconMaterialDesign IsVisible="{Binding IsFavorite}" Kind="Favorite" />
+                                    <ip:PackIconMaterialDesign IsVisible="{Binding !IsFavorite}" Kind="FavoriteBorder" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Button>
             </DataTemplate>

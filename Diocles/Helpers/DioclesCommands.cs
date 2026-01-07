@@ -60,6 +60,26 @@ public static class DioclesCommands
                     ? navigator.NavigateToAsync(factory.CreateRootToDos(), ct)
                     : navigator.NavigateToAsync(factory.CreateToDos(item.Parent), ct)
         );
+
+        SwitchFavoriteCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+            (item, ct) =>
+                uiToDoService.PostAsync(
+                    Guid.NewGuid(),
+                    new()
+                    {
+                        Edits =
+                        [
+                            new()
+                            {
+                                Ids = [item.Id],
+                                IsFavorite = !item.IsFavorite,
+                                IsEditIsFavorite = true,
+                            },
+                        ],
+                    },
+                    ct
+                )
+        );
     }
 
     public static readonly ICommand OpenToDosCommand;
@@ -67,4 +87,5 @@ public static class DioclesCommands
     public static readonly ICommand DeleteToDoCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
+    public static readonly ICommand SwitchFavoriteCommand;
 }
