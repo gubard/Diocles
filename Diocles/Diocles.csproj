@@ -19,7 +19,6 @@
       OutputItemType="Analyzer"
     />
     <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
-    <ProjectReference Include="..\..\Nestor\Nestor.Db.Sqlite\Nestor.Db.Sqlite.csproj" />
   </ItemGroup>
 
   <ItemGroup>

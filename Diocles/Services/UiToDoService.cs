@@ -10,7 +10,7 @@ public interface IUiToDoService
 
 public sealed class UiToDoService(
     IHttpToDoService service,
-    IEfToDoService efService,
+    IDbToDoService dbService,
     AppState appState,
     IToDoCache cache,
     INavigator navigator
@@ -21,7 +21,7 @@ public sealed class UiToDoService(
         HestiaGetResponse,
         HestiaPostResponse,
         IHttpToDoService,
-        IEfToDoService,
+        IDbToDoService,
         IToDoCache
-    >(service, efService, appState, cache, navigator),
+    >(service, dbService, appState, cache, navigator),
         IUiToDoService;
