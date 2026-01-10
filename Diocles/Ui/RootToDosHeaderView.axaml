@@ -18,7 +18,9 @@
         <TextBlock Grid.Column="1" Classes="h2 align-left-center" Text="{DynamicResource Lang.ToDos}" />
 
         <StackPanel Grid.Column="2">
-            <Button IsVisible="{Binding IsOffline}" Command="{Binding SwitchToOnlineCommand}" />
+            <Button IsVisible="{Binding IsOffline}"
+                    Command="{Binding SwitchToOnlineCommand}"
+                    Content="{DynamicResource Lang.SwitchToOnline}" />
             <ItemsControl Classes="horizontal-stack"
                           IsVisible="{Binding IsMulti}"
                           ItemsSource="{Binding Commands}" />

@@ -22,6 +22,11 @@ public sealed partial class RootToDosHeaderViewModel : ViewModelBase
     public IEnumerable<InannaCommand> Commands => _commands;
     public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
 
+    public void RefreshUi()
+    {
+        OnPropertyChanged(nameof(IsOffline));
+    }
+
     private readonly AppState _appState;
     private readonly IUiToDoService _uiToDoService;
     private readonly AvaloniaList<InannaCommand> _commands;
@@ -38,6 +43,6 @@ public sealed partial class RootToDosHeaderViewModel : ViewModelBase
     private async ValueTask SwitchToOnlineCore(CancellationToken ct)
     {
         await _uiToDoService.HealthCheckAsync(ct);
-        OnPropertyChanged(nameof(IsOffline));
+        RefreshUi();
     }
 }

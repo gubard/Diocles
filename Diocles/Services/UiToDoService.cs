@@ -12,7 +12,7 @@ public sealed class UiToDoService(
     IHttpToDoService httpService,
     IDbToDoService dbService,
     AppState appState,
-    IToDoCache cache,
+    IToDoMemoryCache memoryCache,
     INavigator navigator,
     string serviceName
 )
@@ -23,6 +23,6 @@ public sealed class UiToDoService(
         HestiaPostResponse,
         IHttpToDoService,
         IDbToDoService,
-        IToDoCache
-    >(httpService, dbService, appState, cache, navigator, serviceName),
+        IToDoMemoryCache
+    >(httpService, dbService, appState, memoryCache, navigator, serviceName),
         IUiToDoService;

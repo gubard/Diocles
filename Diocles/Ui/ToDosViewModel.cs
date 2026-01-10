@@ -58,6 +58,12 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
     }
 
+    public override void RefreshUi()
+    {
+        base.RefreshUi();
+        Header.RefreshUi();
+    }
+
     private readonly IObjectStorage _objectStorage;
 
     private async ValueTask InitCore(CancellationToken ct)

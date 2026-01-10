@@ -26,6 +26,11 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     public IEnumerable<InannaCommand> Commands => _commands;
     public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
 
+    public void RefreshUi()
+    {
+        OnPropertyChanged(nameof(IsOffline));
+    }
+
     [ObservableProperty]
     private bool _isMulti;
 
@@ -42,6 +47,6 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     private async ValueTask SwitchToOnlineCore(CancellationToken ct)
     {
         await _uiToDoService.HealthCheckAsync(ct);
-        OnPropertyChanged(nameof(IsOffline));
+        RefreshUi();
     }
 }

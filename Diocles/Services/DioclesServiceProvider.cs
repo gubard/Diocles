@@ -7,7 +7,7 @@ namespace Diocles.Services;
 [ServiceProviderModule]
 [Transient(typeof(RootToDosViewModel))]
 [Transient(typeof(ToDoParametersFillerService))]
-[Singleton(typeof(IToDoCache), typeof(ToDoCache))]
+[Singleton(typeof(IToDoMemoryCache), typeof(ToDoMemoryCache))]
 [Transient(typeof(IToDoValidator), typeof(ToDoValidator))]
 [Transient(typeof(IDioclesViewModelFactory), typeof(DioclesViewModelFactory))]
 public interface IDioclesServiceProvider;

@@ -14,7 +14,7 @@ public static class DioclesCommands
     {
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         var uiToDoService = DiHelper.ServiceProvider.GetService<IUiToDoService>();
-        var toDoCache = DiHelper.ServiceProvider.GetService<IToDoCache>();
+        var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
 
         OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(

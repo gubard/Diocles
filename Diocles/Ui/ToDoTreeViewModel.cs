@@ -14,10 +14,10 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     [ObservableProperty]
     private ToDoNotify? _selected;
 
-    public ToDoTreeViewModel(IToDoCache toDoCache, IUiToDoService uiToDoService)
+    public ToDoTreeViewModel(IToDoMemoryCache toDoMemoryCache, IUiToDoService uiToDoService)
     {
         _uiToDoService = uiToDoService;
-        Roots = toDoCache.Roots;
+        Roots = toDoMemoryCache.Roots;
     }
 
     public IEnumerable<ToDoNotify> Roots { get; }

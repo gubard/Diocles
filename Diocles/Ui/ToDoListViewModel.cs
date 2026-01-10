@@ -21,9 +21,12 @@ public partial class ToDoListViewModel : ViewModelBase
 
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy[]))]
-    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoCache toDoCache)
+    public ToDoListViewModel(
+        IAvaloniaReadOnlyList<ToDoNotify> items,
+        IToDoMemoryCache toDoMemoryCache
+    )
     {
-        _favorites = toDoCache.Favorites;
+        _favorites = toDoMemoryCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
         _items = items;
         items.CollectionChanged += (_, _) => Refresh();

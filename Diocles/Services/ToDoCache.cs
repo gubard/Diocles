@@ -10,7 +10,7 @@ using Inanna.Services;
 
 namespace Diocles.Services;
 
-public interface IToDoCache : ICache<HestiaGetResponse>, ICache<HestiaPostRequest>
+public interface IToDoMemoryCache : IMemoryCache<HestiaGetResponse>, IMemoryCache<HestiaPostRequest>
 {
     IAvaloniaReadOnlyList<ToDoNotify> Roots { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
@@ -18,7 +18,7 @@ public interface IToDoCache : ICache<HestiaGetResponse>, ICache<HestiaPostReques
     ToDoNotify? CurrentActive { get; }
 }
 
-public partial class ToDoCache : ObservableObject, IToDoCache
+public partial class ToDoMemoryCache : ObservableObject, IToDoMemoryCache
 {
     private readonly Dictionary<Guid, ToDoNotify> _items = new();
     private readonly AvaloniaList<ToDoNotify> _roots = [];
@@ -34,7 +34,7 @@ public partial class ToDoCache : ObservableObject, IToDoCache
 
     private readonly INavigator _navigator;
 
-    public ToDoCache(INavigator navigator)
+    public ToDoMemoryCache(INavigator navigator)
     {
         _navigator = navigator;
     }

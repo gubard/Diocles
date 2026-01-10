@@ -15,7 +15,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
 {
     public RootToDosViewModel(
         IUiToDoService uiToDoService,
-        IToDoCache toDoCache,
+        IToDoMemoryCache toDoMemoryCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
@@ -28,7 +28,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
             stringFormater,
             factory,
             uiToDoService,
-            toDoCache.Roots
+            toDoMemoryCache.Roots
         )
     {
         _objectStorage = objectStorage;
@@ -50,6 +50,12 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return InitCore(ct).ConfigureAwait(false);
+    }
+
+    public override void RefreshUi()
+    {
+        base.RefreshUi();
+        Header.RefreshUi();
     }
 
     protected override HestiaGetRequest CreateRefreshRequest()
