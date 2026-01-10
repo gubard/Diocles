@@ -9,11 +9,12 @@ public interface IUiToDoService
     : IUiService<HestiaGetRequest, HestiaPostRequest, HestiaGetResponse, HestiaPostResponse>;
 
 public sealed class UiToDoService(
-    IHttpToDoService service,
+    IHttpToDoService httpService,
     IDbToDoService dbService,
     AppState appState,
     IToDoCache cache,
-    INavigator navigator
+    INavigator navigator,
+    string serviceName
 )
     : UiService<
         HestiaGetRequest,
@@ -23,5 +24,5 @@ public sealed class UiToDoService(
         IHttpToDoService,
         IDbToDoService,
         IToDoCache
-    >(service, dbService, appState, cache, navigator),
+    >(httpService, dbService, appState, cache, navigator, serviceName),
         IUiToDoService;
