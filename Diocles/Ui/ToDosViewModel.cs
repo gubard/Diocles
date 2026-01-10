@@ -12,7 +12,7 @@ using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
+public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public ToDosViewModel(
         ToDoNotify item,
@@ -48,6 +48,11 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
         );
     }
 
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    {
+        return InitCore(ct).ConfigureAwait(false);
+    }
+
     protected override HestiaGetRequest CreateRefreshRequest()
     {
         return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
@@ -55,8 +60,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
 
     private readonly IObjectStorage _objectStorage;
 
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
+    private async ValueTask InitCore(CancellationToken ct)
     {
         await RefreshAsync(ct);
 

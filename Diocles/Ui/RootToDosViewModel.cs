@@ -11,7 +11,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
+public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public RootToDosViewModel(
         IUiToDoService uiToDoService,
@@ -47,6 +47,11 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
         );
     }
 
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    {
+        return InitCore(ct).ConfigureAwait(false);
+    }
+
     protected override HestiaGetRequest CreateRefreshRequest()
     {
         return new() { IsRoots = true };
@@ -54,8 +59,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
 
     private readonly IObjectStorage _objectStorage;
 
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
+    private async ValueTask InitCore(CancellationToken ct)
     {
         await RefreshAsync(ct);
 

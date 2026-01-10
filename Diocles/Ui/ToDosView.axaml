@@ -13,12 +13,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDosView"
              x:DataType="ui:ToDosViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Grid RowDefinitions="Auto,*,Auto">
         <c:PathControl Classes="align-center"
                        ItemsSource="{Binding Header.Item.Parents}">
