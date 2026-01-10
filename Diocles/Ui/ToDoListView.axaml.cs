@@ -1,12 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Avalonia.Controls;
-using Diocles.Models;
+﻿using Avalonia.Controls;
 
 namespace Diocles.Ui;
 
 public partial class ToDoListView : UserControl
 {
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy))]
     public ToDoListView()
     {
         InitializeComponent();

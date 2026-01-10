@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
@@ -18,6 +19,8 @@ public partial class ToDoListViewModel : ViewModelBase
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
 
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy[]))]
     public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoCache toDoCache)
     {
         _favorites = toDoCache.Favorites;
