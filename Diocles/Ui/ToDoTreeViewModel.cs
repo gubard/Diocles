@@ -1,12 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
 using Inanna.Models;
+using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class ToDoTreeViewModel : ViewModelBase
+public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
 {
     private readonly IUiToDoService _uiToDoService;
 
@@ -21,9 +22,11 @@ public partial class ToDoTreeViewModel : ViewModelBase
 
     public IEnumerable<ToDoNotify> Roots { get; }
 
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
-        await WrapCommandAsync(() => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct), ct);
+        return WrapCommandAsync(
+            () => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct),
+            ct
+        );
     }
 }
