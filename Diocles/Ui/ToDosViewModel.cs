@@ -33,7 +33,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         )
     {
         _objectStorage = objectStorage;
-        Header = new(item, []);
+        Header = factory.CreateToDosHeader(item, []);
     }
 
     public ToDosHeaderViewModel Header { get; }
@@ -43,12 +43,12 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
     {
         return _objectStorage.SaveAsync(
             $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
-            new ToDosViewModelSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
             ct
         );
     }
 
-    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return InitCore(ct).ConfigureAwait(false);
     }
@@ -64,7 +64,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
     {
         await RefreshAsync(ct);
 
-        var setting = await _objectStorage.LoadAsync<ToDosViewModelSetting>(
+        var setting = await _objectStorage.LoadAsync<ToDosSetting>(
             $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
             ct
         );
@@ -84,7 +84,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = Factory.Create((ValidationMode.ValidateAll, false));
+        var credential = Factory.CreateToDoParameters(ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>

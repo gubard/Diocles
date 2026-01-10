@@ -22,7 +22,7 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
 
     public IEnumerable<ToDoNotify> Roots { get; }
 
-    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             () => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct),

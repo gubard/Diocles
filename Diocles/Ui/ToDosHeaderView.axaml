@@ -16,9 +16,12 @@
         </StackPanel>
 
         <TextBlock Grid.Column="1" Classes="h2 align-left-center" Text="{Binding Item.Name}" />
-        <ItemsControl Grid.Column="2"
-                      Classes="horizontal-stack"
-                      IsVisible="{Binding IsMulti}"
-                      ItemsSource="{Binding Commands}" />
+
+        <StackPanel Grid.Column="2">
+            <Button IsVisible="{Binding IsOffline}" Command="{Binding SwitchToOnlineCommand}" />
+            <ItemsControl Classes="horizontal-stack"
+                          IsVisible="{Binding IsMulti}"
+                          ItemsSource="{Binding Commands}" />
+        </StackPanel>
     </Grid>
 </UserControl>

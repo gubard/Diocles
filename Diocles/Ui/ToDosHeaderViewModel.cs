@@ -1,23 +1,47 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
+using Diocles.Services;
 using Inanna.Models;
 
 namespace Diocles.Ui;
 
 public partial class ToDosHeaderViewModel : ViewModelBase
 {
-    private readonly AvaloniaList<InannaCommand> _commands;
-
-    [ObservableProperty]
-    private bool _isMulti;
-
-    public ToDosHeaderViewModel(ToDoNotify item, AvaloniaList<InannaCommand> commands)
+    public ToDosHeaderViewModel(
+        ToDoNotify item,
+        AvaloniaList<InannaCommand> commands,
+        AppState appState,
+        IUiToDoService uiToDoService
+    )
     {
         Item = item;
         _commands = commands;
+        _appState = appState;
+        _uiToDoService = uiToDoService;
     }
 
     public ToDoNotify Item { get; }
     public IEnumerable<InannaCommand> Commands => _commands;
+    public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
+
+    [ObservableProperty]
+    private bool _isMulti;
+
+    private readonly AvaloniaList<InannaCommand> _commands;
+    private readonly AppState _appState;
+    private readonly IUiToDoService _uiToDoService;
+
+    [RelayCommand]
+    private async Task SwitchToOnlineAsync(CancellationToken ct)
+    {
+        await SwitchToOnlineCore(ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask SwitchToOnlineCore(CancellationToken ct)
+    {
+        await _uiToDoService.HealthCheckAsync(ct);
+        OnPropertyChanged(nameof(IsOffline));
+    }
 }

@@ -14,7 +14,23 @@ namespace Diocles.Ui;
 
 public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRefreshUi
 {
-    private ToDoNotify? _editItem;
+    public ToDoListViewModel List { get; }
+
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
+    }
+
+    public void Refresh()
+    {
+        WrapCommand(() => UiToDoService.Get(CreateRefreshRequest()));
+    }
+
+    public void RefreshUi()
+    {
+        List.Refresh();
+    }
+
     protected readonly IDialogService DialogService;
     protected readonly IAppResourceService AppResourceService;
     protected readonly IStringFormater StringFormater;
@@ -35,12 +51,12 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         StringFormater = stringFormater;
         Factory = factory;
         UiToDoService = uiToDoService;
-        List = factory.Create(items);
+        List = factory.CreateToDoList(items);
     }
 
-    public ToDoListViewModel List { get; }
-
     protected abstract HestiaGetRequest CreateRefreshRequest();
+
+    private ToDoNotify? _editItem;
 
     [RelayCommand]
     private async Task ShowEditAsync(ToDoNotify item, CancellationToken ct)
@@ -48,7 +64,11 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         await WrapCommandAsync(
             () =>
             {
-                var edit = Factory.Create((item, ValidationMode.ValidateOnlyEdited, false));
+                var edit = Factory.CreateToDoParameters(
+                    item,
+                    ValidationMode.ValidateOnlyEdited,
+                    false
+                );
                 _editItem = item;
 
                 return DialogService.ShowMessageBoxAsync(
@@ -95,20 +115,5 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
-    }
-
-    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
-    }
-
-    public void Refresh()
-    {
-        WrapCommand(() => UiToDoService.Get(CreateRefreshRequest()));
-    }
-
-    public void RefreshUi()
-    {
-        List.Refresh();
     }
 }

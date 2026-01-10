@@ -9,23 +9,22 @@ using Inanna.Services;
 namespace Diocles.Services;
 
 public interface IDioclesViewModelFactory
-    : IFactory<(ValidationMode validationMode, bool isShowEdit), ToDoParametersViewModel>,
-        IFactory<
-            (ToDoNotify item, ValidationMode validationMode, bool isShowEdit),
-            ToDoParametersViewModel
-        >,
-        IFactory<ToDoTreeViewModel>,
-        IFactory<RootToDosViewModel>,
-        IFactory<IAvaloniaReadOnlyList<ToDoNotify>, ToDoListViewModel>,
-        IFactory<ToDoNotify, ToDosViewModel>,
-        IFactory<ToDoNotify, EditToDoViewModel>,
-        IFactory<ToDoNotify, EditToDoHeaderViewModel>
 {
+    ToDosHeaderViewModel CreateToDosHeader(ToDoNotify item, AvaloniaList<InannaCommand> commands);
+    RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> commands);
     ToDosViewModel CreateToDos(ToDoNotify item);
     EditToDoViewModel CreateEditToDo(ToDoNotify item);
     EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item);
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
+    ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit);
+    ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
+
+    ToDoParametersViewModel CreateToDoParameters(
+        ToDoNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    );
 }
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
@@ -38,7 +37,8 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         IDialogService dialogService,
         IAppResourceService appResourceService,
         INotificationService notificationService,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        AppState appState
     )
     {
         _toDoValidator = toDoValidator;
@@ -49,16 +49,20 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _appResourceService = appResourceService;
         _notificationService = notificationService;
         _objectStorage = objectStorage;
+        _appState = appState;
     }
 
-    public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) input)
+    public ToDosHeaderViewModel CreateToDosHeader(
+        ToDoNotify item,
+        AvaloniaList<InannaCommand> commands
+    )
     {
-        return new(input.validationMode, input.isShowEdit, _toDoValidator, this);
+        return new(item, commands, _appState, _uiToDoService);
     }
 
-    public ToDoTreeViewModel Create()
+    public RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> commands)
     {
-        return CreateToDoTree();
+        return new(commands, _appState, _uiToDoService);
     }
 
     public ToDosViewModel CreateToDos(ToDoNotify item)
@@ -102,36 +106,26 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(_toDoCache, _uiToDoService);
     }
 
-    public ToDoParametersViewModel Create(
-        (ToDoNotify item, ValidationMode validationMode, bool isShowEdit) input
+    public ToDoParametersViewModel CreateToDoParameters(
+        ValidationMode validationMode,
+        bool isShowEdit
     )
     {
-        return new(input.item, input.validationMode, input.isShowEdit, _toDoValidator, this);
+        return new(validationMode, isShowEdit, _toDoValidator, this);
     }
 
-    public EditToDoHeaderViewModel Create(ToDoNotify input)
+    public ToDoParametersViewModel CreateToDoParameters(
+        ToDoNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
     {
-        return CreateEditToDoHeader(input);
+        return new(item, validationMode, isShowEdit, _toDoValidator, this);
     }
 
-    public ToDoListViewModel Create(IAvaloniaReadOnlyList<ToDoNotify> input)
+    public ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input)
     {
         return new(input, _toDoCache);
-    }
-
-    ToDosViewModel IFactory<ToDoNotify, ToDosViewModel>.Create(ToDoNotify input)
-    {
-        return CreateToDos(input);
-    }
-
-    EditToDoViewModel IFactory<ToDoNotify, EditToDoViewModel>.Create(ToDoNotify input)
-    {
-        return CreateEditToDo(input);
-    }
-
-    RootToDosViewModel IFactory<RootToDosViewModel>.Create()
-    {
-        return CreateRootToDos();
     }
 
     private readonly IToDoValidator _toDoValidator;
@@ -142,4 +136,5 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IAppResourceService _appResourceService;
     private readonly INotificationService _notificationService;
     private readonly IObjectStorage _objectStorage;
+    private readonly AppState _appState;
 }

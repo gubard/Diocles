@@ -26,7 +26,7 @@ public partial class EditToDoViewModel : ViewModelBase, IHeader
         _uiToDoService = uiToDoService;
         _notificationService = notificationService;
         _appResourceService = appResourceService;
-        Parameters = factory.Create((item, ValidationMode.ValidateOnlyEdited, false));
+        Parameters = factory.CreateToDoParameters(item, ValidationMode.ValidateOnlyEdited, false);
         _header = factory.CreateEditToDoHeader(item);
     }
 
