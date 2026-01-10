@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
@@ -11,7 +12,7 @@ using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosViewModel : ToDosViewModelBase, IHeader
+public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
 {
     public ToDosViewModel(
         ToDoNotify item,
@@ -19,7 +20,8 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        IDioclesViewModelFactory factory
+        IDioclesViewModelFactory factory,
+        IObjectStorage objectStorage
     )
         : base(
             dialogService,
@@ -30,16 +32,49 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader
             item.Children
         )
     {
+        _objectStorage = objectStorage;
         Header = new(item, []);
     }
 
     public ToDosHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    {
+        return _objectStorage.SaveAsync(
+            $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
+            new ToDosViewModelSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            ct
+        );
+    }
+
+    protected override HestiaGetRequest CreateRefreshRequest()
+    {
+        return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
+    }
+
+    private readonly IObjectStorage _objectStorage;
+
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
         await RefreshAsync(ct);
+
+        var setting = await _objectStorage.LoadAsync<ToDosViewModelSetting>(
+            $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
+            ct
+        );
+
+        if (setting is null)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            List.GroupBy = setting.GroupBy;
+            List.OrderBy = setting.OrderBy;
+        });
     }
 
     [RelayCommand]
@@ -98,10 +133,5 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
-    }
-
-    protected override HestiaGetRequest CreateRefreshRequest()
-    {
-        return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
     }
 }

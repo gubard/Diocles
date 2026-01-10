@@ -1,5 +1,7 @@
-﻿using Avalonia.Threading;
+﻿using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
@@ -9,7 +11,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
+public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi
 {
     public RootToDosViewModel(
         IUiToDoService uiToDoService,
@@ -17,7 +19,8 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        IDioclesViewModelFactory factory
+        IDioclesViewModelFactory factory,
+        IObjectStorage objectStorage
     )
         : base(
             dialogService,
@@ -28,16 +31,49 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
             toDoCache.Roots
         )
     {
+        _objectStorage = objectStorage;
         Header = new([]);
     }
 
     public RootToDosHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    {
+        return _objectStorage.SaveAsync(
+            $"{typeof(RootToDosViewModel).FullName}",
+            new ToDosViewModelSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            ct
+        );
+    }
+
+    protected override HestiaGetRequest CreateRefreshRequest()
+    {
+        return new() { IsRoots = true };
+    }
+
+    private readonly IObjectStorage _objectStorage;
+
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
         await RefreshAsync(ct);
+
+        var setting = await _objectStorage.LoadAsync<ToDosViewModelSetting>(
+            $"{typeof(RootToDosViewModel).FullName}",
+            ct
+        );
+
+        if (setting is null)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            List.GroupBy = setting.GroupBy;
+            List.OrderBy = setting.OrderBy;
+        });
     }
 
     [RelayCommand]
@@ -91,10 +127,5 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
-    }
-
-    protected override HestiaGetRequest CreateRefreshRequest()
-    {
-        return new() { IsRoots = true };
     }
 }

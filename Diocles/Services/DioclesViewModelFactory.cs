@@ -30,14 +30,6 @@ public interface IDioclesViewModelFactory
 
 public class DioclesViewModelFactory : IDioclesViewModelFactory
 {
-    private readonly IToDoValidator _toDoValidator;
-    private readonly IToDoCache _toDoCache;
-    private readonly IUiToDoService _uiToDoService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IDialogService _dialogService;
-    private readonly IAppResourceService _appResourceService;
-    private readonly INotificationService _notificationService;
-
     public DioclesViewModelFactory(
         IToDoValidator toDoValidator,
         IToDoCache toDoCache,
@@ -45,7 +37,8 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        INotificationService notificationService
+        INotificationService notificationService,
+        IObjectStorage objectStorage
     )
     {
         _toDoValidator = toDoValidator;
@@ -55,6 +48,7 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _dialogService = dialogService;
         _appResourceService = appResourceService;
         _notificationService = notificationService;
+        _objectStorage = objectStorage;
     }
 
     public ToDoParametersViewModel Create((ValidationMode validationMode, bool isShowEdit) input)
@@ -67,16 +61,6 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return CreateToDoTree();
     }
 
-    ToDosViewModel IFactory<ToDoNotify, ToDosViewModel>.Create(ToDoNotify input)
-    {
-        return CreateToDos(input);
-    }
-
-    EditToDoViewModel IFactory<ToDoNotify, EditToDoViewModel>.Create(ToDoNotify input)
-    {
-        return CreateEditToDo(input);
-    }
-
     public ToDosViewModel CreateToDos(ToDoNotify item)
     {
         return new(
@@ -85,7 +69,8 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
             _stringFormater,
             _dialogService,
             _appResourceService,
-            this
+            this,
+            _objectStorage
         );
     }
 
@@ -107,7 +92,8 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
             _stringFormater,
             _dialogService,
             _appResourceService,
-            this
+            this,
+            _objectStorage
         );
     }
 
@@ -128,13 +114,32 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return CreateEditToDoHeader(input);
     }
 
+    public ToDoListViewModel Create(IAvaloniaReadOnlyList<ToDoNotify> input)
+    {
+        return new(input, _toDoCache);
+    }
+
+    ToDosViewModel IFactory<ToDoNotify, ToDosViewModel>.Create(ToDoNotify input)
+    {
+        return CreateToDos(input);
+    }
+
+    EditToDoViewModel IFactory<ToDoNotify, EditToDoViewModel>.Create(ToDoNotify input)
+    {
+        return CreateEditToDo(input);
+    }
+
     RootToDosViewModel IFactory<RootToDosViewModel>.Create()
     {
         return CreateRootToDos();
     }
 
-    public ToDoListViewModel Create(IAvaloniaReadOnlyList<ToDoNotify> input)
-    {
-        return new(input, _toDoCache);
-    }
+    private readonly IToDoValidator _toDoValidator;
+    private readonly IToDoCache _toDoCache;
+    private readonly IUiToDoService _uiToDoService;
+    private readonly IStringFormater _stringFormater;
+    private readonly IDialogService _dialogService;
+    private readonly IAppResourceService _appResourceService;
+    private readonly INotificationService _notificationService;
+    private readonly IObjectStorage _objectStorage;
 }
