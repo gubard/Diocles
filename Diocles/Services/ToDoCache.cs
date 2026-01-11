@@ -66,7 +66,7 @@ public sealed class ToDoMemoryCache
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public override void Update(HestiaGetResponse source)
+    private void Update(HestiaGetResponse source)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -172,7 +172,7 @@ public sealed class ToDoMemoryCache
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public override void Update(HestiaPostRequest source)
+    private void Update(HestiaPostRequest source)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {

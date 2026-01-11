@@ -21,11 +21,6 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
     }
 
-    public void Refresh()
-    {
-        WrapCommand(() => UiToDoService.Get(CreateRefreshRequest()));
-    }
-
     public virtual void RefreshUi()
     {
         List.Refresh();

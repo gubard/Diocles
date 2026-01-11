@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Services;
 using Inanna.Models;
 
 namespace Diocles.Ui;
@@ -41,12 +42,22 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     [RelayCommand]
     private async Task SwitchToOnlineAsync(CancellationToken ct)
     {
-        await SwitchToOnlineCore(ct).ConfigureAwait(false);
+        await WrapCommandAsync(() => SwitchToOnlineCore(ct).ConfigureAwait(false), ct);
     }
 
-    private async ValueTask SwitchToOnlineCore(CancellationToken ct)
+    private async ValueTask<IValidationErrors> SwitchToOnlineCore(CancellationToken ct)
     {
-        await _uiToDoService.HealthCheckAsync(ct);
+        var errors = await _uiToDoService.HealthCheckAsync(ct);
+
+        if (errors.ValidationErrors.Count > 0)
+        {
+            return errors;
+        }
+
+        errors = await _uiToDoService.UpdateEventsAsync(ct);
+
         RefreshUi();
+
+        return errors;
     }
 }
