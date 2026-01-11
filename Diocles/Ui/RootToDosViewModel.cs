@@ -95,12 +95,14 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
             () =>
                 DialogService.ShowMessageBoxAsync(
                     new(
-                        StringFormater
-                            .Format(
-                                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                                AppResourceService.GetResource<string>("Lang.ToDo")
-                            )
-                            .ToDialogHeader(),
+                        Dispatcher.UIThread.Invoke(() =>
+                            StringFormater
+                                .Format(
+                                    AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                                    AppResourceService.GetResource<string>("Lang.ToDo")
+                                )
+                                .ToDialogHeader()
+                        ),
                         credential,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
