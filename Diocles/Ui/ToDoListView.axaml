@@ -11,6 +11,16 @@
              x:DataType="ui:ToDoListViewModel">
     <Grid RowDefinitions="Auto,*">
         <StackPanel Classes="horizontal">
+            <StackPanel.Styles>
+                <Style Selector=":is(TopLevel):extra-small c|EnumSelectorControl">
+                    <Setter Property="Template">
+                        <ControlTemplate>
+                            <ComboBox x:Name="PART_SelectingItemsControl" MinWidth="{TemplateBinding MinWidth}" />
+                        </ControlTemplate>
+                    </Setter>
+                </Style>
+            </StackPanel.Styles>
+
             <StackPanel>
                 <TextBlock Text="{DynamicResource Lang.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
