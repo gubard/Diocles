@@ -3,6 +3,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Helpers;
 using Gaia.Models;
+using Gaia.Services;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
@@ -11,14 +12,8 @@ using Inanna.Models;
 
 namespace Diocles.Models;
 
-public partial class ToDoNotify : ObservableObject, IToDo
+public partial class ToDoNotify : ObservableObject, IToDo, IStaticFactory<Guid, ToDoNotify>
 {
-    private readonly AvaloniaList<ToDoNotify> _children;
-    private readonly AvaloniaList<object> _parents;
-    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
-    private readonly AvaloniaList<int> _monthlyDays;
-    private readonly AvaloniaList<DayOfYear> _annuallyDays;
-
     public ToDoNotify(Guid id)
     {
         Id = id;
@@ -144,4 +139,15 @@ public partial class ToDoNotify : ObservableObject, IToDo
     {
         _children.Remove(child);
     }
+
+    public static ToDoNotify Create(Guid input)
+    {
+        return new(input);
+    }
+
+    private readonly AvaloniaList<ToDoNotify> _children;
+    private readonly AvaloniaList<object> _parents;
+    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
+    private readonly AvaloniaList<int> _monthlyDays;
+    private readonly AvaloniaList<DayOfYear> _annuallyDays;
 }
