@@ -21,9 +21,7 @@
             <Button IsVisible="{Binding IsOffline}"
                     Command="{Binding SwitchToOnlineCommand}"
                     Content="{DynamicResource Lang.SwitchToOnline}" />
-            <ItemsControl Classes="horizontal-stack"
-                          IsVisible="{Binding IsMulti}"
-                          ItemsSource="{Binding Commands}" />
+            <ItemsControl Classes="horizontal-stack" ItemsSource="{Binding Commands}" />
         </StackPanel>
     </Grid>
 </UserControl>

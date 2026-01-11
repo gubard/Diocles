@@ -5,6 +5,7 @@ using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -33,7 +34,11 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         )
     {
         _objectStorage = objectStorage;
-        Header = factory.CreateToDosHeader(item, []);
+
+        Header = factory.CreateToDosHeader(
+            item,
+            [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)]
+        );
     }
 
     public ToDosHeaderViewModel Header { get; }
