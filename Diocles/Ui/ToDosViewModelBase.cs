@@ -68,10 +68,12 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
 
                 return DialogService.ShowMessageBoxAsync(
                     new(
-                        StringFormater.Format(
-                            AppResourceService.GetResource<string>("Lang.EditItem"),
-                            item.Name
-                        ),
+                        StringFormater
+                            .Format(
+                                AppResourceService.GetResource<string>("Lang.EditItem"),
+                                item.Name
+                            )
+                            .ToDialogHeader(),
                         edit,
                         new(
                             AppResourceService.GetResource<string>("Lang.Edit"),

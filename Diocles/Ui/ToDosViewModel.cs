@@ -95,10 +95,12 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         await WrapCommandAsync(
             () =>
             {
-                var header = StringFormater.Format(
-                    AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                    AppResourceService.GetResource<string>("Lang.ToDo")
-                );
+                var header = StringFormater
+                    .Format(
+                        AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                        AppResourceService.GetResource<string>("Lang.ToDo")
+                    )
+                    .ToDialogHeader();
 
                 var button = new DialogButton(
                     AppResourceService.GetResource<string>("Lang.Create"),
