@@ -16,11 +16,10 @@ public partial class ToDoListViewModel : ViewModelBase
 
     [ObservableProperty]
     private ToDoOrderBy _orderBy;
+
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
 
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ToDoGroupBy[]))]
     public ToDoListViewModel(
         IAvaloniaReadOnlyList<ToDoNotify> items,
         IToDoMemoryCache toDoMemoryCache
