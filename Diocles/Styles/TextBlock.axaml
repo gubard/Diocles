@@ -1,0 +1,42 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="TextBlock.miss">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+    </Style>
+
+    <Style Selector="TextBlock.ready-for-complete" />
+
+    <Style Selector="TextBlock.planned">
+        <Setter Property="TextDecorations">
+            <TextDecorationCollection>
+                <TextDecoration Location="Strikethrough"
+                                StrokeDashArray="3.35"
+                                StrokeThickness="3"
+                                StrokeThicknessUnit="Pixel"
+                                Stroke="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+            </TextDecorationCollection>
+        </Setter>
+    </Style>
+
+    <Style Selector="TextBlock.completed">
+        <Setter Property="TextDecorations">
+            <TextDecorationCollection>
+                <TextDecoration Location="Strikethrough"
+                                StrokeThickness="3"
+                                StrokeThicknessUnit="Pixel"
+                                Stroke="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+            </TextDecorationCollection>
+        </Setter>
+    </Style>
+
+    <Style Selector="TextBlock.coming-soon">
+        <Setter Property="TextDecorations">
+            <TextDecorationCollection>
+                <TextDecoration Location="Underline"
+                                StrokeThickness="3"
+                                StrokeThicknessUnit="Pixel"
+                                Stroke="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+            </TextDecorationCollection>
+        </Setter>
+    </Style>
+</Styles>

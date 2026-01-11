@@ -25,7 +25,13 @@
                         </ToggleButton>
 
                         <Grid Grid.Column="1" Classes="align-left-center" RowDefinitions="Auto,Auto">
-                            <TextBlock Classes="text-wrap field h5" Text="{Binding Name}" />
+                            <TextBlock Classes="text-wrap field h5" 
+                                       Classes.miss="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                                       Classes.ready-for-complete="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                                       Classes.planned="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                                       Classes.completed="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                                       Classes.coming-soon="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                                       Text="{Binding Name}" />
 
                             <Button Grid.Row="1"
                                     Classes="align-stretch"
