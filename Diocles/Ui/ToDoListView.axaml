@@ -44,8 +44,8 @@
                     </Expander.Header>
 
                     <StackPanel>
-                        <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
-                        <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
+                        <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
+                        <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
                     </StackPanel>
                 </Expander>
 
@@ -62,8 +62,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -80,8 +80,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
                             </StackPanel>
                         </Expander>
 
@@ -95,8 +95,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
                             </StackPanel>
                         </Expander>
 
@@ -110,8 +110,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
                             </StackPanel>
                         </Expander>
 
@@ -125,8 +125,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
                             </StackPanel>
                         </Expander>
 
@@ -140,8 +140,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
                             </StackPanel>
                         </Expander>
 
@@ -155,8 +155,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
                             </StackPanel>
                         </Expander>
 
@@ -170,8 +170,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
                             </StackPanel>
                         </Expander>
 
@@ -185,8 +185,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -203,8 +203,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
                             </StackPanel>
                         </Expander>
 
@@ -218,8 +218,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
                             </StackPanel>
                         </Expander>
 
@@ -233,8 +233,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
                             </StackPanel>
                         </Expander>
 
@@ -248,8 +248,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
                             </StackPanel>
                         </Expander>
 
@@ -263,8 +263,8 @@
                             </Expander.Header>
 
                             <StackPanel>
-                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
-                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.Multi.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
+                                <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
+                                <ListBox IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>

@@ -8,7 +8,7 @@ using Inanna.Models;
 
 namespace Diocles.Ui;
 
-public sealed partial class RootToDosHeaderViewModel : ViewModelBase, IIsMulti
+public sealed partial class RootToDosHeaderViewModel : ViewModelBase
 {
     public RootToDosHeaderViewModel(
         IEnumerable<InannaCommand> commands,

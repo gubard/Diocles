@@ -3,6 +3,8 @@
         xmlns:m="clr-namespace:Diocles.Models"
         xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract">
     <Style Selector="ListBox.todo-view">
+        <Setter Property="SelectionMode" Value="Multiple" />
+
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
                 <TextBlock Classes="text-wrap field h5"

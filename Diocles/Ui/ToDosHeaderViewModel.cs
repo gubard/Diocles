@@ -8,7 +8,7 @@ using Inanna.Models;
 
 namespace Diocles.Ui;
 
-public partial class ToDosHeaderViewModel : ViewModelBase, IIsMulti
+public partial class ToDosHeaderViewModel : ViewModelBase
 {
     public ToDosHeaderViewModel(
         ToDoNotify item,

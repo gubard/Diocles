@@ -39,7 +39,14 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         );
 
         _objectStorage = objectStorage;
-        Multi = Header;
+
+        Header.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Header.IsMulti))
+            {
+                IsMulti = Header.IsMulti;
+            }
+        };
     }
 
     public ToDosHeaderViewModel Header { get; }

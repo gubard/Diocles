@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
@@ -12,14 +13,9 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public abstract partial class ToDosViewModelBase
-    : ViewModelBase,
-        IRefresh,
-        IRefreshUi,
-        IIsMultiObject
+public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRefreshUi
 {
     public ToDoListViewModel List { get; }
-    public IIsMulti Multi { get; protected set; }
 
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
@@ -57,6 +53,9 @@ public abstract partial class ToDosViewModelBase
     protected abstract HestiaGetRequest CreateRefreshRequest();
 
     private ToDoNotify? _editItem;
+
+    [ObservableProperty]
+    private bool _isMulti;
 
     [RelayCommand]
     private async Task ShowEditAsync(ToDoNotify item, CancellationToken ct)

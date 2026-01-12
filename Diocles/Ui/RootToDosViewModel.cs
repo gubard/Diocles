@@ -33,7 +33,14 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
     {
         _objectStorage = objectStorage;
         Header = factory.CreateRootToDosHeader([]);
-        Multi = Header;
+
+        Header.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Header.IsMulti))
+            {
+                IsMulti = Header.IsMulti;
+            }
+        };
     }
 
     object IHeader.Header => Header;
