@@ -1,11 +1,22 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:models="clr-namespace:Diocles.Models">
+        xmlns:m="clr-namespace:Diocles.Models"
+        xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract">
     <Style Selector="ListBox.todo-view">
         <Setter Property="ItemTemplate">
-            <DataTemplate DataType="models:ToDoNotify">
-                <TextBlock Text="{Binding Name}" />
+            <DataTemplate DataType="m:ToDoNotify">
+                <TextBlock Classes="text-wrap field h5"
+                           Classes.miss="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                           Classes.ready-for-complete="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                           Classes.planned="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                           Classes.completed="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                           Classes.coming-soon="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                           Text="{Binding Name}" />
             </DataTemplate>
         </Setter>
+    </Style>
+
+    <Style x:DataType="m:ToDoNotify" Selector="ListBox.todo-view ListBoxItem">
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
     </Style>
 </Styles>

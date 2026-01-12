@@ -53,7 +53,7 @@
                         <Grid Grid.Column="2" RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,Auto">
                             <Button Content="{ip:MaterialDesign Edit}"
                                     CommandParameter="{Binding}"
-                                    Command="{Binding $parent[services:IToDosView].ViewModel.ShowEditCommand}" />
+                                    Command="{Binding $parent[m:IToDosView].ViewModel.ShowEditCommand}" />
                             <Button Grid.Column="1" Classes="danger"
                                     Content="{ip:MaterialDesign Delete}"
                                     CommandParameter="{Binding}"

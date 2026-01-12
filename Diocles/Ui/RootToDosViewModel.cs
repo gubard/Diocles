@@ -33,10 +33,11 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
     {
         _objectStorage = objectStorage;
         Header = factory.CreateRootToDosHeader([]);
+        Multi = Header;
     }
 
-    public RootToDosHeaderViewModel Header { get; }
     object IHeader.Header => Header;
+    public RootToDosHeaderViewModel Header { get; }
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {

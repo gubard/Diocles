@@ -1,6 +1,6 @@
 ﻿using Diocles.Ui;
 
-namespace Diocles.Services;
+namespace Diocles.Models;
 
 public interface IToDosView
 {

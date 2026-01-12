@@ -33,12 +33,13 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
             item.Children
         )
     {
-        _objectStorage = objectStorage;
-
         Header = factory.CreateToDosHeader(
             item,
             [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)]
         );
+
+        _objectStorage = objectStorage;
+        Multi = Header;
     }
 
     public ToDosHeaderViewModel Header { get; }

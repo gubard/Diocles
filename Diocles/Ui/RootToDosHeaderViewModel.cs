@@ -1,13 +1,14 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Inanna.Models;
 
 namespace Diocles.Ui;
 
-public sealed partial class RootToDosHeaderViewModel : ViewModelBase
+public sealed partial class RootToDosHeaderViewModel : ViewModelBase, IIsMulti
 {
     public RootToDosHeaderViewModel(
         IEnumerable<InannaCommand> commands,

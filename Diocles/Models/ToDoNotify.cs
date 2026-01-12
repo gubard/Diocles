@@ -46,6 +46,9 @@ public partial class ToDoNotify
     public partial bool IsChangingOrder { get; set; }
 
     [ObservableProperty]
+    public partial bool IsSelected { get; set; }
+
+    [ObservableProperty]
     public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]

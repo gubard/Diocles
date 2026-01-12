@@ -12,9 +12,14 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRefreshUi
+public abstract partial class ToDosViewModelBase
+    : ViewModelBase,
+        IRefresh,
+        IRefreshUi,
+        IIsMultiObject
 {
     public ToDoListViewModel List { get; }
+    public IIsMulti Multi { get; protected set; }
 
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
