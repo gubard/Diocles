@@ -15,7 +15,9 @@
                     Command="{x:Static h:DioclesCommands.OpenCurrentToDoCommand}" />
         </StackPanel>
 
-        <TextBlock Grid.Column="1" Classes="h2 align-left-center" Text="{Binding Item.Name}" />
+        <ScrollViewer Grid.Column="1" Classes="horizontal-scroll">
+            <TextBlock Classes="h2 align-left-center" Text="{Binding Item.Name}" />
+        </ScrollViewer>
 
         <StackPanel Grid.Column="2">
             <Button IsVisible="{Binding IsOffline}"
