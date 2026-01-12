@@ -12,7 +12,11 @@ using Inanna.Models;
 
 namespace Diocles.Models;
 
-public partial class ToDoNotify : ObservableObject, IToDo, IStaticFactory<Guid, ToDoNotify>
+public partial class ToDoNotify
+    : ObservableObject,
+        IToDo,
+        IStaticFactory<Guid, ToDoNotify>,
+        IOrderedItem
 {
     public ToDoNotify(Guid id)
     {
@@ -37,6 +41,9 @@ public partial class ToDoNotify : ObservableObject, IToDo, IStaticFactory<Guid, 
 
     [ObservableProperty]
     public partial uint OrderIndex { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsChangingOrder { get; set; }
 
     [ObservableProperty]
     public partial string Description { get; set; } = string.Empty;

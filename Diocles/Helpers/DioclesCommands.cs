@@ -2,6 +2,7 @@
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
+using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
 using Inanna.Services;
@@ -16,20 +17,6 @@ public static class DioclesCommands
         var uiToDoService = DiHelper.ServiceProvider.GetService<IUiToDoService>();
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
-
-        OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
-            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
-        );
-
-        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
-            (item, ct) =>
-                uiToDoService.PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, ct)
-        );
-
-        SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
-            (item, ct) =>
-                uiToDoService.PostAsync(Guid.NewGuid(), new() { SwitchCompleteIds = [item.Id] }, ct)
-        );
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -49,6 +36,48 @@ public static class DioclesCommands
 
             return response;
         }
+
+        async ValueTask<IValidationErrors> ChangeOrderAsync(ToDoNotify item, CancellationToken ct)
+        {
+            var items = item.Parent is null ? toDoCache.Roots : item.Parent.Children;
+            var changeOrder = await UiHelper.ShowChangeOrderAsync(items.ToArray(), [item], ct);
+
+            if (changeOrder is null)
+            {
+                return new EmptyValidationErrors();
+            }
+
+            return await uiToDoService.PostAsync(
+                Guid.NewGuid(),
+                new()
+                {
+                    ChangeOrder =
+                    [
+                        new()
+                        {
+                            IsAfter = changeOrder.IsAfter,
+                            StartId = item.Id,
+                            InsertIds = [item.Id],
+                        },
+                    ],
+                },
+                ct
+            );
+        }
+
+        OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
+        );
+
+        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+            (item, ct) =>
+                uiToDoService.PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, ct)
+        );
+
+        SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+            (item, ct) =>
+                uiToDoService.PostAsync(Guid.NewGuid(), new() { SwitchCompleteIds = [item.Id] }, ct)
+        );
 
         OpenCurrentToDoCommand = UiHelper.CreateCommand(ct =>
             OpenCurrentToDoAsync(ct).ConfigureAwait(false)
@@ -80,6 +109,10 @@ public static class DioclesCommands
                     ct
                 )
         );
+
+        ChangeOrderCommand = UiHelper.CreateCommand<ToDoNotify, IValidationErrors>(
+            (item, ct) => ChangeOrderAsync(item, ct).ConfigureAwait(false)
+        );
     }
 
     public static readonly ICommand OpenToDosCommand;
@@ -88,4 +121,5 @@ public static class DioclesCommands
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;
+    public static readonly ICommand ChangeOrderCommand;
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;

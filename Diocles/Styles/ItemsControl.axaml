@@ -14,18 +14,26 @@
                         Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
                         Background="{Binding Color, Converter={StaticResource ColorToBrushConverter}, ConverterParameter={x:Static ih:Numbers.Byte_51}}">
                     <Grid ColumnDefinitions="Auto,*,Auto">
-                        <ToggleButton Classes="h1"
-                                      IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}"
-                                      IsVisible="{Binding IsCan, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.None}}"
-                                      CommandParameter="{Binding}"
-                                      Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
-                            <ip:PackIconMaterialDesign Kind="Check"
-                                                       Classes="h2 align-center"
-                                                       IsVisible="{Binding IsCan, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}" />
-                        </ToggleButton>
+                        <StackPanel Classes="horizontal">
+                            <Button Classes="align-center mini"
+                                    Content="{ip:MaterialDesign Reorder}"
+                                    CommandParameter="{Binding}"
+                                    Command="{x:Static h:DioclesCommands.ChangeOrderCommand}"
+                                    IsVisible="{Binding $parent[ItemsControl].ItemCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_1}}"/>
+
+                            <ToggleButton Classes="h1"
+                                          IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}"
+                                          IsVisible="{Binding IsCan, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.None}}"
+                                          CommandParameter="{Binding}"
+                                          Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
+                                <ip:PackIconMaterialDesign Kind="Check"
+                                                           Classes="h2 align-center"
+                                                           IsVisible="{Binding IsCan, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}" />
+                            </ToggleButton>
+                        </StackPanel>
 
                         <Grid Grid.Column="1" Classes="align-left-center" RowDefinitions="Auto,Auto">
-                            <TextBlock Classes="text-wrap field h5" 
+                            <TextBlock Classes="text-wrap field h5"
                                        Classes.miss="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
                                        Classes.ready-for-complete="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
                                        Classes.planned="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
