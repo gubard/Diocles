@@ -18,4 +18,10 @@ public sealed class HttpToDoService(
         tryPolicyService,
         headersFactory
     ),
-        IHttpToDoService;
+        IHttpToDoService
+{
+    protected override HestiaGetRequest CreateHealthCheckGetRequest()
+    {
+        return new() { IsSelectors = true };
+    }
+}
