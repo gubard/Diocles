@@ -15,18 +15,6 @@
         <TabControl>
             <TabItem Header="{DynamicResource Lang.Parameters}">
                 <StackPanel>
-                    <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditType}">
-                        <ToggleSwitch.OffContent>
-                            <TextBlock Text="{StaticResource Lang.Type}" />
-                        </ToggleSwitch.OffContent>
-                        <ToggleSwitch.OnContent>
-                            <TextBlock Text="{StaticResource Lang.Type}" />
-                        </ToggleSwitch.OnContent>
-                    </ToggleSwitch>
-
-                    <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Type}" />
-                    <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
-
                     <WrapPanel Classes="horizontal"
                                IsVisible="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
                         <StackPanel>
@@ -109,6 +97,18 @@
                         <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Link}" />
                         <TextBox Text="{Binding Link}" />
                     </StackPanel>
+
+                    <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditType}">
+                        <ToggleSwitch.OffContent>
+                            <TextBlock Text="{StaticResource Lang.Type}" />
+                        </ToggleSwitch.OffContent>
+                        <ToggleSwitch.OnContent>
+                            <TextBlock Text="{StaticResource Lang.Type}" />
+                        </ToggleSwitch.OnContent>
+                    </ToggleSwitch>
+
+                    <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Type}" />
+                    <c:EnumSelectorControl SelectedEnum="{Binding Type}" />
 
                     <StackPanel>
                         <StackPanel.IsVisible>
