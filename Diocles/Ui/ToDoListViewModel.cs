@@ -10,15 +10,6 @@ namespace Diocles.Ui;
 
 public partial class ToDoListViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private ToDoGroupBy _groupBy;
-
-    [ObservableProperty]
-    private ToDoOrderBy _orderBy;
-
-    private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
-    private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
-
     public ToDoListViewModel(
         IAvaloniaReadOnlyList<ToDoNotify> items,
         IToDoMemoryCache toDoMemoryCache
@@ -102,6 +93,15 @@ public partial class ToDoListViewModel : ViewModelBase
         OnPropertyChanged(nameof(ComingSoon));
         OnPropertyChanged(nameof(ComingSoonCount));
     }
+
+    [ObservableProperty]
+    private ToDoGroupBy _groupBy;
+
+    [ObservableProperty]
+    private ToDoOrderBy _orderBy;
+
+    private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
+    private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
