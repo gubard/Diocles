@@ -14,7 +14,7 @@
                         Background="{Binding Color, Converter={StaticResource ColorToBrushConverter}, ConverterParameter={x:Static ih:Numbers.Byte_51}}">
                     <Grid ColumnDefinitions="Auto,*,Auto">
                         <StackPanel Classes="horizontal">
-                            <Button Classes="align-center mini"
+                            <Button Classes="align-stretch mini"
                                     Content="{ip:MaterialDesign Reorder}"
                                     CommandParameter="{Binding}"
                                     Command="{x:Static h:DioclesCommands.ChangeOrderCommand}"
