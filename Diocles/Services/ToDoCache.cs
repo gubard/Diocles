@@ -19,6 +19,7 @@ public interface IToDoMemoryCache : IMemoryCache<HestiaPostRequest, HestiaGetRes
     IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
     ToDoNotify? CurrentActive { get; }
+    void ResetItems();
 }
 
 public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, IToDoMemoryCache>
@@ -27,6 +28,7 @@ public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, I
     IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
     ToDoNotify? CurrentActive { get; }
+    void ResetItems();
 }
 
 public sealed class ToDoUiCache
@@ -40,6 +42,11 @@ public sealed class ToDoUiCache
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => MemoryCache.Favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => MemoryCache.Bookmarks;
     public ToDoNotify? CurrentActive => MemoryCache.CurrentActive;
+
+    public void ResetItems()
+    {
+        MemoryCache.ResetItems();
+    }
 }
 
 public sealed class ToDoMemoryCache
@@ -54,6 +61,16 @@ public sealed class ToDoMemoryCache
     public ToDoMemoryCache(INavigator navigator)
     {
         _navigator = navigator;
+    }
+
+    public void ResetItems()
+    {
+        foreach (var (_, item) in Items)
+        {
+            item.IsSelected = false;
+            item.IsChangingOrder = false;
+            item.IsChangingParent = false;
+        }
     }
 
     public override ConfiguredValueTaskAwaitable UpdateAsync(

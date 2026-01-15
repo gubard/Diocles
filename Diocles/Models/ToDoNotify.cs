@@ -43,12 +43,6 @@ public partial class ToDoNotify
     public partial uint OrderIndex { get; set; }
 
     [ObservableProperty]
-    public partial bool IsChangingOrder { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsSelected { get; set; }
-
-    [ObservableProperty]
     public partial string Description { get; set; } = string.Empty;
 
     [ObservableProperty]
@@ -160,4 +154,13 @@ public partial class ToDoNotify
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
     private readonly AvaloniaList<int> _monthlyDays;
     private readonly AvaloniaList<DayOfYear> _annuallyDays;
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    [ObservableProperty]
+    private bool _isChangingParent;
+
+    [ObservableProperty]
+    private bool _isChangingOrder;
 }

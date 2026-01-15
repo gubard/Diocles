@@ -6,13 +6,13 @@ namespace Diocles.Ui;
 
 public partial class ChangeParentToDoViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private bool _isRoot;
-
     public ChangeParentToDoViewModel(IDioclesViewModelFactory factory)
     {
         Tree = factory.CreateToDoTree();
     }
 
     public ToDoTreeViewModel Tree { get; }
+
+    [ObservableProperty]
+    private bool _isRoot;
 }

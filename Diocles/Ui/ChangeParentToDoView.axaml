@@ -3,9 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:m="clr-namespace:Diocles.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ChangeParentToDoView"
              x:DataType="ui:ChangeParentToDoViewModel">
+    <UserControl.Styles>
+        <Style x:DataType="m:ToDoNotify" Selector="TreeViewItem">
+            <Setter Property="IsVisible" Value="{Binding Converter={StaticResource ToDoNotifyTreeVisibleConverter}}" />
+        </Style>
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto,*">
         <ToggleButton Content="{DynamicResource Lang.IsRoot}" IsChecked="{Binding IsRoot}" />
         <ContentControl Grid.Row="1" IsEnabled="{Binding !IsRoot}" Content="{Binding Tree}" />

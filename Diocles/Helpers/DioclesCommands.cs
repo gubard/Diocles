@@ -26,6 +26,11 @@ public static class DioclesCommands
         async ValueTask ShowChangeParentAsync(ToDoNotify item, CancellationToken ct)
         {
             var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+            Dispatcher.UIThread.Post(() =>
+            {
+                toDoCache.ResetItems();
+                item.IsChangingParent = true;
+            });
 
             await dialogService.ShowMessageBoxAsync(
                 new(
@@ -37,7 +42,10 @@ public static class DioclesCommands
                     new(
                         appResourceService.GetResource<string>("Lang.ChangeParent"),
                         UiHelper.CreateCommand(ct =>
-                            uiToDoService.PostAsync(
+                        {
+                            dialogService.CloseMessageBox();
+
+                            return uiToDoService.PostAsync(
                                 Guid.NewGuid(),
                                 new()
                                 {
@@ -49,12 +57,13 @@ public static class DioclesCommands
                                             ParentId = viewModel.IsRoot
                                                 ? null
                                                 : viewModel.Tree.Selected?.Id,
+                                            IsEditParentId = true,
                                         },
                                     ],
                                 },
                                 ct
-                            )
-                        ),
+                            );
+                        }),
                         null,
                         DialogButtonType.Primary
                     ),
