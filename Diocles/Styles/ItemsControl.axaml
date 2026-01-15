@@ -4,7 +4,6 @@
         xmlns:h="clr-namespace:Diocles.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
-        xmlns:services="clr-namespace:Diocles.Services"
         xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna">
     <Style Selector="ItemsControl.todo-view">
         <Setter Property="ItemTemplate">
@@ -66,6 +65,12 @@
                                     <ip:PackIconMaterialDesign IsVisible="{Binding !IsFavorite}" Kind="FavoriteBorder" />
                                 </StackPanel>
                             </Button>
+                            
+                            <Button Grid.Row="1" 
+                                    Grid.Column="1"
+                                    Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="{ip:MaterialDesign AccountTree}"/>
                         </Grid>
                     </Grid>
                 </Button>

@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Diocles.Models;
-using Diocles.Services;
 
 namespace Diocles.Ui;
 

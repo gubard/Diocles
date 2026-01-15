@@ -1,10 +1,12 @@
 ﻿using System.Windows.Input;
+using Avalonia.Threading;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Helpers;
@@ -13,10 +15,54 @@ public static class DioclesCommands
 {
     static DioclesCommands()
     {
+        var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
+        var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         var uiToDoService = DiHelper.ServiceProvider.GetService<IUiToDoService>();
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
+        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
+
+        async ValueTask ShowChangeParentAsync(ToDoNotify item, CancellationToken ct)
+        {
+            var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+
+            await dialogService.ShowMessageBoxAsync(
+                new(
+                    stringFormater.Format(
+                        appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                        item.Name
+                    ),
+                    viewModel,
+                    new(
+                        appResourceService.GetResource<string>("Lang.ChangeParent"),
+                        UiHelper.CreateCommand(ct =>
+                            uiToDoService.PostAsync(
+                                Guid.NewGuid(),
+                                new()
+                                {
+                                    Edits =
+                                    [
+                                        new()
+                                        {
+                                            Ids = [item.Id],
+                                            ParentId = viewModel.IsRoot
+                                                ? null
+                                                : viewModel.Tree.Selected?.Id,
+                                        },
+                                    ],
+                                },
+                                ct
+                            )
+                        ),
+                        null,
+                        DialogButtonType.Primary
+                    ),
+                    UiHelper.CancelButton
+                ),
+                ct
+            );
+        }
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -113,6 +159,10 @@ public static class DioclesCommands
         ChangeOrderCommand = UiHelper.CreateCommand<ToDoNotify, IValidationErrors>(
             (item, ct) => ChangeOrderAsync(item, ct).ConfigureAwait(false)
         );
+
+        ShowChangeParentCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) => ShowChangeParentAsync(item, ct).ConfigureAwait(false)
+        );
     }
 
     public static readonly ICommand OpenToDosCommand;
@@ -122,4 +172,5 @@ public static class DioclesCommands
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;
     public static readonly ICommand ChangeOrderCommand;
+    public static readonly ICommand ShowChangeParentCommand;
 }

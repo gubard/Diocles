@@ -1,7 +1,6 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Inanna.Models;
