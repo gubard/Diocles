@@ -37,8 +37,9 @@
 
         <Expander Grid.Row="1"
                   IsVisible="{Binding Header.Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
-                  Header="{DynamicResource Lang.Description}"
-                  Content="{Binding Header.Item.Description}" />
+                  Header="{DynamicResource Lang.Description}">
+            <TextBlock Text="{Binding Header.Item.Description}" Classes="text-wrap" />
+        </Expander>
         <ContentControl Grid.Row="2" Content="{Binding List}" />
         <Button Grid.Row="3"
                 Classes="align-stretch content-align-center h1"
