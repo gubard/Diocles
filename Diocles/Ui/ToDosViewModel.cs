@@ -37,7 +37,6 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
             item,
             [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)]
         );
-
         _objectStorage = objectStorage;
 
         Header.PropertyChanged += (_, e) =>
@@ -143,6 +142,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
         CancellationToken ct
     )
     {
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
         parameters.StartExecute();
 
         if (parameters.HasErrors)
@@ -152,13 +152,7 @@ public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IIni
 
         var create = parameters.CreateShortToDo();
         create.ParentId = Header.Item.Id;
-        var response = await UiToDoService.PostAsync(
-            Guid.NewGuid(),
-            new() { Creates = [create] },
-            ct
-        );
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
-        return response;
+        return await UiToDoService.PostAsync(Guid.NewGuid(), new() { Creates = [create] }, ct);
     }
 }

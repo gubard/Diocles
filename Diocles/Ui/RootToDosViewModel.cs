@@ -137,6 +137,7 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
         CancellationToken ct
     )
     {
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
         parameters.StartExecute();
 
         if (parameters.HasErrors)
@@ -146,7 +147,6 @@ public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, 
 
         var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
         var response = await UiToDoService.PostAsync(Guid.NewGuid(), request, ct);
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }
