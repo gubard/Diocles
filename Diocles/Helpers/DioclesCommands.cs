@@ -111,7 +111,7 @@ public static class DioclesCommands
                         new()
                         {
                             IsAfter = changeOrder.IsAfter,
-                            StartId = item.Id,
+                            StartId = changeOrder.Item.Id,
                             InsertIds = [item.Id],
                         },
                     ],
