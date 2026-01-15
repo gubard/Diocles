@@ -81,7 +81,7 @@
                     </ToggleSwitch>
 
                     <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{StaticResource Lang.Name}" />
-                    <TextBox Text="{Binding Name}" />
+                    <TextBox x:Name="NameTextBox" Text="{Binding Name}" />
 
                     <StackPanel
                         IsVisible="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
