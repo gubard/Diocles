@@ -23,7 +23,7 @@
                     Content="{DynamicResource Lang.SwitchToOnline}" />
             <ItemsControl Classes="horizontal-stack"
                           IsVisible="{Binding IsMulti}"
-                          ItemsSource="{Binding Commands}" />
+                          ItemsSource="{Binding MultiCommands}" />
         </StackPanel>
     </Grid>
 </UserControl>

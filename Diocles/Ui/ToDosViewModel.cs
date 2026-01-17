@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
@@ -35,8 +36,17 @@ public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, 
     {
         Header = factory.CreateToDosHeader(
             item,
-            [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)]
+            [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)],
+            [
+                new(
+                    DioclesCommands.DeleteToDosCommand,
+                    item.Children,
+                    PackIconMaterialDesignKind.Delete,
+                    ButtonType.Danger
+                ),
+            ]
         );
+
         _objectStorage = objectStorage;
 
         Header.PropertyChanged += (_, e) =>

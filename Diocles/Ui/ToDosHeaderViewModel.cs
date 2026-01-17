@@ -1,5 +1,4 @@
-﻿using Avalonia.Collections;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
@@ -12,19 +11,22 @@ public partial class ToDosHeaderViewModel : ViewModelBase
 {
     public ToDosHeaderViewModel(
         ToDoNotify item,
-        AvaloniaList<InannaCommand> commands,
+        IEnumerable<InannaCommand> commands,
+        IEnumerable<InannaCommand> multiCommands,
         AppState appState,
         IUiToDoService uiToDoService
     )
     {
         Item = item;
-        _commands = commands;
+        Commands = commands;
         _appState = appState;
         _uiToDoService = uiToDoService;
+        MultiCommands = multiCommands;
     }
 
     public ToDoNotify Item { get; }
-    public IEnumerable<InannaCommand> Commands => _commands;
+    public IEnumerable<InannaCommand> Commands { get; }
+    public IEnumerable<InannaCommand> MultiCommands { get; }
     public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
 
     public void RefreshUi()
@@ -35,7 +37,6 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isMulti;
 
-    private readonly AvaloniaList<InannaCommand> _commands;
     private readonly AppState _appState;
     private readonly IUiToDoService _uiToDoService;
 

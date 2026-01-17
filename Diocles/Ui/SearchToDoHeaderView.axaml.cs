@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Diocles.Models;
+﻿using Avalonia.Controls;
 
 namespace Diocles.Ui;
 

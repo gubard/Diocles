@@ -10,8 +10,7 @@ namespace Diocles.Services;
 
 public interface IDioclesViewModelFactory
 {
-    ToDosHeaderViewModel CreateToDosHeader(ToDoNotify item, AvaloniaList<InannaCommand> commands);
-    RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> commands);
+    RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> multiCommands);
     ToDosViewModel CreateToDos(ToDoNotify item);
     EditToDoViewModel CreateEditToDo(ToDoNotify item);
     ChangeParentToDoViewModel CreateChangeParentToDo();
@@ -20,7 +19,13 @@ public interface IDioclesViewModelFactory
     ToDoTreeViewModel CreateToDoTree();
     ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit);
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
-    SearchToDoHeaderViewModel CreateSearchToDoHeder();
+    SearchToDoHeaderViewModel CreateSearchToDoHeder(AvaloniaList<InannaCommand> multiCommands);
+
+    ToDosHeaderViewModel CreateToDosHeader(
+        ToDoNotify item,
+        AvaloniaList<InannaCommand> commands,
+        AvaloniaList<InannaCommand> multiCommands
+    );
 
     ToDoParametersViewModel CreateToDoParameters(
         ToDoNotify item,
@@ -56,10 +61,11 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDosHeaderViewModel CreateToDosHeader(
         ToDoNotify item,
-        AvaloniaList<InannaCommand> commands
+        AvaloniaList<InannaCommand> commands,
+        AvaloniaList<InannaCommand> multiCommands
     )
     {
-        return new(item, commands, _appState, _uiToDoService);
+        return new(item, commands, multiCommands, _appState, _uiToDoService);
     }
 
     public RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> commands)
@@ -121,9 +127,11 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(validationMode, isShowEdit, _toDoValidator, this);
     }
 
-    public SearchToDoHeaderViewModel CreateSearchToDoHeder()
+    public SearchToDoHeaderViewModel CreateSearchToDoHeder(
+        AvaloniaList<InannaCommand> multiCommands
+    )
     {
-        return new();
+        return new(multiCommands);
     }
 
     public ToDoParametersViewModel CreateToDoParameters(

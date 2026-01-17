@@ -1,17 +1,21 @@
+using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader
+public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader, IRefresh
 {
     public SearchToDoViewModel(
         IDioclesViewModelFactory factory,
@@ -23,10 +27,27 @@ public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader
     )
         : base(dialogService, appResourceService, stringFormater, factory, uiToDoService, Todos)
     {
-        Header = factory.CreateSearchToDoHeder();
+        var header = factory.CreateSearchToDoHeder([
+            new(
+                DioclesCommands.DeleteToDosCommand,
+                Todos,
+                PackIconMaterialDesignKind.Delete,
+                ButtonType.Danger
+            ),
+        ]);
+
         _uiToDoService = uiToDoService;
         _toDoUiCache = toDoUiCache;
         Dispatcher.UIThread.Post(() => Todos.Clear());
+        Header = header;
+
+        header.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(SearchToDoHeaderViewModel.IsMulti))
+            {
+                IsMulti = header.IsMulti;
+            }
+        };
     }
 
     public object Header { get; }
@@ -58,5 +79,10 @@ public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader
         );
 
         return response;
+    }
+
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
     }
 }

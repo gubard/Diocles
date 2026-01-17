@@ -1,10 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -32,7 +34,15 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         )
     {
         _objectStorage = objectStorage;
-        Header = factory.CreateRootToDosHeader([]);
+
+        Header = factory.CreateRootToDosHeader([
+            new(
+                DioclesCommands.DeleteToDosCommand,
+                toDoMemoryCache.Roots,
+                PackIconMaterialDesignKind.Delete,
+                ButtonType.Danger
+            ),
+        ]);
 
         Header.PropertyChanged += (_, e) =>
         {
