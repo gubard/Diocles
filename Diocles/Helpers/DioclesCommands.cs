@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using Diocles.Models;
 using Diocles.Services;
@@ -22,56 +23,6 @@ public static class DioclesCommands
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
-
-        async ValueTask ShowChangeParentAsync(ToDoNotify item, CancellationToken ct)
-        {
-            var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
-            Dispatcher.UIThread.Post(() =>
-            {
-                toDoCache.ResetItems();
-                item.IsChangingParent = true;
-            });
-
-            await dialogService.ShowMessageBoxAsync(
-                new(
-                    stringFormater.Format(
-                        appResourceService.GetResource<string>("Lang.ChangeParentItem"),
-                        item.Name
-                    ),
-                    viewModel,
-                    new(
-                        appResourceService.GetResource<string>("Lang.ChangeParent"),
-                        UiHelper.CreateCommand(ct =>
-                        {
-                            dialogService.CloseMessageBox();
-
-                            return uiToDoService.PostAsync(
-                                Guid.NewGuid(),
-                                new()
-                                {
-                                    Edits =
-                                    [
-                                        new()
-                                        {
-                                            Ids = [item.Id],
-                                            ParentId = viewModel.IsRoot
-                                                ? null
-                                                : viewModel.Tree.Selected?.Id,
-                                            IsEditParentId = true,
-                                        },
-                                    ],
-                                },
-                                ct
-                            );
-                        }),
-                        null,
-                        DialogButtonType.Primary
-                    ),
-                    UiHelper.CancelButton
-                ),
-                ct
-            );
-        }
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -124,9 +75,45 @@ public static class DioclesCommands
             (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
         );
 
-        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
+        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>
-                uiToDoService.PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, ct)
+            {
+                var header = Dispatcher.UIThread.Invoke(() =>
+                    new TextBlock
+                    {
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.Delete")
+                        ),
+                    }
+                );
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.AskDelete"),
+                            item.Name
+                        ),
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Delete"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new() { DeleteIds = [item.Id] },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
         );
 
         SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
@@ -170,7 +157,55 @@ public static class DioclesCommands
         );
 
         ShowChangeParentCommand = UiHelper.CreateCommand<ToDoNotify>(
-            (item, ct) => ShowChangeParentAsync(item, ct).ConfigureAwait(false)
+            (item, ct) =>
+            {
+                var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+                Dispatcher.UIThread.Post(() =>
+                {
+                    toDoCache.ResetItems();
+                    item.IsChangingParent = true;
+                });
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                            item.Name
+                        ),
+                        viewModel,
+                        new(
+                            appResourceService.GetResource<string>("Lang.ChangeParent"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Edits =
+                                        [
+                                            new()
+                                            {
+                                                Ids = [item.Id],
+                                                ParentId = viewModel.IsRoot
+                                                    ? null
+                                                    : viewModel.Tree.Selected?.Id,
+                                                IsEditParentId = true,
+                                            },
+                                        ],
+                                    },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
         );
     }
 
