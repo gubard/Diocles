@@ -46,9 +46,11 @@
                                     IsVisible="{Binding Active, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Null}}">
                                 <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center small" />
                             </Button>
+
                             <OnPlatform>
                                 <On Options="Android, iOS">
                                     <TextBlock Classes="h6 align-center"
+                                               IsVisible="{Binding Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
                                                Text="{Binding Description, Converter={StaticResource DescriptionToolTipConverter}, ConverterParameter={x:Static h:DiocleHelper.AndroidDescriptionStringParameters}}" />
                                 </On>
 
