@@ -45,6 +45,25 @@ public sealed partial class SearchToDoViewModel
 
     public object Header => _header;
 
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    {
+        _header.PropertyChanged += HeaderChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
     private static readonly AvaloniaList<ToDoNotify> Todos = new();
     private readonly IUiToDoService _uiToDoService;
     private readonly IToDoUiCache _toDoUiCache;
@@ -81,24 +100,5 @@ public sealed partial class SearchToDoViewModel
         );
 
         return response;
-    }
-
-    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
-    }
-
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
-    {
-        _header.PropertyChanged -= HeaderChanged;
-
-        return TaskHelper.ConfiguredCompletedTask;
-    }
-
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
-    {
-        _header.PropertyChanged += HeaderChanged;
-
-        return TaskHelper.ConfiguredCompletedTask;
     }
 }

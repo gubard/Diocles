@@ -39,7 +39,14 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
         _header = factory.CreateToDosHeader(
             item.Name,
-            [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)],
+            [
+                new(
+                    ShowEditCommand,
+                    item,
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    PackIconMaterialDesignKind.Edit
+                ),
+            ],
             DiocleHelper.CreateMultiCommands(item.Children)
         );
 

@@ -5,6 +5,7 @@
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ui="clr-namespace:Diocles.Ui"
              xmlns:h="clr-namespace:Diocles.Helpers"
+             xmlns:sm="clr-namespace:Inanna.Models;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDosHeaderView"
              x:DataType="ui:ToDosHeaderViewModel">
@@ -20,13 +21,57 @@
         </ScrollViewer>
 
         <StackPanel Grid.Column="2" Classes="horizontal">
+            <StackPanel.Styles>
+                <Style Selector="MenuItem" x:DataType="sm:InannaCommand">
+                    <Setter Property="Command" Value="{Binding Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                    <Setter Property="Icon" Value="{Binding Icon}" />
+                </Style>
+
+                <Style Selector="Panel.adaptive-buttons">
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+
+                <Style Selector=":is(TopLevel):extra-small Panel.adaptive-buttons">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+
+                <Style Selector=":is(TopLevel):extra-small Panel.adaptive-items">
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+            </StackPanel.Styles>
+
             <Button IsVisible="{Binding IsOffline}"
                     Command="{Binding SwitchToOnlineCommand}"
                     Content="{DynamicResource Lang.SwitchToOnline}" />
-            <ItemsControl Classes="horizontal-stack" IsVisible="{Binding !IsMulti}" ItemsSource="{Binding Commands}" />
-            <ItemsControl Classes="horizontal-stack"
-                          IsVisible="{Binding IsMulti}"
-                          ItemsSource="{Binding MultiCommands}" />
+
+            <Panel Classes="adaptive-buttons">
+                <Panel.DataTemplates>
+                    <DataTemplate x:DataType="sm:InannaCommand">
+                        <ContentControl Content="{Binding Content}" />
+                    </DataTemplate>
+                </Panel.DataTemplates>
+
+                <Button IsVisible="{Binding !IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
+                    <Button.Flyout>
+                        <MenuFlyout ItemsSource="{Binding Commands}" />
+                    </Button.Flyout>
+                </Button>
+
+                <Button IsVisible="{Binding IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
+                    <Button.Flyout>
+                        <MenuFlyout ItemsSource="{Binding MultiCommands}" />
+                    </Button.Flyout>
+                </Button>
+            </Panel>
+
+            <Panel Classes="adaptive-items">
+                <ItemsControl Classes="horizontal-stack" IsVisible="{Binding !IsMulti}"
+                              ItemsSource="{Binding Commands}" />
+                <ItemsControl Classes="horizontal-stack"
+                              IsVisible="{Binding IsMulti}"
+                              ItemsSource="{Binding MultiCommands}" />
+            </Panel>
         </StackPanel>
     </Grid>
 </UserControl>
