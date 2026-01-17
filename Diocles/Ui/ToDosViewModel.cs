@@ -13,7 +13,7 @@ using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IInitUi
+public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public ToDosViewModel(
         ToDoNotify item,

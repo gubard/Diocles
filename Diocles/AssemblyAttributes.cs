@@ -11,3 +11,5 @@ using Inanna.Generator;
 [assembly: ViewPair(typeof(EditToDoView), typeof(EditToDoViewModel))]
 [assembly: ViewPair(typeof(EditToDoHeaderView), typeof(EditToDoHeaderViewModel))]
 [assembly: ViewPair(typeof(ChangeParentToDoView), typeof(ChangeParentToDoViewModel))]
+[assembly: ViewPair(typeof(SearchToDoView), typeof(SearchToDoViewModel))]
+[assembly: ViewPair(typeof(SearchToDoHeaderView), typeof(SearchToDoHeaderViewModel))]

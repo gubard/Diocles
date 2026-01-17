@@ -10,4 +10,5 @@ namespace Diocles.Services;
 [Singleton(typeof(IToDoMemoryCache), typeof(ToDoMemoryCache))]
 [Transient(typeof(IToDoValidator), typeof(ToDoValidator))]
 [Transient(typeof(IDioclesViewModelFactory), typeof(DioclesViewModelFactory))]
+[Transient(typeof(SearchToDoViewModel))]
 public interface IDioclesServiceProvider;

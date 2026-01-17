@@ -6,5 +6,17 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.SearchToDoView"
              x:DataType="ui:SearchToDoViewModel">
-    <ContentControl Content="{Binding ToDoList}" />
+    <Grid RowDefinitions="Auto,*,Auto">
+        <StackPanel>
+            <TextBlock Classes="field" Text="{DynamicResource Lang.SearchText}" />
+            <TextBox Text="{Binding SearchText}" />
+        </StackPanel>
+
+        <ContentControl Grid.Row="1" Content="{Binding List}" />
+        <Button Grid.Row="2"
+                Classes="align-stretch content-align-center h1"
+                IsDefault="True"
+                Content="{DynamicResource Lang.Search}"
+                Command="{Binding SearchCommand}" />
+    </Grid>
 </UserControl>

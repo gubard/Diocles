@@ -20,11 +20,16 @@ public interface IDioclesViewModelFactory
     ToDoTreeViewModel CreateToDoTree();
     ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit);
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
+    SearchToDoHeaderViewModel CreateSearchToDoHeder();
 
-    ToDoParametersViewModel CreateToDoParameters(ToDoNotify item, ValidationMode validationMode, bool isShowEdit);
+    ToDoParametersViewModel CreateToDoParameters(
+        ToDoNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    );
 }
 
-public class DioclesViewModelFactory : IDioclesViewModelFactory
+public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 {
     public DioclesViewModelFactory(
         IToDoValidator toDoValidator,
@@ -49,7 +54,10 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         _appState = appState;
     }
 
-    public ToDosHeaderViewModel CreateToDosHeader(ToDoNotify item, AvaloniaList<InannaCommand> commands)
+    public ToDosHeaderViewModel CreateToDosHeader(
+        ToDoNotify item,
+        AvaloniaList<InannaCommand> commands
+    )
     {
         return new(item, commands, _appState, _uiToDoService);
     }
@@ -61,7 +69,15 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDosViewModel CreateToDos(ToDoNotify item)
     {
-        return new(item, _uiToDoService, _stringFormater, _dialogService, _appResourceService, this, _objectStorage);
+        return new(
+            item,
+            _uiToDoService,
+            _stringFormater,
+            _dialogService,
+            _appResourceService,
+            this,
+            _objectStorage
+        );
     }
 
     public EditToDoViewModel CreateEditToDo(ToDoNotify item)
@@ -81,8 +97,15 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public RootToDosViewModel CreateRootToDos()
     {
-        return new(_uiToDoService, _toDoMemoryCache, _stringFormater, _dialogService, _appResourceService, this,
-            _objectStorage);
+        return new(
+            _uiToDoService,
+            _toDoMemoryCache,
+            _stringFormater,
+            _dialogService,
+            _appResourceService,
+            this,
+            _objectStorage
+        );
     }
 
     public ToDoTreeViewModel CreateToDoTree()
@@ -90,12 +113,24 @@ public class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(_toDoMemoryCache, _uiToDoService);
     }
 
-    public ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit)
+    public ToDoParametersViewModel CreateToDoParameters(
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
     {
         return new(validationMode, isShowEdit, _toDoValidator, this);
     }
 
-    public ToDoParametersViewModel CreateToDoParameters(ToDoNotify item, ValidationMode validationMode, bool isShowEdit)
+    public SearchToDoHeaderViewModel CreateSearchToDoHeder()
+    {
+        return new();
+    }
+
+    public ToDoParametersViewModel CreateToDoParameters(
+        ToDoNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
     {
         return new(item, validationMode, isShowEdit, _toDoValidator, this);
     }

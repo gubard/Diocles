@@ -13,10 +13,8 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRefreshUi
+public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRefreshUi
 {
-    public ToDoListViewModel List { get; }
-
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
         return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
@@ -26,6 +24,23 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
     {
         List.Refresh();
     }
+
+    protected ToDosMainViewModelBase(
+        IDialogService dialogService,
+        IAppResourceService appResourceService,
+        IStringFormater stringFormater,
+        IDioclesViewModelFactory factory,
+        IUiToDoService uiToDoService,
+        IAvaloniaReadOnlyList<ToDoNotify> items
+    )
+        : base(dialogService, appResourceService, stringFormater, factory, uiToDoService, items) { }
+
+    protected abstract HestiaGetRequest CreateRefreshRequest();
+}
+
+public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewModel
+{
+    public ToDoListViewModel List { get; }
 
     protected readonly IDialogService DialogService;
     protected readonly IAppResourceService AppResourceService;
@@ -49,8 +64,6 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IRefresh, IRef
         UiToDoService = uiToDoService;
         List = factory.CreateToDoList(items);
     }
-
-    protected abstract HestiaGetRequest CreateRefreshRequest();
 
     private ToDoNotify? _editItem;
 

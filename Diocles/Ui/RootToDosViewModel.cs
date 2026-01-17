@@ -11,7 +11,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ToDosViewModelBase, IHeader, ISaveUi, IInitUi
+public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public RootToDosViewModel(
         IUiToDoService uiToDoService,

@@ -20,6 +20,7 @@ public interface IToDoMemoryCache : IMemoryCache<HestiaPostRequest, HestiaGetRes
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
     ToDoNotify? CurrentActive { get; }
     void ResetItems();
+    ToDoNotify Get(Guid id);
 }
 
 public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, IToDoMemoryCache>
@@ -29,6 +30,7 @@ public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, I
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
     ToDoNotify? CurrentActive { get; }
     void ResetItems();
+    ToDoNotify Get(Guid id);
 }
 
 public sealed class ToDoUiCache
@@ -46,6 +48,11 @@ public sealed class ToDoUiCache
     public void ResetItems()
     {
         MemoryCache.ResetItems();
+    }
+
+    public ToDoNotify Get(Guid id)
+    {
+        return MemoryCache.Get(id);
     }
 }
 
@@ -71,6 +78,11 @@ public sealed class ToDoMemoryCache
             item.IsChangingOrder = false;
             item.IsChangingParent = false;
         }
+    }
+
+    public ToDoNotify Get(Guid id)
+    {
+        return GetItem(id);
     }
 
     public override ConfiguredValueTaskAwaitable UpdateAsync(

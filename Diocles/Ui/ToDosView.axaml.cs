@@ -10,6 +10,6 @@ public partial class ToDosView : UserControl, IToDosView
         InitializeComponent();
     }
 
-    public ToDosViewModelBase ViewModel =>
-        DataContext as ToDosViewModelBase ?? throw new InvalidOperationException();
+    public IToDosViewModel ViewModel =>
+        DataContext as IToDosViewModel ?? throw new InvalidOperationException();
 }
