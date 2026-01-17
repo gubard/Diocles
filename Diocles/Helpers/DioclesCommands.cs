@@ -115,6 +115,48 @@ public static class DioclesCommands
                 );
             }
         );
+        DeleteToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+            (items, ct) =>
+            {
+                var selected = items.Where(x => x.IsSelected).ToArray();
+
+                var header = Dispatcher.UIThread.Invoke(() =>
+                    new TextBlock
+                    {
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.Delete")
+                        ),
+                    }
+                );
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.AskDelete"),
+                            selected.Select(x => x.Name).JoinString(", ")
+                        ),
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Delete"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
 
         SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
             (item, ct) =>
@@ -212,6 +254,7 @@ public static class DioclesCommands
     public static readonly ICommand OpenToDosCommand;
     public static readonly ICommand OpenParentCommand;
     public static readonly ICommand DeleteToDoCommand;
+    public static readonly ICommand DeleteToDosCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;
