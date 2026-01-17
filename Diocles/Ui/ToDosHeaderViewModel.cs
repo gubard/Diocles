@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Inanna.Models;
@@ -10,21 +9,20 @@ namespace Diocles.Ui;
 public partial class ToDosHeaderViewModel : ViewModelBase
 {
     public ToDosHeaderViewModel(
-        ToDoNotify item,
+        string title,
         IEnumerable<InannaCommand> commands,
         IEnumerable<InannaCommand> multiCommands,
         AppState appState,
         IUiToDoService uiToDoService
     )
     {
-        Item = item;
+        _title = title;
         Commands = commands;
         _appState = appState;
         _uiToDoService = uiToDoService;
         MultiCommands = multiCommands;
     }
 
-    public ToDoNotify Item { get; }
     public IEnumerable<InannaCommand> Commands { get; }
     public IEnumerable<InannaCommand> MultiCommands { get; }
     public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
@@ -36,6 +34,9 @@ public partial class ToDosHeaderViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isMulti;
+
+    [ObservableProperty]
+    private string _title;
 
     private readonly AppState _appState;
     private readonly IUiToDoService _uiToDoService;

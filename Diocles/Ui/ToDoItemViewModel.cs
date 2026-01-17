@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
@@ -14,9 +15,9 @@ using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
+public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
-    public ToDosViewModel(
+    public ToDoItemViewModel(
         ToDoNotify item,
         IUiToDoService uiToDoService,
         IStringFormater stringFormater,
@@ -34,37 +35,27 @@ public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, 
             item.Children
         )
     {
-        Header = factory.CreateToDosHeader(
-            item,
+        Item = item;
+
+        _header = factory.CreateToDosHeader(
+            item.Name,
             [new(ShowEditCommand, item, PackIconMaterialDesignKind.Edit)],
-            [
-                new(
-                    DioclesCommands.DeleteToDosCommand,
-                    item.Children,
-                    PackIconMaterialDesignKind.Delete,
-                    ButtonType.Danger
-                ),
-            ]
+            DiocleHelper.CreateMultiCommands(item.Children)
         );
 
         _objectStorage = objectStorage;
-
-        Header.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(Header.IsMulti))
-            {
-                IsMulti = Header.IsMulti;
-            }
-        };
     }
 
-    public ToDosHeaderViewModel Header { get; }
-    object IHeader.Header => Header;
+    public object Header => _header;
+    public ToDoNotify Item { get; }
 
-    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
+        _header.PropertyChanged -= HeaderChanged;
+        Item.PropertyChanged -= ItemChanged;
+
         return _objectStorage.SaveAsync(
-            $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
+            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
             new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
             ct
         );
@@ -77,23 +68,42 @@ public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, 
 
     protected override HestiaGetRequest CreateRefreshRequest()
     {
-        return new() { ChildrenIds = [Header.Item.Id], ParentIds = [Header.Item.Id] };
+        return new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] };
     }
 
     public override void RefreshUi()
     {
         base.RefreshUi();
-        Header.RefreshUi();
+        _header.RefreshUi();
     }
 
     private readonly IObjectStorage _objectStorage;
+    private readonly ToDosHeaderViewModel _header;
+
+    private void ItemChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Item.Name))
+        {
+            _header.Title = Item.Name;
+        }
+    }
+
+    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
+        {
+            IsMulti = _header.IsMulti;
+        }
+    }
 
     private async ValueTask InitCore(CancellationToken ct)
     {
+        _header.PropertyChanged += HeaderChanged;
+        Item.PropertyChanged += ItemChanged;
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
-            $"{typeof(ToDosViewModel).FullName}.{Header.Item.Id}",
+            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
             ct
         );
 
@@ -161,7 +171,7 @@ public partial class ToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, 
         }
 
         var create = parameters.CreateShortToDo();
-        create.ParentId = Header.Item.Id;
+        create.ParentId = Item.Id;
 
         return await UiToDoService.PostAsync(Guid.NewGuid(), new() { Creates = [create] }, ct);
     }

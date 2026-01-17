@@ -115,6 +115,60 @@ public static class DioclesCommands
                 );
             }
         );
+
+        EditToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+            (items, ct) =>
+            {
+                var selected = items.Where(x => x.IsSelected).ToArray();
+
+                var header = Dispatcher.UIThread.Invoke(() =>
+                    new TextBlock
+                    {
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.Edit")
+                        ),
+                    }
+                );
+
+                var viewModel = factory.CreateToDoParameters(
+                    ValidationMode.ValidateOnlyEdited,
+                    true
+                );
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        viewModel,
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Edit"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Edits =
+                                        [
+                                            viewModel.CreateEditToDos(
+                                                selected.Select(x => x.Id).ToArray()
+                                            ),
+                                        ],
+                                    },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
+
         DeleteToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
@@ -255,6 +309,7 @@ public static class DioclesCommands
     public static readonly ICommand OpenParentCommand;
     public static readonly ICommand DeleteToDoCommand;
     public static readonly ICommand DeleteToDosCommand;
+    public static readonly ICommand EditToDosCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;

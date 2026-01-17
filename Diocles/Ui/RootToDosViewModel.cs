@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
@@ -6,7 +7,6 @@ using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
 using Hestia.Contract.Models;
-using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -35,29 +35,19 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     {
         _objectStorage = objectStorage;
 
-        Header = factory.CreateRootToDosHeader([
-            new(
-                DioclesCommands.DeleteToDosCommand,
-                toDoMemoryCache.Roots,
-                PackIconMaterialDesignKind.Delete,
-                ButtonType.Danger
-            ),
-        ]);
-
-        Header.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(Header.IsMulti))
-            {
-                IsMulti = Header.IsMulti;
-            }
-        };
+        _header = factory.CreateToDosHeader(
+            appResourceService.GetResource<string>("Lang.ToDos"),
+            [],
+            DiocleHelper.CreateMultiCommands(toDoMemoryCache.Roots)
+        );
     }
 
-    object IHeader.Header => Header;
-    public RootToDosHeaderViewModel Header { get; }
+    public object Header => _header;
 
-    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
+        _header.PropertyChanged -= HeaderChanged;
+
         return _objectStorage.SaveAsync(
             $"{typeof(RootToDosViewModel).FullName}",
             new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
@@ -70,21 +60,25 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         return InitCore(ct).ConfigureAwait(false);
     }
 
-    public override void RefreshUi()
-    {
-        base.RefreshUi();
-        Header.RefreshUi();
-    }
-
     protected override HestiaGetRequest CreateRefreshRequest()
     {
         return new() { IsRoots = true };
     }
 
     private readonly IObjectStorage _objectStorage;
+    private readonly ToDosHeaderViewModel _header;
+
+    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
+        {
+            IsMulti = _header.IsMulti;
+        }
+    }
 
     private async ValueTask InitCore(CancellationToken ct)
     {
+        _header.PropertyChanged += HeaderChanged;
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(

@@ -10,21 +10,17 @@ namespace Diocles.Services;
 
 public interface IDioclesViewModelFactory
 {
-    RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> multiCommands);
-    ToDosViewModel CreateToDos(ToDoNotify item);
-    EditToDoViewModel CreateEditToDo(ToDoNotify item);
+    ToDoItemViewModel CreateToDos(ToDoNotify item);
     ChangeParentToDoViewModel CreateChangeParentToDo();
-    EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item);
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
     ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit);
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
-    SearchToDoHeaderViewModel CreateSearchToDoHeder(AvaloniaList<InannaCommand> multiCommands);
 
     ToDosHeaderViewModel CreateToDosHeader(
-        ToDoNotify item,
-        AvaloniaList<InannaCommand> commands,
-        AvaloniaList<InannaCommand> multiCommands
+        string title,
+        IEnumerable<InannaCommand> commands,
+        IEnumerable<InannaCommand> multiCommands
     );
 
     ToDoParametersViewModel CreateToDoParameters(
@@ -60,20 +56,15 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
-        ToDoNotify item,
-        AvaloniaList<InannaCommand> commands,
-        AvaloniaList<InannaCommand> multiCommands
+        string title,
+        IEnumerable<InannaCommand> commands,
+        IEnumerable<InannaCommand> multiCommands
     )
     {
-        return new(item, commands, multiCommands, _appState, _uiToDoService);
+        return new(title, commands, multiCommands, _appState, _uiToDoService);
     }
 
-    public RootToDosHeaderViewModel CreateRootToDosHeader(AvaloniaList<InannaCommand> commands)
-    {
-        return new(commands, _appState, _uiToDoService);
-    }
-
-    public ToDosViewModel CreateToDos(ToDoNotify item)
+    public ToDoItemViewModel CreateToDos(ToDoNotify item)
     {
         return new(
             item,
@@ -86,19 +77,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         );
     }
 
-    public EditToDoViewModel CreateEditToDo(ToDoNotify item)
-    {
-        return new(item, this, _uiToDoService, _notificationService, _appResourceService);
-    }
-
     public ChangeParentToDoViewModel CreateChangeParentToDo()
     {
         return new(this);
-    }
-
-    public EditToDoHeaderViewModel CreateEditToDoHeader(ToDoNotify item)
-    {
-        return new(item);
     }
 
     public RootToDosViewModel CreateRootToDos()
@@ -125,13 +106,6 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     )
     {
         return new(validationMode, isShowEdit, _toDoValidator, this);
-    }
-
-    public SearchToDoHeaderViewModel CreateSearchToDoHeder(
-        AvaloniaList<InannaCommand> multiCommands
-    )
-    {
-        return new(multiCommands);
     }
 
     public ToDoParametersViewModel CreateToDoParameters(

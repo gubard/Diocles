@@ -125,8 +125,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
             return new EmptyValidationErrors();
         }
 
-        var edit = viewModel.CreateEditToDos();
-        edit.Ids = [_editItem.Id];
+        var edit = viewModel.CreateEditToDos(_editItem.Id);
         var response = await UiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 

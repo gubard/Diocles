@@ -253,10 +253,16 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         };
     }
 
-    public EditToDos CreateEditToDos()
+    public EditToDos CreateEditToDos(Guid id)
+    {
+        return CreateEditToDos([id]);
+    }
+
+    public EditToDos CreateEditToDos(Guid[] ids)
     {
         return new()
         {
+            Ids = ids,
             AnnuallyDays = AnnuallyDays.ToArray(),
             IsEditAnnuallyDays = IsEditAnnuallyDays,
             ChildrenCompletionType = ChildrenCompletionType,

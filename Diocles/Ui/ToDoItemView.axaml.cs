@@ -3,9 +3,9 @@ using Diocles.Models;
 
 namespace Diocles.Ui;
 
-public partial class ToDosView : UserControl, IToDosView
+public partial class ToDoItemView : UserControl, IToDosView
 {
-    public ToDosView()
+    public ToDoItemView()
     {
         InitializeComponent();
     }

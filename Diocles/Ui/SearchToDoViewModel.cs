@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
@@ -6,16 +7,20 @@ using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
-using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
-using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader, IRefresh
+public sealed partial class SearchToDoViewModel
+    : ToDosViewModelBase,
+        IHeader,
+        IRefresh,
+        ISaveUi,
+        IInitUi
 {
     public SearchToDoViewModel(
         IDioclesViewModelFactory factory,
@@ -27,34 +32,23 @@ public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader, I
     )
         : base(dialogService, appResourceService, stringFormater, factory, uiToDoService, Todos)
     {
-        var header = factory.CreateSearchToDoHeder([
-            new(
-                DioclesCommands.DeleteToDosCommand,
-                Todos,
-                PackIconMaterialDesignKind.Delete,
-                ButtonType.Danger
-            ),
-        ]);
+        _header = factory.CreateToDosHeader(
+            appResourceService.GetResource<string>("Lang.SearchToDos"),
+            [],
+            DiocleHelper.CreateMultiCommands(Todos)
+        );
 
         _uiToDoService = uiToDoService;
         _toDoUiCache = toDoUiCache;
         Dispatcher.UIThread.Post(() => Todos.Clear());
-        Header = header;
-
-        header.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(SearchToDoHeaderViewModel.IsMulti))
-            {
-                IsMulti = header.IsMulti;
-            }
-        };
     }
 
-    public object Header { get; }
+    public object Header => _header;
 
     private static readonly AvaloniaList<ToDoNotify> Todos = new();
     private readonly IUiToDoService _uiToDoService;
     private readonly IToDoUiCache _toDoUiCache;
+    private readonly ToDosHeaderViewModel _header;
 
     [ObservableProperty]
     private string _searchText = string.Empty;
@@ -63,6 +57,14 @@ public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader, I
     private async Task SearchAsync(CancellationToken ct)
     {
         await WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
+    }
+
+    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
+        {
+            IsMulti = _header.IsMulti;
+        }
     }
 
     private async ValueTask<HestiaGetResponse> SearchCore(CancellationToken ct)
@@ -84,5 +86,19 @@ public sealed partial class SearchToDoViewModel : ToDosViewModelBase, IHeader, I
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
         return WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    {
+        _header.PropertyChanged += HeaderChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
     }
 }

@@ -11,11 +11,11 @@
              xmlns:in="clr-namespace:Inanna.Models;assembly=Inanna"
              xmlns:hi="clr-namespace:Inanna.Helpers;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Diocles.Ui.ToDosView"
-             x:DataType="ui:ToDosViewModel">
+             x:Class="Diocles.Ui.ToDoItemView"
+             x:DataType="ui:ToDoItemViewModel">
     <Grid RowDefinitions="Auto,Auto,*,Auto">
         <c:PathControl Classes="align-center"
-                       ItemsSource="{Binding Header.Item.Parents}">
+                       ItemsSource="{Binding Item.Parents}">
             <c:PathControl.ItemTemplate>
                 <s:SelectorDataTemplate>
                     <DataTemplate DataType="{x:Type m:ToDoNotify}">
@@ -36,9 +36,9 @@
         </c:PathControl>
 
         <Expander Grid.Row="1"
-                  IsVisible="{Binding Header.Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
+                  IsVisible="{Binding Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
                   Header="{DynamicResource Lang.Description}">
-            <TextBlock Text="{Binding Header.Item.Description}" Classes="text-wrap" />
+            <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
         </Expander>
         <ContentControl Grid.Row="2" Content="{Binding List}" />
         <Button Grid.Row="3"

@@ -16,10 +16,10 @@
         </StackPanel>
 
         <ScrollViewer Grid.Column="1" Classes="horizontal-scroll">
-            <TextBlock Classes="h2 align-left-center" Text="{Binding Item.Name}" />
+            <TextBlock Classes="h2 align-left-center" Text="{Binding Title}" />
         </ScrollViewer>
 
-        <StackPanel Grid.Column="2">
+        <StackPanel Grid.Column="2" Classes="horizontal">
             <Button IsVisible="{Binding IsOffline}"
                     Command="{Binding SwitchToOnlineCommand}"
                     Content="{DynamicResource Lang.SwitchToOnline}" />
