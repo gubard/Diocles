@@ -98,7 +98,7 @@ public static class DioclesCommands
                             appResourceService.GetResource<string>("Lang.Delete"),
                             UiHelper.CreateCommand(ct =>
                             {
-                                dialogService.CloseMessageBox();
+                                dialogService.DispatchCloseMessageBox();
 
                                 return uiToDoService.PostAsync(
                                     Guid.NewGuid(),
@@ -143,7 +143,7 @@ public static class DioclesCommands
                             appResourceService.GetResource<string>("Lang.Edit"),
                             UiHelper.CreateCommand(ct =>
                             {
-                                dialogService.CloseMessageBox();
+                                dialogService.DispatchCloseMessageBox();
 
                                 return uiToDoService.PostAsync(
                                     Guid.NewGuid(),
@@ -194,7 +194,7 @@ public static class DioclesCommands
                             appResourceService.GetResource<string>("Lang.Delete"),
                             UiHelper.CreateCommand(ct =>
                             {
-                                dialogService.CloseMessageBox();
+                                dialogService.DispatchCloseMessageBox();
 
                                 return uiToDoService.PostAsync(
                                     Guid.NewGuid(),
@@ -277,7 +277,7 @@ public static class DioclesCommands
                                     ? (Guid?)null
                                     : viewModel.Tree.Selected.Id;
 
-                                dialogService.CloseMessageBox();
+                                dialogService.DispatchCloseMessageBox();
 
                                 return uiToDoService.PostAsync(
                                     Guid.NewGuid(),

@@ -169,7 +169,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         CancellationToken ct
     )
     {
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
         parameters.StartExecute();
 
         if (parameters.HasErrors)

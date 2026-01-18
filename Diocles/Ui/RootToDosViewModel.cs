@@ -141,7 +141,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         CancellationToken ct
     )
     {
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
         parameters.StartExecute();
 
         if (parameters.HasErrors)

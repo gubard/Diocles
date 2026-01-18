@@ -120,6 +120,8 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         CancellationToken ct
     )
     {
+        DialogService.DispatchCloseMessageBox();
+
         if (_editItem is null)
         {
             return new EmptyValidationErrors();
@@ -127,7 +129,6 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
 
         var edit = viewModel.CreateEditToDos(_editItem.Id);
         var response = await UiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }
