@@ -31,17 +31,23 @@ public sealed partial class SearchToDoViewModel
         IAppResourceService appResourceService,
         IStringFormater stringFormater
     )
-        : base(dialogService, appResourceService, stringFormater, factory, uiToDoService, Todos)
+        : base(
+            dialogService,
+            appResourceService,
+            stringFormater,
+            factory,
+            uiToDoService,
+            toDoUiCache.Search
+        )
     {
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.SearchToDos"),
             new AvaloniaList<InannaCommand>(),
-            DiocleHelper.CreateMultiCommands(Todos)
+            DiocleHelper.CreateMultiCommands(toDoUiCache.Search)
         );
 
         _uiToDoService = uiToDoService;
         _toDoUiCache = toDoUiCache;
-        Dispatcher.UIThread.Post(() => Todos.Clear());
     }
 
     public object Header => _header;
@@ -65,7 +71,6 @@ public sealed partial class SearchToDoViewModel
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    private static readonly AvaloniaList<ToDoNotify> Todos = new();
     private readonly IUiToDoService _uiToDoService;
     private readonly IToDoUiCache _toDoUiCache;
     private readonly ToDosHeaderViewModel _header;
@@ -92,12 +97,6 @@ public sealed partial class SearchToDoViewModel
         var response = await _uiToDoService.GetAsync(
             new() { Search = new() { SearchText = SearchText } },
             ct
-        );
-
-        Dispatcher.UIThread.Post(() =>
-            Todos.UpdateOrder(
-                response.Search.Select(x => _toDoUiCache.Get(x.Parameters.Id)).ToArray()
-            )
         );
 
         return response;

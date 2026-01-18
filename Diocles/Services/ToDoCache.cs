@@ -18,9 +18,9 @@ public interface IToDoMemoryCache : IMemoryCache<HestiaPostRequest, HestiaGetRes
     IAvaloniaReadOnlyList<ToDoNotify> Roots { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
+    IAvaloniaReadOnlyList<ToDoNotify> Search { get; }
     ToDoNotify? CurrentActive { get; }
     void ResetItems();
-    ToDoNotify Get(Guid id);
 }
 
 public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, IToDoMemoryCache>
@@ -28,9 +28,9 @@ public interface IToDoUiCache : IUiCache<HestiaPostRequest, HestiaGetResponse, I
     IAvaloniaReadOnlyList<ToDoNotify> Roots { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Favorites { get; }
     IAvaloniaReadOnlyList<ToDoNotify> Bookmarks { get; }
+    IAvaloniaReadOnlyList<ToDoNotify> Search { get; }
     ToDoNotify? CurrentActive { get; }
     void ResetItems();
-    ToDoNotify Get(Guid id);
 }
 
 public sealed class ToDoUiCache
@@ -43,16 +43,12 @@ public sealed class ToDoUiCache
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => MemoryCache.Roots;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => MemoryCache.Favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => MemoryCache.Bookmarks;
+    public IAvaloniaReadOnlyList<ToDoNotify> Search => MemoryCache.Search;
     public ToDoNotify? CurrentActive => MemoryCache.CurrentActive;
 
     public void ResetItems()
     {
         MemoryCache.ResetItems();
-    }
-
-    public ToDoNotify Get(Guid id)
-    {
-        return MemoryCache.Get(id);
     }
 }
 
@@ -64,6 +60,7 @@ public sealed class ToDoMemoryCache
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => _bookmarks;
+    public IAvaloniaReadOnlyList<ToDoNotify> Search => _search;
 
     public ToDoMemoryCache(INavigator navigator)
     {
@@ -177,10 +174,13 @@ public sealed class ToDoMemoryCache
                 );
             }
 
-            foreach (var item in source.Search)
-            {
-                UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds);
-            }
+            _search.UpdateOrder(
+                source
+                    .Search.OrderBy(x => x.Parameters.Name)
+                    .ThenBy(x => x.Parameters.OrderIndex)
+                    .Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+                    .ToArray()
+            );
 
             foreach (var item in source.Today)
             {
@@ -586,5 +586,6 @@ public sealed class ToDoMemoryCache
     private readonly AvaloniaList<ToDoNotify> _roots = [];
     private readonly AvaloniaList<ToDoNotify> _favorites = [];
     private readonly AvaloniaList<ToDoNotify> _bookmarks = [];
+    private readonly AvaloniaList<ToDoNotify> _search = [];
     private readonly INavigator _navigator;
 }
