@@ -14,32 +14,35 @@
              x:Class="Diocles.Ui.ToDoItemView"
              x:DataType="ui:ToDoItemViewModel">
     <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <c:PathControl Classes="align-center"
-                       ItemsSource="{Binding Item.Parents}">
-            <c:PathControl.ItemTemplate>
-                <s:SelectorDataTemplate>
-                    <DataTemplate DataType="{x:Type m:ToDoNotify}">
-                        <Button Classes="align-center"
-                                Content="{Binding Name}"
-                                Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
-                                CommandParameter="{Binding}" />
-                    </DataTemplate>
+        <ScrollViewer Classes="horizontal-scroll">
+            <c:PathControl Classes="align-center"
+                           ItemsSource="{Binding Item.Parents}">
+                <c:PathControl.ItemTemplate>
+                    <s:SelectorDataTemplate>
+                        <DataTemplate DataType="{x:Type m:ToDoNotify}">
+                            <Button Classes="align-center"
+                                    Content="{Binding Name}"
+                                    Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
 
-                    <DataTemplate DataType="{x:Type in:HomeMark}">
-                        <Button Classes="align-center"
-                                Content="{ip:MaterialDesign Home}"
-                                Command="{x:Static hi:InannaCommands.NavigateToCommand}"
-                                CommandParameter="{x:Type ui:RootToDosViewModel}" />
-                    </DataTemplate>
-                </s:SelectorDataTemplate>
-            </c:PathControl.ItemTemplate>
-        </c:PathControl>
+                        <DataTemplate DataType="{x:Type in:HomeMark}">
+                            <Button Classes="align-center"
+                                    Content="{ip:MaterialDesign Home}"
+                                    Command="{x:Static hi:InannaCommands.NavigateToCommand}"
+                                    CommandParameter="{x:Type ui:RootToDosViewModel}" />
+                        </DataTemplate>
+                    </s:SelectorDataTemplate>
+                </c:PathControl.ItemTemplate>
+            </c:PathControl>
+        </ScrollViewer>
 
         <Expander Grid.Row="1"
                   IsVisible="{Binding Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
                   Header="{DynamicResource Lang.Description}">
             <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
         </Expander>
+
         <ContentControl Grid.Row="2" Content="{Binding List}" />
         <Button Grid.Row="3"
                 Classes="align-stretch content-align-center h1"
