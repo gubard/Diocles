@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
@@ -12,12 +13,13 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     private readonly IUiToDoService _uiToDoService;
 
     [ObservableProperty]
-    private ToDoNotify? _selected;
+    private ToDoNotify _selected;
 
     public ToDoTreeViewModel(IToDoMemoryCache toDoMemoryCache, IUiToDoService uiToDoService)
     {
         _uiToDoService = uiToDoService;
         Roots = toDoMemoryCache.Roots;
+        _selected = Roots.First();
     }
 
     public IEnumerable<ToDoNotify> Roots { get; }

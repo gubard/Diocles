@@ -19,17 +19,23 @@ public static class DiocleHelper
         return
         [
             new(
-                DioclesCommands.DeleteToDosCommand,
+                DioclesCommands.ShowDeleteToDosCommand,
                 parameter,
                 AppResourceService.GetResource<string>("Lang.Delete"),
                 PackIconMaterialDesignKind.Delete,
                 ButtonType.Danger
             ),
             new(
-                DioclesCommands.EditToDosCommand,
+                DioclesCommands.ShowEditToDosCommand,
                 parameter,
                 AppResourceService.GetResource<string>("Lang.Edit"),
                 PackIconMaterialDesignKind.Edit
+            ),
+            new(
+                DioclesCommands.ShowChangesParentCommand,
+                parameter,
+                AppResourceService.GetResource<string>("Lang.ChangeParent"),
+                PackIconMaterialDesignKind.AccountTree
             ),
         ];
     }

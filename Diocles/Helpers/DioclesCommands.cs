@@ -75,7 +75,7 @@ public static class DioclesCommands
             (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
         );
 
-        DeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
+        ShowDeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>
             {
                 var header = Dispatcher.UIThread.Invoke(() =>
@@ -116,7 +116,7 @@ public static class DioclesCommands
             }
         );
 
-        EditToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+        ShowEditToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
@@ -169,7 +169,7 @@ public static class DioclesCommands
             }
         );
 
-        DeleteToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+        ShowDeleteToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
@@ -273,6 +273,10 @@ public static class DioclesCommands
                             appResourceService.GetResource<string>("Lang.ChangeParent"),
                             UiHelper.CreateCommand(ct =>
                             {
+                                var parentId = viewModel.IsRoot
+                                    ? (Guid?)null
+                                    : viewModel.Tree.Selected.Id;
+
                                 dialogService.CloseMessageBox();
 
                                 return uiToDoService.PostAsync(
@@ -284,9 +288,64 @@ public static class DioclesCommands
                                             new()
                                             {
                                                 Ids = [item.Id],
-                                                ParentId = viewModel.IsRoot
-                                                    ? null
-                                                    : viewModel.Tree.Selected?.Id,
+                                                ParentId = parentId,
+                                                IsEditParentId = true,
+                                            },
+                                        ],
+                                    },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
+
+        ShowChangesParentCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+            (items, ct) =>
+            {
+                var selected = items.Where(x => x.IsSelected).ToArray();
+                var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    toDoCache.ResetItems();
+
+                    foreach (var item in selected)
+                    {
+                        item.IsChangingParent = true;
+                    }
+                });
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        appResourceService.GetResource<string>("Lang.ChangeParent"),
+                        viewModel,
+                        new(
+                            appResourceService.GetResource<string>("Lang.ChangeParent"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                var parentId = viewModel.IsRoot
+                                    ? (Guid?)null
+                                    : viewModel.Tree.Selected.Id;
+
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Edits =
+                                        [
+                                            new()
+                                            {
+                                                Ids = selected.Select(x => x.Id).ToArray(),
+                                                ParentId = parentId,
                                                 IsEditParentId = true,
                                             },
                                         ],
@@ -307,12 +366,13 @@ public static class DioclesCommands
 
     public static readonly ICommand OpenToDosCommand;
     public static readonly ICommand OpenParentCommand;
-    public static readonly ICommand DeleteToDoCommand;
-    public static readonly ICommand DeleteToDosCommand;
-    public static readonly ICommand EditToDosCommand;
+    public static readonly ICommand ShowDeleteToDoCommand;
+    public static readonly ICommand ShowDeleteToDosCommand;
+    public static readonly ICommand ShowEditToDosCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;
     public static readonly ICommand ChangeOrderCommand;
     public static readonly ICommand ShowChangeParentCommand;
+    public static readonly ICommand ShowChangesParentCommand;
 }
