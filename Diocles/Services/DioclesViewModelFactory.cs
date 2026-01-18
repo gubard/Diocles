@@ -34,23 +34,21 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 {
     public DioclesViewModelFactory(
         IToDoValidator toDoValidator,
-        IToDoMemoryCache toDoMemoryCache,
-        IUiToDoService uiToDoService,
+        IToDoUiCache toDoUiCache,
+        IToDoUiService toDoUiService,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        INotificationService notificationService,
         IObjectStorage objectStorage,
         AppState appState
     )
     {
         _toDoValidator = toDoValidator;
-        _toDoMemoryCache = toDoMemoryCache;
-        _uiToDoService = uiToDoService;
+        _toDoUiCache = toDoUiCache;
+        _toDoUiService = toDoUiService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
         _appResourceService = appResourceService;
-        _notificationService = notificationService;
         _objectStorage = objectStorage;
         _appState = appState;
     }
@@ -61,14 +59,15 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(title, commands, multiCommands, _appState, _uiToDoService);
+        return new(title, commands, multiCommands, _appState, _toDoUiService);
     }
 
     public ToDoItemViewModel CreateToDos(ToDoNotify item)
     {
         return new(
             item,
-            _uiToDoService,
+            _toDoUiService,
+            _toDoUiCache,
             _stringFormater,
             _dialogService,
             _appResourceService,
@@ -85,8 +84,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     public RootToDosViewModel CreateRootToDos()
     {
         return new(
-            _uiToDoService,
-            _toDoMemoryCache,
+            _toDoUiService,
+            _toDoUiCache,
             _stringFormater,
             _dialogService,
             _appResourceService,
@@ -97,7 +96,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDoTreeViewModel CreateToDoTree()
     {
-        return new(_toDoMemoryCache, _uiToDoService);
+        return new(_toDoUiCache, _toDoUiService);
     }
 
     public ToDoParametersViewModel CreateToDoParameters(
@@ -119,16 +118,15 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input)
     {
-        return new(input, _toDoMemoryCache);
+        return new(input, _toDoUiCache);
     }
 
     private readonly IToDoValidator _toDoValidator;
-    private readonly IToDoMemoryCache _toDoMemoryCache;
-    private readonly IUiToDoService _uiToDoService;
+    private readonly IToDoUiCache _toDoUiCache;
+    private readonly IToDoUiService _toDoUiService;
     private readonly IStringFormater _stringFormater;
     private readonly IDialogService _dialogService;
     private readonly IAppResourceService _appResourceService;
-    private readonly INotificationService _notificationService;
     private readonly IObjectStorage _objectStorage;
     private readonly AppState _appState;
 }

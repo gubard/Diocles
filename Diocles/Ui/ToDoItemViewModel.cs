@@ -20,7 +20,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 {
     public ToDoItemViewModel(
         ToDoNotify item,
-        IUiToDoService uiToDoService,
+        IToDoUiService toDoUiService,
+        IToDoUiCache toDoUiCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
@@ -32,7 +33,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             appResourceService,
             stringFormater,
             factory,
-            uiToDoService,
+            toDoUiService,
+            toDoUiCache,
             item.Children
         )
     {
@@ -136,14 +138,12 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         await WrapCommandAsync(
             () =>
             {
-                var header = Dispatcher.UIThread.Invoke(() =>
-                    StringFormater
-                        .Format(
-                            AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                            AppResourceService.GetResource<string>("Lang.ToDo")
-                        )
-                        .ToDialogHeader()
-                );
+                var header = StringFormater
+                    .Format(
+                        AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                        AppResourceService.GetResource<string>("Lang.ToDo")
+                    )
+                    .DispatchToDialogHeader();
 
                 var button = new DialogButton(
                     AppResourceService.GetResource<string>("Lang.Create"),
@@ -182,6 +182,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         var create = parameters.CreateShortToDo();
         create.ParentId = Item.Id;
 
-        return await UiToDoService.PostAsync(Guid.NewGuid(), new() { Creates = [create] }, ct);
+        return await ToDoUiService.PostAsync(Guid.NewGuid(), new() { Creates = [create] }, ct);
     }
 }

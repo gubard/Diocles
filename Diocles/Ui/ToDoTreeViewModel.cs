@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
@@ -10,15 +9,10 @@ namespace Diocles.Ui;
 
 public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
 {
-    private readonly IUiToDoService _uiToDoService;
-
-    [ObservableProperty]
-    private ToDoNotify _selected;
-
-    public ToDoTreeViewModel(IToDoMemoryCache toDoMemoryCache, IUiToDoService uiToDoService)
+    public ToDoTreeViewModel(IToDoUiCache toDoUiCache, IToDoUiService toDoUiService)
     {
-        _uiToDoService = uiToDoService;
-        Roots = toDoMemoryCache.Roots;
+        _toDoUiService = toDoUiService;
+        Roots = toDoUiCache.Roots;
         _selected = Roots.First();
     }
 
@@ -27,8 +21,13 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
-            () => _uiToDoService.GetAsync(new() { IsSelectors = true }, ct),
+            () => _toDoUiService.GetAsync(new() { IsSelectors = true }, ct),
             ct
         );
     }
+
+    private readonly IToDoUiService _toDoUiService;
+
+    [ObservableProperty]
+    private ToDoNotify _selected;
 }

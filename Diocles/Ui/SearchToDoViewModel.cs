@@ -1,16 +1,13 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
-using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
-using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
@@ -25,7 +22,7 @@ public sealed partial class SearchToDoViewModel
 {
     public SearchToDoViewModel(
         IDioclesViewModelFactory factory,
-        IUiToDoService uiToDoService,
+        IToDoUiService toDoUiService,
         IToDoUiCache toDoUiCache,
         IDialogService dialogService,
         IAppResourceService appResourceService,
@@ -36,7 +33,8 @@ public sealed partial class SearchToDoViewModel
             appResourceService,
             stringFormater,
             factory,
-            uiToDoService,
+            toDoUiService,
+            toDoUiCache,
             toDoUiCache.Search
         )
     {
@@ -46,8 +44,7 @@ public sealed partial class SearchToDoViewModel
             DiocleHelper.CreateMultiCommands(toDoUiCache.Search)
         );
 
-        _uiToDoService = uiToDoService;
-        _toDoUiCache = toDoUiCache;
+        _toDoUiService = toDoUiService;
     }
 
     public object Header => _header;
@@ -71,8 +68,7 @@ public sealed partial class SearchToDoViewModel
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    private readonly IUiToDoService _uiToDoService;
-    private readonly IToDoUiCache _toDoUiCache;
+    private readonly IToDoUiService _toDoUiService;
     private readonly ToDosHeaderViewModel _header;
 
     [ObservableProperty]
@@ -94,7 +90,7 @@ public sealed partial class SearchToDoViewModel
 
     private async ValueTask<HestiaGetResponse> SearchCore(CancellationToken ct)
     {
-        var response = await _uiToDoService.GetAsync(
+        var response = await _toDoUiService.GetAsync(
             new() { Search = new() { SearchText = SearchText } },
             ct
         );

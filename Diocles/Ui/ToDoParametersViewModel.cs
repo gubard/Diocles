@@ -294,7 +294,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
             Name = Name.Trim(),
             IsEditName = IsEditName,
             ReferenceId = Reference?.Id,
-            IsEditReference = IsEditReference,
+            IsEditReferenceId = IsEditReference,
             RemindDaysBefore = RemindDaysBefore,
             IsEditRemindDaysBefore = IsEditRemindDaysBefore,
             Type = Type,

@@ -10,12 +10,9 @@ namespace Diocles.Ui;
 
 public partial class ToDoListViewModel : ViewModelBase
 {
-    public ToDoListViewModel(
-        IAvaloniaReadOnlyList<ToDoNotify> items,
-        IToDoMemoryCache toDoMemoryCache
-    )
+    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoUiCache toDoUiCache)
     {
-        _favorites = toDoMemoryCache.Favorites;
+        _favorites = toDoUiCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
         _items = items;
         items.CollectionChanged += (_, _) => Refresh();
@@ -24,7 +21,7 @@ public partial class ToDoListViewModel : ViewModelBase
     public IEnumerable<ToDoNotify> Items =>
         OrderBy switch
         {
-            ToDoOrderBy.OrderIndex => _items,
+            ToDoOrderBy.OrderIndex => _items.OrderBy(x => x.OrderIndex),
             ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
             ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
             _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),

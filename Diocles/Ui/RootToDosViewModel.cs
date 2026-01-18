@@ -17,8 +17,8 @@ namespace Diocles.Ui;
 public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public RootToDosViewModel(
-        IUiToDoService uiToDoService,
-        IToDoMemoryCache toDoMemoryCache,
+        IToDoUiService toDoUiService,
+        IToDoUiCache toDoUiCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
@@ -30,8 +30,9 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             appResourceService,
             stringFormater,
             factory,
-            uiToDoService,
-            toDoMemoryCache.Roots
+            toDoUiService,
+            toDoUiCache,
+            toDoUiCache.Roots
         )
     {
         _objectStorage = objectStorage;
@@ -39,7 +40,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.ToDos"),
             new AvaloniaList<InannaCommand>(),
-            DiocleHelper.CreateMultiCommands(toDoMemoryCache.Roots)
+            DiocleHelper.CreateMultiCommands(toDoUiCache.Roots)
         );
     }
 
@@ -108,14 +109,12 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             () =>
                 DialogService.ShowMessageBoxAsync(
                     new(
-                        Dispatcher.UIThread.Invoke(() =>
-                            StringFormater
-                                .Format(
-                                    AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                                    AppResourceService.GetResource<string>("Lang.ToDo")
-                                )
-                                .ToDialogHeader()
-                        ),
+                        StringFormater
+                            .Format(
+                                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                                AppResourceService.GetResource<string>("Lang.ToDo")
+                            )
+                            .DispatchToDialogHeader(),
                         credential,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
@@ -151,7 +150,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         }
 
         var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
-        var response = await UiToDoService.PostAsync(Guid.NewGuid(), request, ct);
+        var response = await ToDoUiService.PostAsync(Guid.NewGuid(), request, ct);
 
         return response;
     }

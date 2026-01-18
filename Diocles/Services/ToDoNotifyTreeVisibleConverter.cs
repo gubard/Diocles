@@ -14,7 +14,7 @@ public class ToDoNotifyTreeVisibleConverter : IValueConverter
             return value;
         }
 
-        if (item.IsChangingParent)
+        if (item.IsHideOnTree)
         {
             return false;
         }

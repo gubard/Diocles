@@ -17,7 +17,7 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRe
 {
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
-        return WrapCommandAsync(() => UiToDoService.GetAsync(CreateRefreshRequest(), ct), ct);
+        return WrapCommandAsync(() => ToDoUiService.GetAsync(CreateRefreshRequest(), ct), ct);
     }
 
     public virtual void RefreshUi()
@@ -30,10 +30,19 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRe
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
         IDioclesViewModelFactory factory,
-        IUiToDoService uiToDoService,
+        IToDoUiService toDoUiService,
+        IToDoUiCache toDoUiCache,
         IAvaloniaReadOnlyList<ToDoNotify> items
     )
-        : base(dialogService, appResourceService, stringFormater, factory, uiToDoService, items) { }
+        : base(
+            dialogService,
+            appResourceService,
+            stringFormater,
+            factory,
+            toDoUiService,
+            toDoUiCache,
+            items
+        ) { }
 
     protected abstract HestiaGetRequest CreateRefreshRequest();
 }
@@ -46,14 +55,16 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
     protected readonly IAppResourceService AppResourceService;
     protected readonly IStringFormater StringFormater;
     protected readonly IDioclesViewModelFactory Factory;
-    protected readonly IUiToDoService UiToDoService;
+    protected readonly IToDoUiService ToDoUiService;
+    protected readonly IToDoUiCache ToDoUiCache;
 
     protected ToDosViewModelBase(
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
         IDioclesViewModelFactory factory,
-        IUiToDoService uiToDoService,
+        IToDoUiService toDoUiService,
+        IToDoUiCache toDoUiCache,
         IAvaloniaReadOnlyList<ToDoNotify> items
     )
     {
@@ -61,7 +72,8 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         AppResourceService = appResourceService;
         StringFormater = stringFormater;
         Factory = factory;
-        UiToDoService = uiToDoService;
+        ToDoUiService = toDoUiService;
+        ToDoUiCache = toDoUiCache;
         List = factory.CreateToDoList(items);
     }
 
@@ -76,23 +88,28 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         await WrapCommandAsync(
             () =>
             {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    ToDoUiCache.ResetItems();
+                    item.IsHideOnTree = true;
+                });
+
                 var edit = Factory.CreateToDoParameters(
                     item,
                     ValidationMode.ValidateOnlyEdited,
                     false
                 );
+
                 _editItem = item;
 
                 return DialogService.ShowMessageBoxAsync(
                     new(
-                        Dispatcher.UIThread.Invoke(() =>
-                            StringFormater
-                                .Format(
-                                    AppResourceService.GetResource<string>("Lang.EditItem"),
-                                    item.Name
-                                )
-                                .ToDialogHeader()
-                        ),
+                        StringFormater
+                            .Format(
+                                AppResourceService.GetResource<string>("Lang.EditItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
                         edit,
                         new(
                             AppResourceService.GetResource<string>("Lang.Edit"),
@@ -120,16 +137,16 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         CancellationToken ct
     )
     {
-        DialogService.DispatchCloseMessageBox();
-
         if (_editItem is null)
         {
+            DialogService.DispatchCloseMessageBox();
+
             return new EmptyValidationErrors();
         }
 
         var edit = viewModel.CreateEditToDos(_editItem.Id);
-        var response = await UiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
+        DialogService.DispatchCloseMessageBox();
 
-        return response;
+        return await ToDoUiService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
     }
 }

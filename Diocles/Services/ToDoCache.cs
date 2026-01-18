@@ -73,7 +73,7 @@ public sealed class ToDoMemoryCache
         {
             item.IsSelected = false;
             item.IsChangingOrder = false;
-            item.IsChangingParent = false;
+            item.IsHideOnTree = false;
         }
     }
 
@@ -400,7 +400,7 @@ public sealed class ToDoMemoryCache
                     }
                 }
 
-                if (edit.IsEditReference || edit.IsEditReferenceId)
+                if (edit.IsEditReferenceId)
                 {
                     var reference = edit.ReferenceId.HasValue
                         ? GetItem(edit.ReferenceId.Value)

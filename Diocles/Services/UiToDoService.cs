@@ -5,10 +5,10 @@ using Inanna.Services;
 
 namespace Diocles.Services;
 
-public interface IUiToDoService
+public interface IToDoUiService
     : IUiService<HestiaGetRequest, HestiaPostRequest, HestiaGetResponse, HestiaPostResponse>;
 
-public sealed class UiToDoService(
+public sealed class ToDoUiService(
     IHttpToDoService httpService,
     IDbToDoService dbService,
     AppState appState,
@@ -25,4 +25,4 @@ public sealed class UiToDoService(
         IDbToDoService,
         IToDoUiCache
     >(httpService, dbService, appState, uiCache, navigator, serviceName),
-        IUiToDoService;
+        IToDoUiService;

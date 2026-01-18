@@ -14,19 +14,19 @@ public partial class ToDosHeaderViewModel : ViewModelBase
         IAvaloniaReadOnlyList<InannaCommand> commands,
         IAvaloniaReadOnlyList<InannaCommand> multiCommands,
         AppState appState,
-        IUiToDoService uiToDoService
+        IToDoUiService toDoUiService
     )
     {
         _title = title;
         Commands = commands;
         _appState = appState;
-        _uiToDoService = uiToDoService;
+        _toDoUiService = toDoUiService;
         MultiCommands = multiCommands;
     }
 
     public IAvaloniaReadOnlyList<InannaCommand> Commands { get; }
     public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
-    public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
+    public bool IsOffline => _appState.GetServiceMode(nameof(ToDoUiService)) == ServiceMode.Offline;
 
     public void RefreshUi()
     {
@@ -40,7 +40,7 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     private string _title;
 
     private readonly AppState _appState;
-    private readonly IUiToDoService _uiToDoService;
+    private readonly IToDoUiService _toDoUiService;
 
     [RelayCommand]
     private async Task SwitchToOnlineAsync(CancellationToken ct)
@@ -50,14 +50,14 @@ public partial class ToDosHeaderViewModel : ViewModelBase
 
     private async ValueTask<IValidationErrors> SwitchToOnlineCore(CancellationToken ct)
     {
-        var errors = await _uiToDoService.HealthCheckAsync(ct);
+        var errors = await _toDoUiService.HealthCheckAsync(ct);
 
         if (errors.ValidationErrors.Count > 0)
         {
             return errors;
         }
 
-        errors = await _uiToDoService.UpdateEventsAsync(ct);
+        errors = await _toDoUiService.UpdateEventsAsync(ct);
 
         RefreshUi();
 

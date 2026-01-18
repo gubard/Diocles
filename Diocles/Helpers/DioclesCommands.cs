@@ -19,7 +19,7 @@ public static class DioclesCommands
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
-        var uiToDoService = DiHelper.ServiceProvider.GetService<IUiToDoService>();
+        var uiToDoService = DiHelper.ServiceProvider.GetService<IToDoUiService>();
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
@@ -35,7 +35,7 @@ public static class DioclesCommands
             else
             {
                 await navigator.NavigateToAsync(
-                    factory.CreateToDos(toDoCache.CurrentActive.Parent),
+                    factory.CreateToDos(toDoCache.CurrentActive.Parent.ActualItem),
                     ct
                 );
             }
@@ -72,7 +72,7 @@ public static class DioclesCommands
         }
 
         OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
-            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item), ct)
+            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item.ActualItem), ct)
         );
 
         ShowDeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
@@ -121,14 +121,19 @@ public static class DioclesCommands
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
 
-                var header = Dispatcher.UIThread.Invoke(() =>
-                    new TextBlock
+                Dispatcher.UIThread.Post(() =>
+                {
+                    toDoCache.ResetItems();
+
+                    foreach (var s in selected)
                     {
-                        Text = stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.Edit")
-                        ),
+                        s.IsHideOnTree = true;
                     }
-                );
+                });
+
+                var header = stringFormater
+                    .Format(appResourceService.GetResource<string>("Lang.Edit"))
+                    .DispatchToDialogHeader();
 
                 var viewModel = factory.CreateToDoParameters(
                     ValidationMode.ValidateOnlyEdited,
@@ -143,19 +148,15 @@ public static class DioclesCommands
                             appResourceService.GetResource<string>("Lang.Edit"),
                             UiHelper.CreateCommand(ct =>
                             {
+                                var edit = viewModel.CreateEditToDos(
+                                    selected.Select(x => x.Id).ToArray()
+                                );
+
                                 dialogService.DispatchCloseMessageBox();
 
                                 return uiToDoService.PostAsync(
                                     Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Edits =
-                                        [
-                                            viewModel.CreateEditToDos(
-                                                selected.Select(x => x.Id).ToArray()
-                                            ),
-                                        ],
-                                    },
+                                    new() { Edits = [edit] },
                                     ct
                                 );
                             }),
@@ -225,7 +226,7 @@ public static class DioclesCommands
             (item, ct) =>
                 item.Parent is null
                     ? navigator.NavigateToAsync(factory.CreateRootToDos(), ct)
-                    : navigator.NavigateToAsync(factory.CreateToDos(item.Parent), ct)
+                    : navigator.NavigateToAsync(factory.CreateToDos(item.Parent.ActualItem), ct)
         );
 
         SwitchFavoriteCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
@@ -259,7 +260,7 @@ public static class DioclesCommands
                 Dispatcher.UIThread.Post(() =>
                 {
                     toDoCache.ResetItems();
-                    item.IsChangingParent = true;
+                    item.IsHideOnTree = true;
                 });
 
                 return dialogService.ShowMessageBoxAsync(
@@ -318,7 +319,7 @@ public static class DioclesCommands
 
                     foreach (var item in selected)
                     {
-                        item.IsChangingParent = true;
+                        item.IsHideOnTree = true;
                     }
                 });
 

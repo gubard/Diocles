@@ -34,7 +34,7 @@ public partial class ToDoNotify
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
-    Guid? IToDo.ReferenceId => Reference?.Id;
+    public ToDoNotify ActualItem => Type == ToDoType.Reference ? Reference ?? this : this;
 
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
@@ -149,6 +149,8 @@ public partial class ToDoNotify
         return new(input);
     }
 
+    Guid? IToDo.ReferenceId => Reference?.Id;
+
     private readonly AvaloniaList<ToDoNotify> _children;
     private readonly AvaloniaList<object> _parents;
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
@@ -159,7 +161,7 @@ public partial class ToDoNotify
     private bool _isSelected;
 
     [ObservableProperty]
-    private bool _isChangingParent;
+    private bool _isHideOnTree;
 
     [ObservableProperty]
     private bool _isChangingOrder;
