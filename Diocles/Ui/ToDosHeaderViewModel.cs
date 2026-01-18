@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Services;
 using Gaia.Services;
@@ -10,8 +11,8 @@ public partial class ToDosHeaderViewModel : ViewModelBase
 {
     public ToDosHeaderViewModel(
         string title,
-        IEnumerable<InannaCommand> commands,
-        IEnumerable<InannaCommand> multiCommands,
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands,
         AppState appState,
         IUiToDoService uiToDoService
     )
@@ -23,8 +24,8 @@ public partial class ToDosHeaderViewModel : ViewModelBase
         MultiCommands = multiCommands;
     }
 
-    public IEnumerable<InannaCommand> Commands { get; }
-    public IEnumerable<InannaCommand> MultiCommands { get; }
+    public IAvaloniaReadOnlyList<InannaCommand> Commands { get; }
+    public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
     public bool IsOffline => _appState.GetServiceMode(nameof(UiToDoService)) == ServiceMode.Offline;
 
     public void RefreshUi()

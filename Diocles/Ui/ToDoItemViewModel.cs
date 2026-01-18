@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
@@ -39,14 +40,15 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
         _header = factory.CreateToDosHeader(
             item.Name,
-            [
+            new AvaloniaList<InannaCommand>()
+            {
                 new(
                     ShowEditCommand,
                     item,
                     appResourceService.GetResource<string>("Lang.Edit"),
                     PackIconMaterialDesignKind.Edit
                 ),
-            ],
+            },
             DiocleHelper.CreateMultiCommands(item.Children)
         );
 

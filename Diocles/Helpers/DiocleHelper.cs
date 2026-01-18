@@ -1,3 +1,4 @@
+using Avalonia.Collections;
 using Diocles.Models;
 using Gaia.Helpers;
 using IconPacks.Avalonia.MaterialDesign;
@@ -14,10 +15,12 @@ public static class DiocleHelper
     public static readonly StringCutParameters DesktopDescriptionStringParameters = new(5, 100);
     public static readonly StringCutParameters AndroidDescriptionStringParameters = new(1, 20);
 
-    public static IEnumerable<InannaCommand> CreateMultiCommands(IEnumerable<ToDoNotify> parameter)
+    public static IAvaloniaReadOnlyList<InannaCommand> CreateMultiCommands(
+        IEnumerable<ToDoNotify> parameter
+    )
     {
-        return
-        [
+        return new AvaloniaList<InannaCommand>()
+        {
             new(
                 DioclesCommands.ShowDeleteToDosCommand,
                 parameter,
@@ -37,6 +40,6 @@ public static class DiocleHelper
                 AppResourceService.GetResource<string>("Lang.ChangeParent"),
                 PackIconMaterialDesignKind.AccountTree
             ),
-        ];
+        };
     }
 }

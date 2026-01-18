@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
@@ -37,7 +38,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.ToDos"),
-            [],
+            new AvaloniaList<InannaCommand>(),
             DiocleHelper.CreateMultiCommands(toDoMemoryCache.Roots)
         );
     }

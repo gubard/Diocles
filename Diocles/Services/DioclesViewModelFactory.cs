@@ -19,8 +19,8 @@ public interface IDioclesViewModelFactory
 
     ToDosHeaderViewModel CreateToDosHeader(
         string title,
-        IEnumerable<InannaCommand> commands,
-        IEnumerable<InannaCommand> multiCommands
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
     );
 
     ToDoParametersViewModel CreateToDoParameters(
@@ -57,8 +57,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDosHeaderViewModel CreateToDosHeader(
         string title,
-        IEnumerable<InannaCommand> commands,
-        IEnumerable<InannaCommand> multiCommands
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
         return new(title, commands, multiCommands, _appState, _uiToDoService);

@@ -11,6 +11,7 @@ using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Ui;
@@ -34,7 +35,7 @@ public sealed partial class SearchToDoViewModel
     {
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.SearchToDos"),
-            [],
+            new AvaloniaList<InannaCommand>(),
             DiocleHelper.CreateMultiCommands(Todos)
         );
 
