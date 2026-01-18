@@ -209,7 +209,12 @@ public sealed class ToDoMemoryCache
 
             foreach (var create in source.Creates)
             {
-                UpdateShortToDo(create, shortUpdatedIds);
+                var item = UpdateShortToDo(create, shortUpdatedIds);
+                item.Status = ToDoStatus.ReadyForComplete;
+
+                item.OrderIndex = item.Parent is null
+                    ? (uint)_roots.Count + 1
+                    : (uint)item.Parent.Children.Count + 1;
             }
 
             foreach (var edit in source.Edits)
