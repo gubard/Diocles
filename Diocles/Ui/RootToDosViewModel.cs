@@ -63,7 +63,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
     protected override HestiaGetRequest CreateRefreshRequest()
     {
-        return new() { IsRoots = true };
+        return new() { IsRoots = true, IsSelectors = true };
     }
 
     private readonly IObjectStorage _objectStorage;
