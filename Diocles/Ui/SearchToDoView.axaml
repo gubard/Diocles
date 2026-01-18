@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.SearchToDoView"
              x:DataType="ui:SearchToDoViewModel">
@@ -10,6 +11,9 @@
         <StackPanel>
             <TextBlock Classes="field" Text="{DynamicResource Lang.SearchText}" />
             <TextBox Text="{Binding SearchText}" />
+            
+            <TextBlock Classes="field" Text="{DynamicResource Lang.Type}" />
+            <c:EnumsSelectorControl  SelectedEnums="{Binding Types}"/>
         </StackPanel>
 
         <ContentControl Grid.Row="1" Content="{Binding List}" />

@@ -45,9 +45,11 @@ public sealed partial class SearchToDoViewModel
         );
 
         _toDoUiService = toDoUiService;
+        _types = new();
     }
 
     public object Header => _header;
+    public IEnumerable<ToDoType> Types => _types;
 
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
@@ -70,6 +72,7 @@ public sealed partial class SearchToDoViewModel
 
     private readonly IToDoUiService _toDoUiService;
     private readonly ToDosHeaderViewModel _header;
+    private readonly AvaloniaList<ToDoType> _types;
 
     [ObservableProperty]
     private string _searchText = string.Empty;
@@ -91,7 +94,10 @@ public sealed partial class SearchToDoViewModel
     private async ValueTask<HestiaGetResponse> SearchCore(CancellationToken ct)
     {
         var response = await _toDoUiService.GetAsync(
-            new() { Search = new() { SearchText = SearchText } },
+            new()
+            {
+                Search = new() { SearchText = SearchText, Types = _types.ToArray() },
+            },
             ct
         );
 
