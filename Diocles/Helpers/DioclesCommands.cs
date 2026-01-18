@@ -78,14 +78,9 @@ public static class DioclesCommands
         ShowDeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>
             {
-                var header = Dispatcher.UIThread.Invoke(() =>
-                    new TextBlock
-                    {
-                        Text = stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.Delete")
-                        ),
-                    }
-                );
+                var header = appResourceService
+                    .GetResource<string>("Lang.Delete")
+                    .DispatchToDialogHeader();
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
@@ -131,8 +126,8 @@ public static class DioclesCommands
                     }
                 });
 
-                var header = stringFormater
-                    .Format(appResourceService.GetResource<string>("Lang.Edit"))
+                var header = appResourceService
+                    .GetResource<string>("Lang.Edit")
                     .DispatchToDialogHeader();
 
                 var viewModel = factory.CreateToDoParameters(
@@ -175,14 +170,9 @@ public static class DioclesCommands
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
 
-                var header = Dispatcher.UIThread.Invoke(() =>
-                    new TextBlock
-                    {
-                        Text = stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.Delete")
-                        ),
-                    }
-                );
+                var header = appResourceService
+                    .GetResource<string>("Lang.Delete")
+                    .DispatchToDialogHeader();
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
@@ -257,6 +247,7 @@ public static class DioclesCommands
             (item, ct) =>
             {
                 var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+
                 Dispatcher.UIThread.Post(() =>
                 {
                     toDoCache.ResetItems();
@@ -265,10 +256,12 @@ public static class DioclesCommands
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
-                        stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.ChangeParentItem"),
-                            item.Name
-                        ),
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
                         viewModel,
                         new(
                             appResourceService.GetResource<string>("Lang.ChangeParent"),
@@ -325,7 +318,9 @@ public static class DioclesCommands
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
-                        appResourceService.GetResource<string>("Lang.ChangeParent"),
+                        appResourceService
+                            .GetResource<string>("Lang.ChangeParent")
+                            .DispatchToDialogHeader(),
                         viewModel,
                         new(
                             appResourceService.GetResource<string>("Lang.ChangeParent"),
