@@ -18,8 +18,7 @@
                             <Button Classes="align-stretch mini"
                                     Content="{ip:MaterialDesign Reorder}"
                                     CommandParameter="{Binding}"
-                                    Command="{x:Static h:DioclesCommands.ChangeOrderCommand}"
-                                    IsVisible="{Binding $parent[ItemsControl].ItemCount, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_1}}" />
+                                    Command="{x:Static h:DioclesCommands.ChangeOrderCommand}" />
 
                             <ToggleButton Classes="s-40"
                                           IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}"
