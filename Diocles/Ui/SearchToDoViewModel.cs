@@ -58,14 +58,14 @@ public sealed partial class SearchToDoViewModel
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged -= HeaderChanged;
+        _header.PropertyChanged -= HeaderPropertyChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged += HeaderChanged;
+        _header.PropertyChanged += HeaderPropertyChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
@@ -83,7 +83,7 @@ public sealed partial class SearchToDoViewModel
         await WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
     }
 
-    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
         {

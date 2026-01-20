@@ -62,8 +62,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged -= HeaderChanged;
-        Item.PropertyChanged -= ItemChanged;
+        _header.PropertyChanged -= HeaderPropertyChanged;
+        Item.PropertyChanged -= ItemPropertyChanged;
 
         return _objectStorage.SaveAsync(
             $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
@@ -91,7 +91,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 
-    private void ItemChanged(object? sender, PropertyChangedEventArgs e)
+    private void ItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Item.Name))
         {
@@ -99,7 +99,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         }
     }
 
-    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
         {
@@ -109,8 +109,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     private async ValueTask InitCore(CancellationToken ct)
     {
-        _header.PropertyChanged += HeaderChanged;
-        Item.PropertyChanged += ItemChanged;
+        _header.PropertyChanged += HeaderPropertyChanged;
+        Item.PropertyChanged += ItemPropertyChanged;
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
@@ -171,7 +171,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         CancellationToken ct
     )
     {
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
         parameters.StartExecute();
 
         if (parameters.HasErrors)

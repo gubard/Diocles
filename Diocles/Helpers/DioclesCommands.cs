@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using Diocles.Models;
 using Diocles.Services;
@@ -82,6 +81,17 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
+                async ValueTask<HestiaPostResponse> DeleteToDoAsync(CancellationToken ct)
+                {
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new() { DeleteIds = [item.Id] },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
@@ -91,16 +101,7 @@ public static class DioclesCommands
                         ),
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Delete"),
-                            UiHelper.CreateCommand(ct =>
-                            {
-                                dialogService.DispatchCloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new() { DeleteIds = [item.Id] },
-                                    ct
-                                );
-                            }),
+                            UiHelper.CreateCommand(ct => DeleteToDoAsync(ct).ConfigureAwait(false)),
                             null,
                             DialogButtonType.Primary
                         ),
@@ -135,26 +136,25 @@ public static class DioclesCommands
                     true
                 );
 
+                async ValueTask<HestiaPostResponse> EditToDosAsync(CancellationToken ct)
+                {
+                    var edit = viewModel.CreateEditToDos(selected.Select(x => x.Id).ToArray());
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new() { Edits = [edit] },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
                         viewModel,
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Edit"),
-                            UiHelper.CreateCommand(ct =>
-                            {
-                                var edit = viewModel.CreateEditToDos(
-                                    selected.Select(x => x.Id).ToArray()
-                                );
-
-                                dialogService.DispatchCloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new() { Edits = [edit] },
-                                    ct
-                                );
-                            }),
+                            UiHelper.CreateCommand(ct => EditToDosAsync(ct).ConfigureAwait(false)),
                             null,
                             DialogButtonType.Primary
                         ),
@@ -174,6 +174,17 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
+                async ValueTask<HestiaPostResponse> DeleteToDosAsync(CancellationToken ct)
+                {
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
@@ -184,15 +195,8 @@ public static class DioclesCommands
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Delete"),
                             UiHelper.CreateCommand(ct =>
-                            {
-                                dialogService.DispatchCloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
-                                    ct
-                                );
-                            }),
+                                DeleteToDosAsync(ct).ConfigureAwait(false)
+                            ),
                             null,
                             DialogButtonType.Primary
                         ),
@@ -262,6 +266,30 @@ public static class DioclesCommands
                     item.IsHideOnTree = true;
                 });
 
+                async ValueTask<HestiaPostResponse> ChangeParentAsync(CancellationToken ct)
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new()
+                        {
+                            Edits =
+                            [
+                                new()
+                                {
+                                    Ids = [item.Id],
+                                    ParentId = parentId,
+                                    IsEditParentId = true,
+                                },
+                            ],
+                        },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         stringFormater
@@ -274,30 +302,8 @@ public static class DioclesCommands
                         new(
                             appResourceService.GetResource<string>("Lang.ChangeParent"),
                             UiHelper.CreateCommand(ct =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
-
-                                dialogService.DispatchCloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Edits =
-                                        [
-                                            new()
-                                            {
-                                                Ids = [item.Id],
-                                                ParentId = parentId,
-                                                IsEditParentId = true,
-                                            },
-                                        ],
-                                    },
-                                    ct
-                                );
-                            }),
+                                ChangeParentAsync(ct).ConfigureAwait(false)
+                            ),
                             null,
                             DialogButtonType.Primary
                         ),
@@ -324,6 +330,30 @@ public static class DioclesCommands
                     }
                 });
 
+                async ValueTask<HestiaPostResponse> ChangesParentAsync(CancellationToken ct)
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new()
+                        {
+                            Edits =
+                            [
+                                new()
+                                {
+                                    Ids = selected.Select(x => x.Id).ToArray(),
+                                    ParentId = parentId,
+                                    IsEditParentId = true,
+                                },
+                            ],
+                        },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         appResourceService
@@ -333,30 +363,8 @@ public static class DioclesCommands
                         new(
                             appResourceService.GetResource<string>("Lang.ChangeParent"),
                             UiHelper.CreateCommand(ct =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
-
-                                dialogService.CloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Edits =
-                                        [
-                                            new()
-                                            {
-                                                Ids = selected.Select(x => x.Id).ToArray(),
-                                                ParentId = parentId,
-                                                IsEditParentId = true,
-                                            },
-                                        ],
-                                    },
-                                    ct
-                                );
-                            }),
+                                ChangesParentAsync(ct).ConfigureAwait(false)
+                            ),
                             null,
                             DialogButtonType.Primary
                         ),
@@ -373,6 +381,19 @@ public static class DioclesCommands
                 var viewModel = factory.CreateChangeParentToDo();
                 Dispatcher.UIThread.Post(() => toDoCache.ResetItems());
 
+                async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new() { Clones = [new() { ParentId = parentId, CloneIds = [item.Id] }] },
+                        ct
+                    );
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         stringFormater
@@ -384,26 +405,7 @@ public static class DioclesCommands
                         viewModel,
                         new(
                             appResourceService.GetResource<string>("Lang.Clone"),
-                            UiHelper.CreateCommand(ct =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
-
-                                dialogService.CloseMessageBox();
-
-                                return uiToDoService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Clones =
-                                        [
-                                            new() { ParentId = parentId, CloneIds = [item.Id] },
-                                        ],
-                                    },
-                                    ct
-                                );
-                            }),
+                            UiHelper.CreateCommand(ct => CloneAsync(ct).ConfigureAwait(false)),
                             null,
                             DialogButtonType.Primary
                         ),

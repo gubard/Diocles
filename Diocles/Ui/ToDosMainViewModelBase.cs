@@ -139,13 +139,13 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
     {
         if (_editItem is null)
         {
-            DialogService.DispatchCloseMessageBox();
+            await DialogService.CloseMessageBoxAsync(ct);
 
             return new EmptyValidationErrors();
         }
 
         var edit = viewModel.CreateEditToDos(_editItem.Id);
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
 
         return await ToDoUiService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
     }

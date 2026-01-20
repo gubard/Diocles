@@ -48,7 +48,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged -= HeaderChanged;
+        _header.PropertyChanged -= HeaderPropertyChanged;
 
         return _objectStorage.SaveAsync(
             $"{typeof(RootToDosViewModel).FullName}",
@@ -70,7 +70,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 
-    private void HeaderChanged(object? sender, PropertyChangedEventArgs e)
+    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
         {
@@ -80,7 +80,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
     private async ValueTask InitCore(CancellationToken ct)
     {
-        _header.PropertyChanged += HeaderChanged;
+        _header.PropertyChanged += HeaderPropertyChanged;
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
@@ -141,7 +141,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         CancellationToken ct
     )
     {
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
         parameters.StartExecute();
 
         if (parameters.HasErrors)

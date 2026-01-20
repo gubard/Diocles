@@ -1,4 +1,6 @@
-﻿using Avalonia.Collections;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
@@ -11,12 +13,13 @@ using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Generator;
 using Inanna.Helpers;
 using Inanna.Models;
+using Inanna.Services;
 using Inanna.Ui;
 
 namespace Diocles.Ui;
 
 [EditNotify]
-public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
+public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, IInitUi, ISaveUi
 {
     private static readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
 
@@ -83,14 +86,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         _weeklyDays = [DayOfWeek.Monday];
         _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         Tree = factory.CreateToDoTree();
-
-        Tree.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(Tree.Selected))
-            {
-                Reference = Tree.Selected;
-            }
-        };
     }
 
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
@@ -223,6 +218,20 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
 
     Guid? IToDo.ReferenceId => Reference?.Id;
 
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    {
+        Tree.PropertyChanged += TreePropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        Tree.PropertyChanged -= TreePropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
     public ShortToDo CreateShortToDo()
     {
         return new()
@@ -329,5 +338,13 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo
         );
         SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
         SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
+    }
+
+    private void TreePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Tree.Selected))
+        {
+            Reference = Tree.Selected;
+        }
     }
 }
