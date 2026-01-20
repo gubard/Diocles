@@ -19,7 +19,7 @@ public static class DiocleHelper
         IEnumerable<ToDoNotify> parameter
     )
     {
-        return new AvaloniaList<InannaCommand>()
+        return new AvaloniaList<InannaCommand>
         {
             new(
                 DioclesCommands.ShowDeleteToDosCommand,
@@ -39,6 +39,12 @@ public static class DiocleHelper
                 parameter,
                 AppResourceService.GetResource<string>("Lang.ChangeParent"),
                 PackIconMaterialDesignKind.AccountTree
+            ),
+            new(
+                DioclesCommands.ShowClonesCommand,
+                parameter,
+                AppResourceService.GetResource<string>("Lang.Clone"),
+                PackIconMaterialDesignKind.CopyrightOutline
             ),
         };
     }

@@ -415,9 +415,59 @@ public static class DioclesCommands
                 );
             }
         );
+
+        ShowClonesCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
+            (items, ct) =>
+            {
+                var selected = items.Where(x => x.IsSelected).ToArray();
+                var viewModel = factory.CreateChangeParentToDo();
+                Dispatcher.UIThread.Post(() => toDoCache.ResetItems());
+
+                async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+
+                    await dialogService.CloseMessageBoxAsync(ct);
+
+                    return await uiToDoService.PostAsync(
+                        Guid.NewGuid(),
+                        new()
+                        {
+                            Clones =
+                            [
+                                new()
+                                {
+                                    ParentId = parentId,
+                                    CloneIds = selected.Select(x => x.Id).ToArray(),
+                                },
+                            ],
+                        },
+                        ct
+                    );
+                }
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        appResourceService
+                            .GetResource<string>("Lang.Clone")
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        new(
+                            appResourceService.GetResource<string>("Lang.Clone"),
+                            UiHelper.CreateCommand(ct => CloneAsync(ct).ConfigureAwait(false)),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
     }
 
     public static readonly ICommand ShowCloneCommand;
+    public static readonly ICommand ShowClonesCommand;
     public static readonly ICommand OpenToDosCommand;
     public static readonly ICommand OpenParentCommand;
     public static readonly ICommand ShowDeleteToDoCommand;
