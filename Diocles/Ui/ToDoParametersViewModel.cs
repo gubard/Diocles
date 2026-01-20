@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Media;
@@ -80,11 +81,8 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         _toDoValidator = toDoValidator;
         InitValidation();
         _annuallyDays = [new() { Day = 1, Month = Month.January }];
-        _annuallyDays.CollectionChanged += (_, _) => IsEditAnnuallyDays = true;
         _monthlyDays = [1];
-        _monthlyDays.CollectionChanged += (_, _) => IsEditMonthlyDays = true;
         _weeklyDays = [DayOfWeek.Monday];
-        _weeklyDays.CollectionChanged += (_, _) => IsEditWeeklyDays = true;
         Tree = factory.CreateToDoTree();
     }
 
@@ -221,6 +219,9 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         Tree.PropertyChanged += TreePropertyChanged;
+        _annuallyDays.CollectionChanged += AnnuallyDaysCollectionChanged;
+        _monthlyDays.CollectionChanged += MonthlyDaysCollectionChanged;
+        _weeklyDays.CollectionChanged += WeeklyDaysCollectionChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
@@ -228,6 +229,9 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
         Tree.PropertyChanged -= TreePropertyChanged;
+        _annuallyDays.CollectionChanged -= AnnuallyDaysCollectionChanged;
+        _monthlyDays.CollectionChanged -= MonthlyDaysCollectionChanged;
+        _weeklyDays.CollectionChanged -= WeeklyDaysCollectionChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
@@ -338,6 +342,21 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         );
         SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
         SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
+    }
+
+    private void AnnuallyDaysCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        IsEditAnnuallyDays = true;
+    }
+
+    private void MonthlyDaysCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        IsEditMonthlyDays = true;
+    }
+
+    private void WeeklyDaysCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        IsEditWeeklyDays = true;
     }
 
     private void TreePropertyChanged(object? sender, PropertyChangedEventArgs e)

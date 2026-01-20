@@ -60,14 +60,14 @@ public sealed partial class SearchToDoViewModel
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
 
-        return TaskHelper.ConfiguredCompletedTask;
+        return List.SaveUiAsync(ct);
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
 
-        return TaskHelper.ConfiguredCompletedTask;
+        return List.InitUiAsync(ct);
     }
 
     private readonly IToDoUiService _toDoUiService;

@@ -1,21 +1,24 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Hestia.Contract.Models;
 using Inanna.Models;
+using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class ToDoListViewModel : ViewModelBase
+public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
 {
     public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoUiCache toDoUiCache)
     {
         _favorites = toDoUiCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
         _items = items;
-        items.CollectionChanged += (_, _) => Refresh();
     }
 
     public IEnumerable<ToDoNotify> Items =>
@@ -59,6 +62,20 @@ public partial class ToDoListViewModel : ViewModelBase
         Items.Where(x => x.Status == ToDoStatus.ReadyForComplete);
     public int ReadyForCompleteCount => ReadyForComplete.Count();
 
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    {
+        _items.CollectionChanged += ItemsCollectionChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        _items.CollectionChanged -= ItemsCollectionChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
     public void Refresh()
     {
         OnPropertyChanged(nameof(Items));
@@ -91,6 +108,16 @@ public partial class ToDoListViewModel : ViewModelBase
         OnPropertyChanged(nameof(ComingSoonCount));
     }
 
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(OrderBy))
+        {
+            Refresh();
+        }
+    }
+
     [ObservableProperty]
     private ToDoGroupBy _groupBy;
 
@@ -100,13 +127,8 @@ public partial class ToDoListViewModel : ViewModelBase
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
 
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    private void ItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        base.OnPropertyChanged(e);
-
-        if (e.PropertyName == nameof(OrderBy))
-        {
-            Refresh();
-        }
+        Refresh();
     }
 }

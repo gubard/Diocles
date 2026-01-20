@@ -62,14 +62,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged -= HeaderPropertyChanged;
-        Item.PropertyChanged -= ItemPropertyChanged;
-
-        return _objectStorage.SaveAsync(
-            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
-            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
-            ct
-        );
+        return SaveUiCore(ct).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
@@ -91,6 +84,20 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 
+    public async ValueTask SaveUiCore(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderPropertyChanged;
+        Item.PropertyChanged -= ItemPropertyChanged;
+
+        await _objectStorage.SaveAsync(
+            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
+            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            ct
+        );
+
+        await List.SaveUiAsync(ct);
+    }
+
     private void ItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Item.Name))
@@ -111,6 +118,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     {
         _header.PropertyChanged += HeaderPropertyChanged;
         Item.PropertyChanged += ItemPropertyChanged;
+        await List.InitUiAsync(ct);
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(

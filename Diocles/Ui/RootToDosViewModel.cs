@@ -48,13 +48,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _header.PropertyChanged -= HeaderPropertyChanged;
-
-        return _objectStorage.SaveAsync(
-            $"{typeof(RootToDosViewModel).FullName}",
-            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
-            ct
-        );
+        return SaveUiCore(ct).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
@@ -78,9 +72,23 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         }
     }
 
+    public async ValueTask SaveUiCore(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderPropertyChanged;
+
+        await _objectStorage.SaveAsync(
+            $"{typeof(RootToDosViewModel).FullName}",
+            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            ct
+        );
+
+        await List.SaveUiAsync(ct);
+    }
+
     private async ValueTask InitCore(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
+        await List.InitUiAsync(ct);
         await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
