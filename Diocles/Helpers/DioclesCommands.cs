@@ -254,7 +254,7 @@ public static class DioclesCommands
         ShowChangeParentCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) =>
             {
-                var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+                var viewModel = factory.CreateChangeParentToDo();
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -312,7 +312,7 @@ public static class DioclesCommands
             (items, ct) =>
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
-                var viewModel = Dispatcher.UIThread.Invoke(() => factory.CreateChangeParentToDo());
+                var viewModel = factory.CreateChangeParentToDo();
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -366,8 +366,56 @@ public static class DioclesCommands
                 );
             }
         );
+
+        ShowCloneCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) =>
+            {
+                var viewModel = factory.CreateChangeParentToDo();
+                Dispatcher.UIThread.Post(() => toDoCache.ResetItems());
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.CloneItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        new(
+                            appResourceService.GetResource<string>("Lang.Clone"),
+                            UiHelper.CreateCommand(ct =>
+                            {
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                dialogService.CloseMessageBox();
+
+                                return uiToDoService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Clones =
+                                        [
+                                            new() { ParentId = parentId, CloneIds = [item.Id] },
+                                        ],
+                                    },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
     }
 
+    public static readonly ICommand ShowCloneCommand;
     public static readonly ICommand OpenToDosCommand;
     public static readonly ICommand OpenParentCommand;
     public static readonly ICommand ShowDeleteToDoCommand;

@@ -78,9 +78,21 @@
 
                             <Button Grid.Row="1"
                                     Grid.Column="1"
-                                    Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="{ip:MaterialDesign AccountTree}" />
+                                    Content="{ip:MaterialDesign MoreHoriz}">
+                                <Button.Flyout>
+                                    <MenuFlyout>
+                                        <MenuItem Icon="{ip:MaterialDesign AccountTree}"
+                                                  Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
+                                                  CommandParameter="{Binding}"
+                                                  Header="{DynamicResource Lang.ChangeParent}" />
+                                        <MenuItem Icon="{ip:MaterialDesign CopyrightOutline}"
+                                                  Header="{DynamicResource Lang.Clone}"
+                                                  Command="{x:Static h:DioclesCommands.ShowCloneCommand}"
+                                                  CommandParameter="{Binding}" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+
 
                             <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Classes="align-center" Text="{Binding Type}" />
                         </Grid>
