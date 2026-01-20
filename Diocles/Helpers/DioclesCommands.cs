@@ -276,8 +276,8 @@ public static class DioclesCommands
                             UiHelper.CreateCommand(ct =>
                             {
                                 var parentId = viewModel.IsRoot
-                                    ? (Guid?)null
-                                    : viewModel.Tree.Selected.Id;
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
 
                                 dialogService.DispatchCloseMessageBox();
 
@@ -335,8 +335,8 @@ public static class DioclesCommands
                             UiHelper.CreateCommand(ct =>
                             {
                                 var parentId = viewModel.IsRoot
-                                    ? (Guid?)null
-                                    : viewModel.Tree.Selected.Id;
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
 
                                 dialogService.CloseMessageBox();
 

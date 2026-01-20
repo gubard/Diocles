@@ -103,7 +103,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = Factory.CreateToDoParameters(ValidationMode.ValidateAll, false);
+        var parameters = Factory.CreateToDoParameters(ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>
@@ -115,11 +115,11 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
                                 AppResourceService.GetResource<string>("Lang.ToDo")
                             )
                             .DispatchToDialogHeader(),
-                        credential,
+                        parameters,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
                             CreateCommand,
-                            credential,
+                            parameters,
                             DialogButtonType.Primary
                         ),
                         UiHelper.CancelButton

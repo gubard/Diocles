@@ -13,7 +13,7 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     {
         _toDoUiService = toDoUiService;
         Roots = toDoUiCache.Roots;
-        _selected = Roots.First();
+        _selected = Roots.FirstOrDefault();
     }
 
     public IEnumerable<ToDoNotify> Roots { get; }
@@ -29,5 +29,5 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     private readonly IToDoUiService _toDoUiService;
 
     [ObservableProperty]
-    private ToDoNotify _selected;
+    private ToDoNotify? _selected;
 }
