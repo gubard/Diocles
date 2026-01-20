@@ -52,7 +52,7 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     {
         var errors = await _toDoUiService.HealthCheckAsync(ct);
 
-        if (errors.ValidationErrors.Count > 0)
+        if (errors.ValidationErrors.Count != 0)
         {
             return errors;
         }
