@@ -461,18 +461,22 @@ public sealed class ToDoMemoryCache
             {
                 var item = GetItem(id);
 
-                switch (item.IsCan)
+                switch (item.IsCanDo)
                 {
-                    case ToDoIsCan.None:
+                    case ToDoIsCanDo.None:
                         break;
-                    case ToDoIsCan.CanComplete:
+                    case ToDoIsCanDo.CanComplete:
                         item.Status = ToDoStatus.Completed;
                         break;
-                    case ToDoIsCan.CanIncomplete:
+                    case ToDoIsCanDo.CanIncomplete:
                         item.Status = ToDoStatus.ReadyForComplete;
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(item.IsCan), item.IsCan, null);
+                        throw new ArgumentOutOfRangeException(
+                            nameof(item.IsCanDo),
+                            item.IsCanDo,
+                            null
+                        );
                 }
             }
 
@@ -553,7 +557,7 @@ public sealed class ToDoMemoryCache
         item.Active = toDo.Active is not null
             ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
             : null;
-        item.IsCan = toDo.IsCan;
+        item.IsCanDo = toDo.IsCanDo;
         item.Status = toDo.Status;
         fullUpdatedIds.Add(item.Id);
 

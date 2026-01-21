@@ -97,7 +97,7 @@ public partial class ToDoNotify
     public partial ToDoStatus Status { get; set; }
 
     [ObservableProperty]
-    public partial ToDoIsCan IsCan { get; set; }
+    public partial ToDoIsCanDo IsCanDo { get; set; }
 
     [ObservableProperty]
     public partial ToDoNotify? Active { get; set; }
@@ -146,7 +146,7 @@ public partial class ToDoNotify
 
     public static ToDoNotify Create(Guid input)
     {
-        return new(input);
+        return new(input) { Status = ToDoStatus.ReadyForComplete };
     }
 
     Guid? IToDo.ReferenceId => Reference?.Id;

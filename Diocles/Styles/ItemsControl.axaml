@@ -21,13 +21,13 @@
                                     Command="{x:Static h:DioclesCommands.ChangeOrderCommand}" />
 
                             <ToggleButton Classes="s-40"
-                                          IsChecked="{Binding IsCan, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}"
-                                          IsVisible="{Binding IsCan, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.None}}"
+                                          IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
+                                          IsVisible="{Binding IsCanDo, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
                                           CommandParameter="{Binding}"
                                           Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
                                 <ip:PackIconMaterialDesign Kind="Check"
                                                            Classes="h2 align-center"
-                                                           IsVisible="{Binding IsCan, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCan.CanIncomplete}}" />
+                                                           IsVisible="{Binding IsCanDo, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
                             </ToggleButton>
                         </StackPanel>
 
