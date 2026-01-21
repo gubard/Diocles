@@ -8,6 +8,7 @@ using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Models;
+using Hestia.Contract.Helpers;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
@@ -30,6 +31,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     private readonly AvaloniaList<int> _monthlyDays;
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
     private readonly IToDoValidator _toDoValidator;
+    private readonly bool _isTypeHasDueDate;
 
     static ToDoParametersViewModel()
     {
@@ -67,6 +69,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         IsBookmark = item.IsBookmark;
         IsFavorite = item.IsFavorite;
         Icon = item.Icon;
+        _isTypeHasDueDate = item.Type.IsHasDueDate();
         ResetEdit();
     }
 
@@ -321,6 +324,16 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
             YearsOffset = YearsOffset,
             IsEditYearsOffset = IsEditYearsOffset,
         };
+    }
+
+    protected override void OnPropertyChanging(PropertyChangingEventArgs e)
+    {
+        base.OnPropertyChanging(e);
+
+        if (e.PropertyName == nameof(Type) && !IsEditDueDate && !_isTypeHasDueDate)
+        {
+            DueDate = DateTime.Now.ToDateOnly();
+        }
     }
 
     private void InitValidation()
