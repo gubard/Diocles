@@ -88,8 +88,6 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     private async ValueTask InitCore(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
-        await List.InitUiAsync(ct);
-        await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
             $"{typeof(RootToDosViewModel).FullName}",
@@ -101,6 +99,9 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             List.GroupBy = setting.GroupBy;
             List.OrderBy = setting.OrderBy;
         });
+
+        await List.InitUiAsync(ct);
+        await RefreshAsync(ct);
     }
 
     [RelayCommand]
