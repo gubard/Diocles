@@ -14,7 +14,8 @@ public sealed class ToDoUiService(
     AppState appState,
     IToDoUiCache uiCache,
     INavigator navigator,
-    string serviceName
+    string serviceName,
+    IResponseHandler responseHandler
 )
     : UiService<
         HestiaGetRequest,
@@ -24,5 +25,5 @@ public sealed class ToDoUiService(
         IHttpToDoService,
         IDbToDoService,
         IToDoUiCache
-    >(httpService, dbService, appState, uiCache, navigator, serviceName),
+    >(httpService, dbService, appState, uiCache, navigator, serviceName, responseHandler),
         IToDoUiService;
