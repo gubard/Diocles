@@ -486,7 +486,7 @@ public sealed class ToDoMemoryCache
 
         item.UpdateChildren(
             toDo.Children.OrderBy(x => x.Item.OrderIndex)
-                .Select(x => UpdateShortToDo(x.Item, shortUpdatedIds))
+                .Select(x => UpdateToDoSelector(x, shortUpdatedIds))
                 .ToArray()
         );
 
