@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using Diocles.Models;
 using Diocles.Services;
@@ -142,23 +143,29 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<HestiaPostResponse> DeleteToDoAsync(CancellationToken ct)
+                async ValueTask<HestiaPostResponse> DeleteToDoAsync(CancellationToken c)
                 {
-                    await dialogService.CloseMessageBoxAsync(ct);
+                    await dialogService.CloseMessageBoxAsync(c);
 
                     return await uiToDoService.PostAsync(
                         Guid.NewGuid(),
                         new() { DeleteIds = [item.Id] },
-                        ct
+                        c
                     );
                 }
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
-                        stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.AskDelete"),
-                            item.Name
+                        Dispatcher.UIThread.Invoke(() =>
+                            new TextBlock
+                            {
+                                Text = stringFormater.Format(
+                                    appResourceService.GetResource<string>("Lang.AskDelete"),
+                                    item.Name
+                                ),
+                                Classes = { "text-wrap" },
+                            }
                         ),
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Delete"),
@@ -186,23 +193,29 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<HestiaPostResponse> DeleteToDosAsync(CancellationToken ct)
+                async ValueTask<HestiaPostResponse> DeleteToDosAsync(CancellationToken c)
                 {
-                    await dialogService.CloseMessageBoxAsync(ct);
+                    await dialogService.CloseMessageBoxAsync(c);
 
                     return await uiToDoService.PostAsync(
                         Guid.NewGuid(),
                         new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
-                        ct
+                        c
                     );
                 }
 
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
-                        stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.AskDelete"),
-                            selected.Select(x => x.Name).JoinString(", ")
+                        Dispatcher.UIThread.Invoke(() =>
+                            new TextBlock
+                            {
+                                Text = stringFormater.Format(
+                                    appResourceService.GetResource<string>("Lang.AskDelete"),
+                                    selected.Select(x => x.Name).JoinString(", ")
+                                ),
+                                Classes = { "text-wrap" },
+                            }
                         ),
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Delete"),

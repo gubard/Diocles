@@ -92,9 +92,25 @@ public sealed class ToDoMemoryCache
         return TaskHelper.ConfiguredCompletedTask;
     }
 
+    public override ConfiguredValueTaskAwaitable UpdateAsync(
+        HestiaPostRequest source,
+        CancellationToken ct
+    )
+    {
+        Update(source);
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    private readonly AvaloniaList<ToDoNotify> _roots = [];
+    private readonly AvaloniaList<ToDoNotify> _favorites = [];
+    private readonly AvaloniaList<ToDoNotify> _bookmarks = [];
+    private readonly AvaloniaList<ToDoNotify> _search = [];
+    private readonly INavigator _navigator;
+
     private void Update(HestiaGetResponse source)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             var fullUpdatedIds = new HashSet<Guid>();
             var shortUpdatedIds = new HashSet<Guid>();
@@ -191,19 +207,9 @@ public sealed class ToDoMemoryCache
         });
     }
 
-    public override ConfiguredValueTaskAwaitable UpdateAsync(
-        HestiaPostRequest source,
-        CancellationToken ct
-    )
-    {
-        Update(source);
-
-        return TaskHelper.ConfiguredCompletedTask;
-    }
-
     private void Update(HestiaPostRequest source)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             var shortUpdatedIds = new HashSet<Guid>();
 
@@ -424,9 +430,11 @@ public sealed class ToDoMemoryCache
             foreach (var changeOrder in source.ChangeOrder)
             {
                 var item = GetItem(changeOrder.StartId);
+
                 var siblings = item.Parent is not null
                     ? (AvaloniaList<ToDoNotify>)item.Children
                     : _roots;
+
                 var index = siblings.IndexOf(item);
 
                 if (index == -1)
@@ -438,6 +446,7 @@ public sealed class ToDoMemoryCache
 
                 foreach (var insertItem in insertItems)
                 {
+                    siblings.Remove(insertItem);
                     siblings.Insert(index, insertItem);
                 }
             }
@@ -554,9 +563,11 @@ public sealed class ToDoMemoryCache
         }
 
         var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
+
         item.Active = toDo.Active is not null
             ? UpdateShortToDo(toDo.Active, shortUpdatedIds)
             : null;
+
         item.IsCanDo = toDo.IsCanDo;
         item.Status = toDo.Status;
         fullUpdatedIds.Add(item.Id);
@@ -591,10 +602,4 @@ public sealed class ToDoMemoryCache
             _roots.Add(item);
         }
     }
-
-    private readonly AvaloniaList<ToDoNotify> _roots = [];
-    private readonly AvaloniaList<ToDoNotify> _favorites = [];
-    private readonly AvaloniaList<ToDoNotify> _bookmarks = [];
-    private readonly AvaloniaList<ToDoNotify> _search = [];
-    private readonly INavigator _navigator;
 }

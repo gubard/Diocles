@@ -82,14 +82,17 @@ public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
             }
         );
 
-        _circle.UpdateOrder(_items.Where(x => x.Type == ToDoType.Circle).ToArray());
-        _group.UpdateOrder(_items.Where(x => x.Type == ToDoType.Group).ToArray());
-        _periodicity.UpdateOrder(_items.Where(x => x.Type == ToDoType.Periodicity).ToArray());
-
         _periodicityOffset.UpdateOrder(
             _items.Where(x => x.Type == ToDoType.PeriodicityOffset).ToArray()
         );
 
+        _readyForComplete.UpdateOrder(
+            _items.Where(x => x.Status == ToDoStatus.ReadyForComplete).ToArray()
+        );
+
+        _circle.UpdateOrder(_items.Where(x => x.Type == ToDoType.Circle).ToArray());
+        _group.UpdateOrder(_items.Where(x => x.Type == ToDoType.Group).ToArray());
+        _periodicity.UpdateOrder(_items.Where(x => x.Type == ToDoType.Periodicity).ToArray());
         _fixedDate.UpdateOrder(_items.Where(x => x.Type == ToDoType.FixedDate).ToArray());
         _reference.UpdateOrder(_items.Where(x => x.Type == ToDoType.Reference).ToArray());
         _step.UpdateOrder(_items.Where(x => x.Type == ToDoType.Step).ToArray());
@@ -98,9 +101,6 @@ public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
         _planned.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Planned).ToArray());
         _completed.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Completed).ToArray());
         _miss.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Miss).ToArray());
-        _readyForComplete.UpdateOrder(
-            _items.Where(x => x.Status == ToDoStatus.ReadyForComplete).ToArray()
-        );
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

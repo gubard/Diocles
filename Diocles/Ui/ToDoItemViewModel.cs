@@ -70,15 +70,15 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         return InitCore(ct).ConfigureAwait(false);
     }
 
-    protected override HestiaGetRequest CreateRefreshRequest()
-    {
-        return new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] };
-    }
-
     public override void RefreshUi()
     {
         base.RefreshUi();
         _header.RefreshUi();
+    }
+
+    protected override HestiaGetRequest CreateRefreshRequest()
+    {
+        return new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] };
     }
 
     private readonly IObjectStorage _objectStorage;
@@ -118,8 +118,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     {
         _header.PropertyChanged += HeaderPropertyChanged;
         Item.PropertyChanged += ItemPropertyChanged;
-        await List.InitUiAsync(ct);
-        await RefreshAsync(ct);
 
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(
             $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
@@ -131,6 +129,9 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             List.GroupBy = setting.GroupBy;
             List.OrderBy = setting.OrderBy;
         });
+
+        await List.InitUiAsync(ct);
+        await RefreshAsync(ct);
     }
 
     [RelayCommand]
