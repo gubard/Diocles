@@ -22,6 +22,7 @@ public static class DioclesCommands
         var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
+        var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -70,6 +71,66 @@ public static class DioclesCommands
             );
         }
 
+        async ValueTask EditToDosCommandAsync(IEnumerable<ToDoNotify> items, CancellationToken ct)
+        {
+            var selected = items.Where(x => x.IsSelected).ToArray();
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                toDoCache.ResetItems();
+
+                foreach (var s in selected)
+                {
+                    s.IsHideOnTree = true;
+                }
+            });
+
+            var header = appResourceService
+                .GetResource<string>("Lang.Edit")
+                .DispatchToDialogHeader();
+
+            var settings = await objectStorage.LoadAsync<ToDoParametersSettings>(
+                $"{typeof(ToDoParametersSettings).FullName}.multi",
+                ct
+            );
+
+            var viewModel = factory.CreateToDoParameters(
+                settings,
+                ValidationMode.ValidateOnlyEdited,
+                true
+            );
+
+            async ValueTask<HestiaPostResponse> EditToDosAsync(CancellationToken c)
+            {
+                var edit = viewModel.CreateEditToDos(selected.Select(x => x.Id).ToArray());
+                var newSettings = viewModel.CreateSettings();
+                await dialogService.CloseMessageBoxAsync(c);
+
+                await objectStorage.SaveAsync(
+                    $"{typeof(ToDoParametersSettings).FullName}.multi",
+                    newSettings,
+                    c
+                );
+
+                return await uiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c);
+            }
+
+            await dialogService.ShowMessageBoxAsync(
+                new(
+                    header,
+                    viewModel,
+                    new DialogButton(
+                        appResourceService.GetResource<string>("Lang.Edit"),
+                        UiHelper.CreateCommand(ct => EditToDosAsync(ct).ConfigureAwait(false)),
+                        null,
+                        DialogButtonType.Primary
+                    ),
+                    UiHelper.CancelButton
+                ),
+                ct
+            );
+        }
+
         OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item.ActualItem), ct)
         );
@@ -113,56 +174,7 @@ public static class DioclesCommands
         );
 
         ShowEditToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(
-            (items, ct) =>
-            {
-                var selected = items.Where(x => x.IsSelected).ToArray();
-
-                Dispatcher.UIThread.Post(() =>
-                {
-                    toDoCache.ResetItems();
-
-                    foreach (var s in selected)
-                    {
-                        s.IsHideOnTree = true;
-                    }
-                });
-
-                var header = appResourceService
-                    .GetResource<string>("Lang.Edit")
-                    .DispatchToDialogHeader();
-
-                var viewModel = factory.CreateToDoParameters(
-                    ValidationMode.ValidateOnlyEdited,
-                    true
-                );
-
-                async ValueTask<HestiaPostResponse> EditToDosAsync(CancellationToken ct)
-                {
-                    var edit = viewModel.CreateEditToDos(selected.Select(x => x.Id).ToArray());
-                    await dialogService.CloseMessageBoxAsync(ct);
-
-                    return await uiToDoService.PostAsync(
-                        Guid.NewGuid(),
-                        new() { Edits = [edit] },
-                        ct
-                    );
-                }
-
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        header,
-                        viewModel,
-                        new DialogButton(
-                            appResourceService.GetResource<string>("Lang.Edit"),
-                            UiHelper.CreateCommand(ct => EditToDosAsync(ct).ConfigureAwait(false)),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        UiHelper.CancelButton
-                    ),
-                    ct
-                );
-            }
+            (items, ct) => EditToDosCommandAsync(items, ct).ConfigureAwait(false)
         );
 
         ShowDeleteToDosCommand = UiHelper.CreateCommand<IEnumerable<ToDoNotify>>(

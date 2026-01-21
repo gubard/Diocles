@@ -126,11 +126,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             ct
         );
 
-        if (setting is null)
-        {
-            return;
-        }
-
         Dispatcher.UIThread.Post(() =>
         {
             List.GroupBy = setting.GroupBy;
@@ -141,7 +136,12 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = Factory.CreateToDoParameters(ValidationMode.ValidateAll, false);
+        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(
+            $"{typeof(ToDoParametersSettings).FullName}.{Item.Id}",
+            ct
+        );
+
+        var credential = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>
@@ -179,13 +179,21 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         CancellationToken ct
     )
     {
-        await DialogService.CloseMessageBoxAsync(ct);
         parameters.StartExecute();
 
         if (parameters.HasErrors)
         {
             return new EmptyValidationErrors();
         }
+
+        var settings = parameters.CreateSettings();
+        await DialogService.CloseMessageBoxAsync(ct);
+
+        await _objectStorage.SaveAsync(
+            $"{typeof(ToDoParametersSettings).FullName}.{Item.Id}",
+            settings,
+            ct
+        );
 
         var create = parameters.CreateShortToDo();
         create.ParentId = Item.Id;

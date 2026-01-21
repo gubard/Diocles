@@ -14,8 +14,13 @@ public interface IDioclesViewModelFactory
     ChangeParentToDoViewModel CreateChangeParentToDo();
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
-    ToDoParametersViewModel CreateToDoParameters(ValidationMode validationMode, bool isShowEdit);
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
+
+    ToDoParametersViewModel CreateToDoParameters(
+        ToDoParametersSettings settings,
+        ValidationMode validationMode,
+        bool isShowEdit
+    );
 
     ToDosHeaderViewModel CreateToDosHeader(
         string title,
@@ -100,11 +105,12 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     }
 
     public ToDoParametersViewModel CreateToDoParameters(
+        ToDoParametersSettings settings,
         ValidationMode validationMode,
         bool isShowEdit
     )
     {
-        return new(validationMode, isShowEdit, _toDoValidator, this);
+        return new(settings, validationMode, isShowEdit, _toDoValidator, this);
     }
 
     public ToDoParametersViewModel CreateToDoParameters(

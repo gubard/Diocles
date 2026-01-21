@@ -39,22 +39,62 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     }
 
     public ToDoParametersViewModel(
+        ToDoParametersSettings item,
+        ValidationMode validationMode,
+        bool isShowEdit,
+        IToDoValidator toDoValidator,
+        IDioclesViewModelFactory factory
+    )
+        : base(validationMode, isShowEdit)
+    {
+        _toDoValidator = toDoValidator;
+        InitValidation();
+        Tree = factory.CreateToDoTree();
+        Name = item.Name;
+        Description = item.Description;
+        Type = item.Type;
+        DueDate = item.DueDate;
+        TypeOfPeriodicity = item.TypeOfPeriodicity;
+        _annuallyDays = new(item.AnnuallyDays.ToArray());
+        _monthlyDays = new(item.MonthlyDays.ToArray());
+        _weeklyDays = new(item.WeeklyDays.ToArray());
+        DaysOffset = item.DaysOffset;
+        MonthsOffset = item.MonthsOffset;
+        WeeksOffset = item.WeeksOffset;
+        YearsOffset = item.YearsOffset;
+        ChildrenCompletionType = item.ChildrenCompletionType;
+        Link = item.Link;
+        IsRequiredCompleteInDueDate = item.IsRequiredCompleteInDueDate;
+        DescriptionType = item.DescriptionType;
+        Color = Color.TryParse(item.Color, out var color) ? color : Colors.Transparent;
+        RemindDaysBefore = item.RemindDaysBefore;
+        IsBookmark = item.IsBookmark;
+        IsFavorite = item.IsFavorite;
+        Icon = item.Icon;
+        _isTypeHasDueDate = item.Type.IsHasDueDate();
+        ResetEdit();
+    }
+
+    public ToDoParametersViewModel(
         ToDoNotify item,
         ValidationMode validationMode,
         bool isShowEdit,
         IToDoValidator toDoValidator,
         IDioclesViewModelFactory factory
     )
-        : this(validationMode, isShowEdit, toDoValidator, factory)
+        : base(validationMode, isShowEdit)
     {
+        _toDoValidator = toDoValidator;
+        InitValidation();
+        Tree = factory.CreateToDoTree();
         Name = item.Name;
         Description = item.Description;
         Type = item.Type;
         DueDate = item.DueDate;
         TypeOfPeriodicity = item.TypeOfPeriodicity;
-        _annuallyDays.UpdateOrder(item.AnnuallyDays.ToArray());
-        _monthlyDays.UpdateOrder(item.MonthlyDays.ToArray());
-        _weeklyDays.UpdateOrder(item.WeeklyDays.ToArray());
+        _annuallyDays = new(item.AnnuallyDays.ToArray());
+        _monthlyDays = new(item.MonthlyDays.ToArray());
+        _weeklyDays = new(item.WeeklyDays.ToArray());
         DaysOffset = item.DaysOffset;
         MonthsOffset = item.MonthsOffset;
         WeeksOffset = item.WeeksOffset;
@@ -73,22 +113,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         ResetEdit();
     }
 
-    public ToDoParametersViewModel(
-        ValidationMode validationMode,
-        bool isShowEdit,
-        IToDoValidator toDoValidator,
-        IDioclesViewModelFactory factory
-    )
-        : base(validationMode, isShowEdit)
-    {
-        _toDoValidator = toDoValidator;
-        InitValidation();
-        _annuallyDays = [new() { Day = 1, Month = Month.January }];
-        _monthlyDays = [1];
-        _weeklyDays = [DayOfWeek.Monday];
-        Tree = factory.CreateToDoTree();
-    }
-
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
@@ -101,22 +125,22 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     public partial bool IsFavorite { get; set; }
 
     [ObservableProperty]
-    public partial string Name { get; set; } = string.Empty;
+    public partial string Name { get; set; }
 
     [ObservableProperty]
-    public partial string Description { get; set; } = string.Empty;
+    public partial string Description { get; set; }
 
     [ObservableProperty]
     public partial ToDoType Type { get; set; }
 
     [ObservableProperty]
-    public partial DateOnly DueDate { get; set; } = DateTime.Now.ToDateOnly();
+    public partial DateOnly DueDate { get; set; }
 
     [ObservableProperty]
     public partial TypeOfPeriodicity TypeOfPeriodicity { get; set; }
 
     [ObservableProperty]
-    public partial ushort DaysOffset { get; set; } = 1;
+    public partial ushort DaysOffset { get; set; }
 
     [ObservableProperty]
     public partial ushort MonthsOffset { get; set; }
@@ -131,10 +155,10 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     public partial ChildrenCompletionType ChildrenCompletionType { get; set; }
 
     [ObservableProperty]
-    public partial string Link { get; set; } = string.Empty;
+    public partial string Link { get; set; }
 
     [ObservableProperty]
-    public partial bool IsRequiredCompleteInDueDate { get; set; } = true;
+    public partial bool IsRequiredCompleteInDueDate { get; set; }
 
     [ObservableProperty]
     public partial DescriptionType DescriptionType { get; set; }
@@ -143,7 +167,10 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     public partial PackIconMaterialDesignKind Icon { get; set; }
 
     [ObservableProperty]
-    public partial Color Color { get; set; } = Colors.Transparent;
+    public partial Color Color { get; set; }
+
+    [ObservableProperty]
+    public partial ToDoNotify? Reference { get; set; }
 
     [ObservableProperty]
     public partial uint RemindDaysBefore { get; set; }
@@ -214,9 +241,6 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
     [ObservableProperty]
     public partial bool IsEditRemindDaysBefore { get; set; }
 
-    [ObservableProperty]
-    public partial ToDoNotify? Reference { get; set; }
-
     Guid? IToDo.ReferenceId => Reference?.Id;
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
@@ -263,6 +287,34 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
             Icon = Icon.ToString(),
             Color = Color.ToString(),
             ReferenceId = Reference?.Id,
+            RemindDaysBefore = RemindDaysBefore,
+            IsBookmark = IsBookmark,
+            IsFavorite = IsFavorite,
+        };
+    }
+
+    public ToDoParametersSettings CreateSettings()
+    {
+        return new()
+        {
+            Name = Name.Trim(),
+            Description = Description.Trim(),
+            Type = Type,
+            DueDate = DueDate,
+            TypeOfPeriodicity = TypeOfPeriodicity,
+            AnnuallyDays = AnnuallyDays.ToArray(),
+            MonthlyDays = MonthlyDays.ToArray(),
+            WeeklyDays = WeeklyDays.ToArray(),
+            DaysOffset = DaysOffset,
+            MonthsOffset = MonthsOffset,
+            WeeksOffset = WeeksOffset,
+            YearsOffset = YearsOffset,
+            ChildrenCompletionType = ChildrenCompletionType,
+            Link = Link.Trim(),
+            IsRequiredCompleteInDueDate = IsRequiredCompleteInDueDate,
+            DescriptionType = DescriptionType,
+            Icon = Icon,
+            Color = Color.ToString(),
             RemindDaysBefore = RemindDaysBefore,
             IsBookmark = IsBookmark,
             IsFavorite = IsFavorite,

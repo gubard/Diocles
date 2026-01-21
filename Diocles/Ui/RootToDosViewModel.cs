@@ -96,11 +96,6 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             ct
         );
 
-        if (setting is null)
-        {
-            return;
-        }
-
         Dispatcher.UIThread.Post(() =>
         {
             List.GroupBy = setting.GroupBy;
@@ -111,7 +106,12 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var parameters = Factory.CreateToDoParameters(ValidationMode.ValidateAll, false);
+        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(
+            $"{typeof(ToDoParametersSettings).FullName}",
+            ct
+        );
+
+        var parameters = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>
@@ -149,7 +149,6 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         CancellationToken ct
     )
     {
-        await DialogService.CloseMessageBoxAsync(ct);
         parameters.StartExecute();
 
         if (parameters.HasErrors)
@@ -157,7 +156,11 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             return new EmptyValidationErrors();
         }
 
-        var request = new HestiaPostRequest { Creates = [parameters.CreateShortToDo()] };
+        var settings = parameters.CreateSettings();
+        var create = parameters.CreateShortToDo();
+        await DialogService.CloseMessageBoxAsync(ct);
+        await _objectStorage.SaveAsync($"{typeof(ToDoParametersSettings).FullName}", settings, ct);
+        var request = new HestiaPostRequest { Creates = [create] };
         var response = await ToDoUiService.PostAsync(Guid.NewGuid(), request, ct);
 
         return response;
