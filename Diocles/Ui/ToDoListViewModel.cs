@@ -7,6 +7,7 @@ using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
 using Hestia.Contract.Models;
+using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
@@ -14,98 +15,92 @@ namespace Diocles.Ui;
 
 public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
 {
-    public ToDoListViewModel(IAvaloniaReadOnlyList<ToDoNotify> items, IToDoUiCache toDoUiCache)
+    public ToDoListViewModel(
+        IAvaloniaReadOnlyList<ToDoNotify> itemsSource,
+        IToDoUiCache toDoUiCache
+    )
     {
         _favorites = toDoUiCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
-        _items = items;
+        _itemsSource = itemsSource;
+        _items = new();
+        _circle = new();
+        _group = new();
+        _periodicity = new();
+        _periodicityOffset = new();
+        _fixedDate = new();
+        _reference = new();
+        _step = new();
+        _value = new();
+        _comingSoon = new();
+        _planned = new();
+        _completed = new();
+        _miss = new();
+        _readyForComplete = new();
+        Refresh();
     }
 
-    public IEnumerable<ToDoNotify> Items =>
-        OrderBy switch
-        {
-            ToDoOrderBy.OrderIndex => _items.OrderBy(x => x.OrderIndex),
-            ToDoOrderBy.Name => _items.OrderBy(x => x.Name),
-            ToDoOrderBy.DueDate => _items.OrderBy(x => x.DueDate),
-            _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),
-        };
-
+    public IAvaloniaReadOnlyList<ToDoNotify> Items => _items;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
-    public int ItemsCount => _items.Count;
-    public IEnumerable<ToDoNotify> Circle => Items.Where(x => x.Type == ToDoType.Circle);
-    public int CircleCount => Circle.Count();
-    public IEnumerable<ToDoNotify> Group => Items.Where(x => x.Type == ToDoType.Group);
-    public int GroupCount => Group.Count();
-    public IEnumerable<ToDoNotify> Periodicity => Items.Where(x => x.Type == ToDoType.Periodicity);
-    public int PeriodicityCount => Periodicity.Count();
-    public IEnumerable<ToDoNotify> PeriodicityOffset =>
-        Items.Where(x => x.Type == ToDoType.PeriodicityOffset);
-    public int PeriodicityOffsetCount => PeriodicityOffset.Count();
-    public IEnumerable<ToDoNotify> FixedDate => Items.Where(x => x.Type == ToDoType.FixedDate);
-    public int FixedDateCount => FixedDate.Count();
-    public IEnumerable<ToDoNotify> Reference => Items.Where(x => x.Type == ToDoType.Reference);
-    public int ReferenceCount => Reference.Count();
-    public IEnumerable<ToDoNotify> Step => Items.Where(x => x.Type == ToDoType.Step);
-    public int StepCount => Step.Count();
-    public IEnumerable<ToDoNotify> Value => Items.Where(x => x.Type == ToDoType.Value);
-    public int ValueCount => Value.Count();
-    public IEnumerable<ToDoNotify> ComingSoon =>
-        Items.Where(x => x.Status == ToDoStatus.ComingSoon);
-    public int ComingSoonCount => ComingSoon.Count();
-    public IEnumerable<ToDoNotify> Planned => Items.Where(x => x.Status == ToDoStatus.Planned);
-    public int PlannedCount => Planned.Count();
-    public IEnumerable<ToDoNotify> Completed => Items.Where(x => x.Status == ToDoStatus.Completed);
-    public int CompletedCount => Completed.Count();
-    public IEnumerable<ToDoNotify> Miss => Items.Where(x => x.Status == ToDoStatus.Miss);
-    public int MissCount => Miss.Count();
-    public IEnumerable<ToDoNotify> ReadyForComplete =>
-        Items.Where(x => x.Status == ToDoStatus.ReadyForComplete);
-    public int ReadyForCompleteCount => ReadyForComplete.Count();
+    public IAvaloniaReadOnlyList<ToDoNotify> Circle => _circle;
+    public IAvaloniaReadOnlyList<ToDoNotify> Group => _group;
+    public IAvaloniaReadOnlyList<ToDoNotify> Periodicity => _periodicity;
+    public IAvaloniaReadOnlyList<ToDoNotify> PeriodicityOffset => _periodicityOffset;
+    public IAvaloniaReadOnlyList<ToDoNotify> FixedDate => _fixedDate;
+    public IAvaloniaReadOnlyList<ToDoNotify> Reference => _reference;
+    public IAvaloniaReadOnlyList<ToDoNotify> Step => _step;
+    public IAvaloniaReadOnlyList<ToDoNotify> Value => _value;
+    public IAvaloniaReadOnlyList<ToDoNotify> ComingSoon => _comingSoon;
+    public IAvaloniaReadOnlyList<ToDoNotify> Planned => _planned;
+    public IAvaloniaReadOnlyList<ToDoNotify> Completed => _completed;
+    public IAvaloniaReadOnlyList<ToDoNotify> Miss => _miss;
+    public IAvaloniaReadOnlyList<ToDoNotify> ReadyForComplete => _readyForComplete;
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
-        _items.CollectionChanged += ItemsCollectionChanged;
+        _itemsSource.CollectionChanged += ItemsSourceCollectionChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _items.CollectionChanged -= ItemsCollectionChanged;
+        _itemsSource.CollectionChanged -= ItemsSourceCollectionChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }
 
     public void Refresh()
     {
-        OnPropertyChanged(nameof(Items));
-        OnPropertyChanged(nameof(ItemsCount));
-        OnPropertyChanged(nameof(Circle));
-        OnPropertyChanged(nameof(CircleCount));
-        OnPropertyChanged(nameof(Group));
-        OnPropertyChanged(nameof(GroupCount));
-        OnPropertyChanged(nameof(Periodicity));
-        OnPropertyChanged(nameof(PeriodicityCount));
-        OnPropertyChanged(nameof(PeriodicityOffset));
-        OnPropertyChanged(nameof(PeriodicityOffsetCount));
-        OnPropertyChanged(nameof(FixedDate));
-        OnPropertyChanged(nameof(FixedDateCount));
-        OnPropertyChanged(nameof(Reference));
-        OnPropertyChanged(nameof(ReferenceCount));
-        OnPropertyChanged(nameof(Step));
-        OnPropertyChanged(nameof(StepCount));
-        OnPropertyChanged(nameof(Value));
-        OnPropertyChanged(nameof(ValueCount));
-        OnPropertyChanged(nameof(Miss));
-        OnPropertyChanged(nameof(MissCount));
-        OnPropertyChanged(nameof(ReadyForComplete));
-        OnPropertyChanged(nameof(ReadyForCompleteCount));
-        OnPropertyChanged(nameof(Planned));
-        OnPropertyChanged(nameof(PlannedCount));
-        OnPropertyChanged(nameof(Completed));
-        OnPropertyChanged(nameof(CompletedCount));
-        OnPropertyChanged(nameof(ComingSoon));
-        OnPropertyChanged(nameof(ComingSoonCount));
+        _items.UpdateOrder(
+            OrderBy switch
+            {
+                ToDoOrderBy.OrderIndex => _itemsSource.OrderBy(x => x.OrderIndex).ToArray(),
+                ToDoOrderBy.Name => _itemsSource.OrderBy(x => x.Name).ToArray(),
+                ToDoOrderBy.DueDate => _itemsSource.OrderBy(x => x.DueDate).ToArray(),
+                _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),
+            }
+        );
+
+        _circle.UpdateOrder(_items.Where(x => x.Type == ToDoType.Circle).ToArray());
+        _group.UpdateOrder(_items.Where(x => x.Type == ToDoType.Group).ToArray());
+        _periodicity.UpdateOrder(_items.Where(x => x.Type == ToDoType.Periodicity).ToArray());
+
+        _periodicityOffset.UpdateOrder(
+            _items.Where(x => x.Type == ToDoType.PeriodicityOffset).ToArray()
+        );
+
+        _fixedDate.UpdateOrder(_items.Where(x => x.Type == ToDoType.FixedDate).ToArray());
+        _reference.UpdateOrder(_items.Where(x => x.Type == ToDoType.Reference).ToArray());
+        _step.UpdateOrder(_items.Where(x => x.Type == ToDoType.Step).ToArray());
+        _value.UpdateOrder(_items.Where(x => x.Type == ToDoType.Value).ToArray());
+        _comingSoon.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.ComingSoon).ToArray());
+        _planned.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Planned).ToArray());
+        _completed.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Completed).ToArray());
+        _miss.UpdateOrder(_items.Where(x => x.Status == ToDoStatus.Miss).ToArray());
+        _readyForComplete.UpdateOrder(
+            _items.Where(x => x.Status == ToDoStatus.ReadyForComplete).ToArray()
+        );
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -124,10 +119,24 @@ public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
     [ObservableProperty]
     private ToDoOrderBy _orderBy;
 
-    private readonly IAvaloniaReadOnlyList<ToDoNotify> _items;
+    private readonly IAvaloniaReadOnlyList<ToDoNotify> _itemsSource;
     private readonly IAvaloniaReadOnlyList<ToDoNotify> _favorites;
+    private readonly AvaloniaList<ToDoNotify> _items;
+    private readonly AvaloniaList<ToDoNotify> _circle;
+    private readonly AvaloniaList<ToDoNotify> _group;
+    private readonly AvaloniaList<ToDoNotify> _periodicity;
+    private readonly AvaloniaList<ToDoNotify> _periodicityOffset;
+    private readonly AvaloniaList<ToDoNotify> _fixedDate;
+    private readonly AvaloniaList<ToDoNotify> _reference;
+    private readonly AvaloniaList<ToDoNotify> _step;
+    private readonly AvaloniaList<ToDoNotify> _value;
+    private readonly AvaloniaList<ToDoNotify> _comingSoon;
+    private readonly AvaloniaList<ToDoNotify> _planned;
+    private readonly AvaloniaList<ToDoNotify> _completed;
+    private readonly AvaloniaList<ToDoNotify> _miss;
+    private readonly AvaloniaList<ToDoNotify> _readyForComplete;
 
-    private void ItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void ItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         Refresh();
     }
