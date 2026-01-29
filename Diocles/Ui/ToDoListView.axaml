@@ -45,7 +45,7 @@
 
                     <StackPanel>
                         <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
-                        <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Favorites}" />
+                        <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Favorites}" />
                     </StackPanel>
                 </Expander>
 
@@ -63,7 +63,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Items}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Items}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -81,7 +81,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Circle}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Circle}" />
                             </StackPanel>
                         </Expander>
 
@@ -96,7 +96,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Group}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Group}" />
                             </StackPanel>
                         </Expander>
 
@@ -111,7 +111,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Periodicity}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Periodicity}" />
                             </StackPanel>
                         </Expander>
 
@@ -126,7 +126,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding PeriodicityOffset}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding PeriodicityOffset}" />
                             </StackPanel>
                         </Expander>
 
@@ -141,7 +141,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding FixedDate}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding FixedDate}" />
                             </StackPanel>
                         </Expander>
 
@@ -156,7 +156,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Reference}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Reference}" />
                             </StackPanel>
                         </Expander>
 
@@ -171,7 +171,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Step}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Step}" />
                             </StackPanel>
                         </Expander>
 
@@ -186,7 +186,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Value}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Value}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>
@@ -204,7 +204,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Miss}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Miss}" />
                             </StackPanel>
                         </Expander>
 
@@ -219,7 +219,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding ReadyForComplete}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ReadyForComplete}" />
                             </StackPanel>
                         </Expander>
 
@@ -234,7 +234,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Planned}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Planned}" />
                             </StackPanel>
                         </Expander>
 
@@ -249,7 +249,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding Completed}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding Completed}" />
                             </StackPanel>
                         </Expander>
 
@@ -264,7 +264,7 @@
 
                             <StackPanel>
                                 <ItemsControl IsVisible="{Binding !$parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
-                                <ListBox SelectionMode="{x:Static h:UiHelper.MultipleToggle}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view multiple" ItemsSource="{Binding ComingSoon}" />
+                                <ListBox SelectionMode="{OnPlatform Android={x:Static h:UiHelper.MultipleToggle}, iOS={x:Static h:UiHelper.MultipleToggle}, Default={x:Static SelectionMode.Multiple}}" IsVisible="{Binding $parent[m:IToDosView].ViewModel.IsMulti}" Classes="todo-view" ItemsSource="{Binding ComingSoon}" />
                             </StackPanel>
                         </Expander>
                     </StackPanel>
