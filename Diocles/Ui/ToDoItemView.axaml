@@ -39,14 +39,14 @@
 
         <Expander Grid.Row="1"
                   IsVisible="{Binding Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
-                  Header="{DynamicResource Lang.Description}">
+                  Header="{StaticResource Lang.Description}">
             <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
         </Expander>
 
         <ContentControl Grid.Row="2" Content="{Binding List}" />
         <Button Grid.Row="3"
                 Classes="align-stretch content-align-center h1"
-                Content="{DynamicResource Lang.Create}"
+                Content="{StaticResource Lang.Create}"
                 Command="{Binding ShowCreateViewCommand}" />
     </Grid>
 </UserControl>

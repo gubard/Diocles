@@ -9,10 +9,10 @@
              x:DataType="ui:SearchToDoViewModel">
     <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel>
-            <TextBlock Classes="field" Text="{DynamicResource Lang.SearchText}" />
+            <TextBlock Classes="field" Text="{StaticResource Lang.SearchText}" />
             <TextBox Text="{Binding SearchText}" />
             
-            <TextBlock Classes="field" Text="{DynamicResource Lang.Type}" />
+            <TextBlock Classes="field" Text="{StaticResource Lang.Type}" />
             <c:EnumsSelectorControl  SelectedEnums="{Binding Types}"/>
         </StackPanel>
 
@@ -20,7 +20,7 @@
         <Button Grid.Row="2"
                 Classes="align-stretch content-align-center h1"
                 IsDefault="True"
-                Content="{DynamicResource Lang.Search}"
+                Content="{StaticResource Lang.Search}"
                 Command="{Binding SearchCommand}" />
     </Grid>
 </UserControl>

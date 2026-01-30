@@ -13,7 +13,7 @@
              x:DataType="ui:ToDoParametersViewModel">
     <ScrollViewer Classes="vertical-scroll">
         <TabControl>
-            <TabItem Header="{DynamicResource Lang.Parameters}">
+            <TabItem Header="{StaticResource Lang.Parameters}">
                 <StackPanel>
                     <WrapPanel Classes="horizontal"
                                IsVisible="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
@@ -327,7 +327,7 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="{DynamicResource Lang.Description}">
+            <TabItem Header="{StaticResource Lang.Description}">
                 <StackPanel>
                     <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditDescriptionType}">
                         <ToggleSwitch.OffContent>
@@ -357,7 +357,7 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="{DynamicResource Lang.Style}">
+            <TabItem Header="{StaticResource Lang.Style}">
                 <StackPanel>
 
                     <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditColor}">

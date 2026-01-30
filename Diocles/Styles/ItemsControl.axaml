@@ -84,13 +84,13 @@
                                         <MenuItem Icon="{ip:MaterialDesign AccountTree}"
                                                   Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
                                                   CommandParameter="{Binding}"
-                                                  Header="{DynamicResource Lang.ChangeParent}" />
+                                                  Header="{StaticResource Lang.ChangeParent}" />
                                         <MenuItem Icon="{ip:MaterialDesign CopyrightOutline}"
-                                                  Header="{DynamicResource Lang.Clone}"
+                                                  Header="{StaticResource Lang.Clone}"
                                                   Command="{x:Static h:DioclesCommands.ShowCloneCommand}"
                                                   CommandParameter="{Binding}" />
                                         <MenuItem Icon="{ip:MaterialDesign Link}"
-                                                  Header="{DynamicResource Lang.OpenLink}"
+                                                  Header="{StaticResource Lang.OpenLink}"
                                                   Command="{x:Static h:DioclesCommands.OpenLinkCommand}"
                                                   CommandParameter="{Binding}"
                                                   IsVisible="{Binding Link, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}" />

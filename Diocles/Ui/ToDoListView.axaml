@@ -22,12 +22,12 @@
             </StackPanel.Styles>
 
             <StackPanel>
-                <TextBlock Text="{DynamicResource Lang.GroupBy}" />
+                <TextBlock Text="{StaticResource Lang.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
 
             <StackPanel>
-                <TextBlock Text="{DynamicResource Lang.OrderBy}" />
+                <TextBlock Text="{StaticResource Lang.OrderBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding OrderBy}" />
             </StackPanel>
         </StackPanel>
@@ -38,7 +38,7 @@
                     IsVisible="{Binding Favorites.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                     <Expander.Header>
                         <StackPanel Classes="horizontal align-center">
-                            <TextBlock Classes="align-center" Text="{DynamicResource Lang.Favorites}" />
+                            <TextBlock Classes="align-center" Text="{StaticResource Lang.Favorites}" />
                             <TextBlock Classes="field" Text="{Binding  Favorites.Count}" />
                         </StackPanel>
                     </Expander.Header>
@@ -56,7 +56,7 @@
                             IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Tasks}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Tasks}" />
                                     <TextBlock Classes="field" Text="{Binding  Items.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -74,7 +74,7 @@
                             IsVisible="{Binding Circle.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Circle}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Circle}" />
                                     <TextBlock Classes="field" Text="{Binding  Circle.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -89,7 +89,7 @@
                             IsVisible="{Binding Group.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Group}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Group}" />
                                     <TextBlock Classes="field" Text="{Binding  Group.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -104,7 +104,7 @@
                             IsVisible="{Binding Periodicity.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Periodicity}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Periodicity}" />
                                     <TextBlock Classes="field" Text="{Binding  Periodicity.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -119,7 +119,7 @@
                             IsVisible="{Binding PeriodicityOffset.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.PeriodicityOffset}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.PeriodicityOffset}" />
                                     <TextBlock Classes="field" Text="{Binding  PeriodicityOffset.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -134,7 +134,7 @@
                             IsVisible="{Binding FixedDate.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.FixedDate}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.FixedDate}" />
                                     <TextBlock Classes="field" Text="{Binding  FixedDate.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -149,7 +149,7 @@
                             IsVisible="{Binding Reference.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Reference}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Reference}" />
                                     <TextBlock Classes="field" Text="{Binding  Reference.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -164,7 +164,7 @@
                             IsVisible="{Binding Step.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Step}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Step}" />
                                     <TextBlock Classes="field" Text="{Binding  Step.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -179,7 +179,7 @@
                             IsVisible="{Binding Value.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Value}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Value}" />
                                     <TextBlock Classes="field" Text="{Binding  Value.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -197,7 +197,7 @@
                             IsVisible="{Binding Miss.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Miss}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Miss}" />
                                     <TextBlock Classes="field" Text="{Binding  Miss.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -212,7 +212,7 @@
                             IsVisible="{Binding ReadyForComplete.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.ReadyForComplete}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.ReadyForComplete}" />
                                     <TextBlock Classes="field" Text="{Binding  ReadyForComplete.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -227,7 +227,7 @@
                             IsVisible="{Binding Planned.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Planned}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Planned}" />
                                     <TextBlock Classes="field" Text="{Binding  Planned.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -242,7 +242,7 @@
                             IsVisible="{Binding Completed.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.Completed}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.Completed}" />
                                     <TextBlock Classes="field" Text="{Binding  Completed.Count}" />
                                 </StackPanel>
                             </Expander.Header>
@@ -257,7 +257,7 @@
                             IsVisible="{Binding ComingSoon.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
-                                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.ComingSoon}" />
+                                    <TextBlock Classes="align-center" Text="{StaticResource Lang.ComingSoon}" />
                                     <TextBlock Classes="field" Text="{Binding  ComingSoon.Count}" />
                                 </StackPanel>
                             </Expander.Header>
