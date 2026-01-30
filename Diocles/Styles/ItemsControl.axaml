@@ -89,6 +89,11 @@
                                                   Header="{DynamicResource Lang.Clone}"
                                                   Command="{x:Static h:DioclesCommands.ShowCloneCommand}"
                                                   CommandParameter="{Binding}" />
+                                        <MenuItem Icon="{ip:MaterialDesign Link}"
+                                                  Header="{DynamicResource Lang.OpenLink}"
+                                                  Command="{x:Static h:DioclesCommands.OpenLinkCommand}"
+                                                  CommandParameter="{Binding}"
+                                                  IsVisible="{Binding Link, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}" />
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>

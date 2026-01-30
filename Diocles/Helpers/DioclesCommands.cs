@@ -24,6 +24,7 @@ public static class DioclesCommands
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
+        var openerLink = DiHelper.ServiceProvider.GetService<IOpenerLink>();
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -489,8 +490,13 @@ public static class DioclesCommands
                 );
             }
         );
+
+        OpenLinkCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) => openerLink.OpenLinkAsync(item.Link.ToUri(), ct)
+        );
     }
 
+    public static readonly ICommand OpenLinkCommand;
     public static readonly ICommand ShowCloneCommand;
     public static readonly ICommand ShowClonesCommand;
     public static readonly ICommand OpenToDosCommand;
