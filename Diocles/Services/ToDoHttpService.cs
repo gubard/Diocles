@@ -6,7 +6,7 @@ using Hestia.Contract.Services;
 
 namespace Diocles.Services;
 
-public sealed class HttpToDoService(
+public sealed class ToDoHttpService(
     HttpClient httpClient,
     JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
@@ -18,7 +18,7 @@ public sealed class HttpToDoService(
         tryPolicyService,
         headersFactory
     ),
-        IHttpToDoService
+        IToDoHttpService
 {
     protected override HestiaGetRequest CreateHealthCheckGetRequest()
     {
