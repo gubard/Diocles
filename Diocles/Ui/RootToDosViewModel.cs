@@ -23,7 +23,8 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IDioclesViewModelFactory factory,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        IFileStorageUiService fileStorageUiService
     )
         : base(
             dialogService,
@@ -32,7 +33,8 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
             factory,
             toDoUiService,
             toDoUiCache,
-            toDoUiCache.Roots
+            toDoUiCache.Roots,
+            fileStorageUiService
         )
     {
         _objectStorage = objectStorage;
@@ -56,9 +58,12 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         return InitCore(ct).ConfigureAwait(false);
     }
 
-    protected override HestiaGetRequest CreateRefreshRequest()
+    public override ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
-        return new() { IsRoots = true, IsSelectors = true };
+        return WrapCommandAsync(
+            () => ToDoUiService.GetAsync(new() { IsRoots = true, IsSelectors = true }, ct),
+            ct
+        );
     }
 
     private readonly IObjectStorage _objectStorage;
@@ -72,7 +77,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         }
     }
 
-    public async ValueTask SaveUiCore(CancellationToken ct)
+    private async ValueTask SaveUiCore(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
 

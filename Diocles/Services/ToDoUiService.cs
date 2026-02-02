@@ -2,6 +2,7 @@
 using Hestia.Contract.Services;
 using Inanna.Models;
 using Inanna.Services;
+using Neotoma.Contract.Models;
 
 namespace Diocles.Services;
 

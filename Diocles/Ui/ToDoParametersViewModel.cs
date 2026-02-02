@@ -21,21 +21,17 @@ using Inanna.Ui;
 namespace Diocles.Ui;
 
 [EditNotify]
-public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, IInitUi, ISaveUi
+public sealed partial class ToDoParametersViewModel
+    : ParametersViewModelBase,
+        IToDo,
+        IInitUi,
+        ISaveUi
 {
-    private static readonly AvaloniaList<PackIconMaterialDesignKind> _icons;
-
-    public static IEnumerable<PackIconMaterialDesignKind> Icons => _icons;
-
-    private readonly AvaloniaList<DayOfYear> _annuallyDays;
-    private readonly AvaloniaList<int> _monthlyDays;
-    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
-    private readonly IToDoValidator _toDoValidator;
-    private readonly bool _isTypeHasDueDate;
+    public static IEnumerable<PackIconMaterialDesignKind> Icons => IconsList;
 
     static ToDoParametersViewModel()
     {
-        _icons = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank];
+        IconsList = [PackIconMaterialDesignKind.None, PackIconMaterialDesignKind.FoodBank];
     }
 
     public ToDoParametersViewModel(
@@ -43,11 +39,15 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         ValidationMode validationMode,
         bool isShowEdit,
         IToDoValidator toDoValidator,
-        IDioclesViewModelFactory factory
+        IDioclesViewModelFactory factory,
+        IFileStorageUiService fileStorageUiService
     )
         : base(validationMode, isShowEdit)
     {
+        _filesDir = string.Empty;
+        _files = new();
         _toDoValidator = toDoValidator;
+        _fileStorageUiService = fileStorageUiService;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -80,11 +80,16 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         ValidationMode validationMode,
         bool isShowEdit,
         IToDoValidator toDoValidator,
-        IDioclesViewModelFactory factory
+        IDioclesViewModelFactory factory,
+        IFileStorageUiService fileStorageUiService,
+        IFileStorageUiCache fileStorageUiCache
     )
         : base(validationMode, isShowEdit)
     {
+        _filesDir = $"{item.Id}/ToDo";
+        _files = fileStorageUiCache.GetFiles(_filesDir);
         _toDoValidator = toDoValidator;
+        _fileStorageUiService = fileStorageUiService;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -113,6 +118,7 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         ResetEdit();
     }
 
+    public IEnumerable<FileObjectNotify> Files => _files;
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;
@@ -250,7 +256,15 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         _monthlyDays.CollectionChanged += MonthlyDaysCollectionChanged;
         _weeklyDays.CollectionChanged += WeeklyDaysCollectionChanged;
 
-        return TaskHelper.ConfiguredCompletedTask;
+        if (_filesDir.IsNullOrWhiteSpace())
+        {
+            return TaskHelper.ConfiguredCompletedTask;
+        }
+
+        return WrapCommandAsync(
+            () => _fileStorageUiService.GetAsync(new() { GetFiles = [_filesDir] }, ct),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
@@ -388,25 +402,39 @@ public partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, I
         }
     }
 
+    private static readonly AvaloniaList<PackIconMaterialDesignKind> IconsList;
+
+    private readonly AvaloniaList<FileObjectNotify> _files;
+    private readonly AvaloniaList<DayOfYear> _annuallyDays;
+    private readonly AvaloniaList<int> _monthlyDays;
+    private readonly AvaloniaList<DayOfWeek> _weeklyDays;
+    private readonly IToDoValidator _toDoValidator;
+    private readonly bool _isTypeHasDueDate;
+    private readonly string _filesDir;
+    private readonly IFileStorageUiService _fileStorageUiService;
+
     private void InitValidation()
     {
         SetValidation(nameof(Name), () => _toDoValidator.Validate(Name, nameof(Name)));
+        SetValidation(nameof(DueDate), () => _toDoValidator.Validate(this, nameof(DueDate)));
+        SetValidation(nameof(Link), () => _toDoValidator.Validate(this, nameof(Link)));
+        SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
+        SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
+
         SetValidation(
             nameof(Description),
             () => _toDoValidator.Validate(Description, nameof(Description))
         );
-        SetValidation(nameof(DueDate), () => _toDoValidator.Validate(this, nameof(DueDate)));
-        SetValidation(nameof(Link), () => _toDoValidator.Validate(this, nameof(Link)));
+
         SetValidation(
             nameof(AnnuallyDays),
             () => _toDoValidator.Validate(this, nameof(AnnuallyDays))
         );
+
         SetValidation(
             nameof(MonthlyDays),
             () => _toDoValidator.Validate(this, nameof(MonthlyDays))
         );
-        SetValidation(nameof(WeeklyDays), () => _toDoValidator.Validate(this, nameof(WeeklyDays)));
-        SetValidation(nameof(Reference), () => _toDoValidator.Validate(this, nameof(Reference)));
     }
 
     private void AnnuallyDaysCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

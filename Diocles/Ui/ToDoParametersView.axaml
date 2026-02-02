@@ -403,6 +403,10 @@
                     </ListBox>
                 </StackPanel>
             </TabItem>
+            
+             <TabItem Header="{StaticResource Lang.Files}">
+                 
+             </TabItem>
         </TabControl>
     </ScrollViewer>
 </UserControl>

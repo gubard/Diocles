@@ -7,12 +7,12 @@ using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Services;
-using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
+using Neotoma.Contract.Models;
 
 namespace Diocles.Ui;
 
@@ -26,7 +26,9 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IDioclesViewModelFactory factory,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        IFileStorageUiService fileStorageUiService,
+        IFileStorageUiCache fileStorageUiCache
     )
         : base(
             dialogService,
@@ -35,10 +37,12 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             factory,
             toDoUiService,
             toDoUiCache,
-            item.Children
+            item.Children,
+            fileStorageUiService
         )
     {
         Item = item;
+        Files = fileStorageUiCache.GetFiles($"{Item.Id}/ToDo");
 
         _header = factory.CreateToDosHeader(
             item.Name,
@@ -59,6 +63,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     public object Header => _header;
     public ToDoNotify Item { get; }
+    public AvaloniaList<FileObjectNotify> Files { get; }
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
@@ -70,21 +75,39 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         return InitCore(ct).ConfigureAwait(false);
     }
 
+    public override ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(
+            async () =>
+            {
+                IValidationErrors errors = await ToDoUiService.GetAsync(
+                    new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] },
+                    ct
+                );
+
+                if (errors.ValidationErrors.Count > 0)
+                {
+                    return errors;
+                }
+
+                var dir = $"{Item.Id}/ToDo";
+
+                return await FileStorageUiService.GetAsync(new() { GetFiles = [dir] }, ct);
+            },
+            ct
+        );
+    }
+
     public override void RefreshUi()
     {
         base.RefreshUi();
         _header.RefreshUi();
     }
 
-    protected override HestiaGetRequest CreateRefreshRequest()
-    {
-        return new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] };
-    }
-
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 
-    public async ValueTask SaveUiCore(CancellationToken ct)
+    private async ValueTask SaveUiCore(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
         Item.PropertyChanged -= ItemPropertyChanged;

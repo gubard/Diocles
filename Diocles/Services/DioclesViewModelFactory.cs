@@ -45,7 +45,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IObjectStorage objectStorage,
-        AppState appState
+        AppState appState,
+        IFileStorageUiService fileStorageUiService,
+        IFileStorageUiCache fileStorageUiCache
     )
     {
         _toDoValidator = toDoValidator;
@@ -56,6 +58,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         _appResourceService = appResourceService;
         _objectStorage = objectStorage;
         _appState = appState;
+        _fileStorageUiService = fileStorageUiService;
+        _fileStorageUiCache = fileStorageUiCache;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -77,7 +81,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _dialogService,
             _appResourceService,
             this,
-            _objectStorage
+            _objectStorage,
+            _fileStorageUiService,
+            _fileStorageUiCache
         );
     }
 
@@ -95,7 +101,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _dialogService,
             _appResourceService,
             this,
-            _objectStorage
+            _objectStorage,
+            _fileStorageUiService
         );
     }
 
@@ -110,7 +117,14 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         bool isShowEdit
     )
     {
-        return new(settings, validationMode, isShowEdit, _toDoValidator, this);
+        return new(
+            settings,
+            validationMode,
+            isShowEdit,
+            _toDoValidator,
+            this,
+            _fileStorageUiService
+        );
     }
 
     public ToDoParametersViewModel CreateToDoParameters(
@@ -119,7 +133,15 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         bool isShowEdit
     )
     {
-        return new(item, validationMode, isShowEdit, _toDoValidator, this);
+        return new(
+            item,
+            validationMode,
+            isShowEdit,
+            _toDoValidator,
+            this,
+            _fileStorageUiService,
+            _fileStorageUiCache
+        );
     }
 
     public ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input)
@@ -135,4 +157,6 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IAppResourceService _appResourceService;
     private readonly IObjectStorage _objectStorage;
     private readonly AppState _appState;
+    private readonly IFileStorageUiService _fileStorageUiService;
+    private readonly IFileStorageUiCache _fileStorageUiCache;
 }

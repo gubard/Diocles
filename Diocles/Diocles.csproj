@@ -19,6 +19,7 @@
       OutputItemType="Analyzer"
     />
     <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
+    <ProjectReference Include="..\..\Neotoma\Neotoma.Contract\Neotoma.Contract.csproj" />
   </ItemGroup>
 
   <ItemGroup>

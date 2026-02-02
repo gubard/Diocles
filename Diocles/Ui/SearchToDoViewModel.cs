@@ -26,7 +26,8 @@ public sealed partial class SearchToDoViewModel
         IToDoUiCache toDoUiCache,
         IDialogService dialogService,
         IAppResourceService appResourceService,
-        IStringFormater stringFormater
+        IStringFormater stringFormater,
+        IFileStorageUiService fileStorageUiService
     )
         : base(
             dialogService,
@@ -35,7 +36,8 @@ public sealed partial class SearchToDoViewModel
             factory,
             toDoUiService,
             toDoUiCache,
-            toDoUiCache.Search
+            toDoUiCache.Search,
+            fileStorageUiService
         )
     {
         _header = factory.CreateToDosHeader(

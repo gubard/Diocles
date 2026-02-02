@@ -13,7 +13,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoItemView"
              x:DataType="ui:ToDoItemViewModel">
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
         <ScrollViewer Classes="horizontal-scroll">
             <c:PathControl Classes="align-center"
                            ItemsSource="{Binding Item.Parents}">
@@ -43,8 +43,32 @@
             <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
         </Expander>
 
-        <ContentControl Grid.Row="2" Content="{Binding List}" />
-        <Button Grid.Row="3"
+        <Expander Grid.Row="2"
+                  IsVisible="{Binding Files.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hi:Numbers.Int32_0}}"
+                  Header="{StaticResource Lang.Files}">
+            <ScrollViewer Classes="horizontal-scroll">
+                <ItemsControl ItemsSource="{Binding Files}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Panel>
+                                <Image Classes="h-100"
+                                       Source="{Binding Image}"
+                                       IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Image}}" />
+                                <ip:PackIconMaterialDesign Classes="s-100"
+                                                           Kind="PictureAsPdf"
+                                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Pdf}}" />
+                                <ip:PackIconMaterialDesign Classes="s-100"
+                                                           Kind="FileCopy"
+                                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Unknown}}" />
+                            </Panel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Expander>
+
+        <ContentControl Grid.Row="3" Content="{Binding List}" />
+        <Button Grid.Row="4"
                 Classes="align-stretch content-align-center h1"
                 Content="{StaticResource Lang.Create}"
                 Command="{Binding ShowCreateViewCommand}" />

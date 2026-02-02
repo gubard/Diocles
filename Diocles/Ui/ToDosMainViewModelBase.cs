@@ -15,10 +15,7 @@ namespace Diocles.Ui;
 
 public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRefreshUi
 {
-    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(() => ToDoUiService.GetAsync(CreateRefreshRequest(), ct), ct);
-    }
+    public abstract ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct);
 
     public virtual void RefreshUi()
     {
@@ -32,7 +29,8 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRe
         IDioclesViewModelFactory factory,
         IToDoUiService toDoUiService,
         IToDoUiCache toDoUiCache,
-        IAvaloniaReadOnlyList<ToDoNotify> items
+        IAvaloniaReadOnlyList<ToDoNotify> items,
+        IFileStorageUiService fileStorageUiService
     )
         : base(
             dialogService,
@@ -41,10 +39,9 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRe
             factory,
             toDoUiService,
             toDoUiCache,
-            items
+            items,
+            fileStorageUiService
         ) { }
-
-    protected abstract HestiaGetRequest CreateRefreshRequest();
 }
 
 public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewModel
@@ -57,6 +54,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
     protected readonly IDioclesViewModelFactory Factory;
     protected readonly IToDoUiService ToDoUiService;
     protected readonly IToDoUiCache ToDoUiCache;
+    protected readonly IFileStorageUiService FileStorageUiService;
 
     protected ToDosViewModelBase(
         IDialogService dialogService,
@@ -65,7 +63,8 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         IDioclesViewModelFactory factory,
         IToDoUiService toDoUiService,
         IToDoUiCache toDoUiCache,
-        IAvaloniaReadOnlyList<ToDoNotify> items
+        IAvaloniaReadOnlyList<ToDoNotify> items,
+        IFileStorageUiService fileStorageUiService
     )
     {
         DialogService = dialogService;
@@ -74,6 +73,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         Factory = factory;
         ToDoUiService = toDoUiService;
         ToDoUiCache = toDoUiCache;
+        FileStorageUiService = fileStorageUiService;
         List = factory.CreateToDoList(items);
     }
 
