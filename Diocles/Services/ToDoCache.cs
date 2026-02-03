@@ -110,17 +110,20 @@ public sealed class ToDoMemoryCache
 
     private void Update(HestiaGetResponse source)
     {
+        var shortUpdatedIds = new HashSet<Guid>();
+
+        if (source.CurrentActive.IsResponse)
+        {
+            Dispatcher.UIThread.Invoke(() =>
+                CurrentActive = source.CurrentActive.Item is not null
+                    ? UpdateShortToDo(source.CurrentActive.Item, shortUpdatedIds)
+                    : null
+            );
+        }
+
         Dispatcher.UIThread.Post(() =>
         {
             var fullUpdatedIds = new HashSet<Guid>();
-            var shortUpdatedIds = new HashSet<Guid>();
-
-            if (source.CurrentActive.IsResponse)
-            {
-                CurrentActive = source.CurrentActive.Item is not null
-                    ? UpdateShortToDo(source.CurrentActive.Item, shortUpdatedIds)
-                    : null;
-            }
 
             foreach (var (id, items) in source.Children)
             {
