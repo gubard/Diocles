@@ -185,6 +185,20 @@ public static class DioclesCommands
                     return errors.Combine();
                 }
 
+                async ValueTask<IValidationErrors> OkAsync(CancellationToken c)
+                {
+                    if (item.Parent is null)
+                    {
+                        await navigator.NavigateToAsync(factory.CreateRootToDos(), c);
+                    }
+                    else
+                    {
+                        await navigator.NavigateToAsync(factory.CreateToDos(item.Parent), c);
+                    }
+
+                    return await DeleteToDoAsync(c);
+                }
+
                 return dialogService.ShowMessageBoxAsync(
                     new(
                         header,
@@ -200,7 +214,7 @@ public static class DioclesCommands
                         ),
                         new DialogButton(
                             appResourceService.GetResource<string>("Lang.Delete"),
-                            UiHelper.CreateCommand(ct => DeleteToDoAsync(ct).ConfigureAwait(false)),
+                            UiHelper.CreateCommand(c => OkAsync(c).ConfigureAwait(false)),
                             null,
                             DialogButtonType.Primary
                         ),

@@ -56,6 +56,13 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
                     appResourceService.GetResource<string>("Lang.Edit"),
                     PackIconMaterialDesignKind.Edit
                 ),
+                new(
+                    DioclesCommands.ShowDeleteToDoCommand,
+                    item,
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    PackIconMaterialDesignKind.Delete,
+                    ButtonType.Danger
+                ),
             },
             DiocleHelper.CreateMultiCommands(item.Children)
         );
