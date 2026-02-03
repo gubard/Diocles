@@ -6,7 +6,9 @@ using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Gaia.Services;
+using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
@@ -46,7 +48,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
         _header = factory.CreateToDosHeader(
             item.Name,
-            new AvaloniaList<InannaCommand>()
+            new AvaloniaList<InannaCommand>
             {
                 new(
                     ShowEditCommand,
@@ -77,22 +79,24 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     public override ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
+        var dir = $"{Item.Id}/ToDo";
+
         return WrapCommandAsync(
             async () =>
             {
-                IValidationErrors errors = await ToDoUiService.GetAsync(
-                    new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] },
+                var errors = await TaskHelper.WhenAllAsync(
+                    [
+                        ToDoUiService
+                            .GetAsync(new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] }, ct)
+                            .ToValidationErrors(),
+                        FileStorageUiService
+                            .GetAsync(new() { GetFiles = [dir] }, ct)
+                            .ToValidationErrors(),
+                    ],
                     ct
                 );
 
-                if (errors.ValidationErrors.Count > 0)
-                {
-                    return errors;
-                }
-
-                var dir = $"{Item.Id}/ToDo";
-
-                return await FileStorageUiService.GetAsync(new() { GetFiles = [dir] }, ct);
+                return errors.Combine();
             },
             ct
         );
@@ -207,10 +211,13 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
         if (parameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
+        var id = Guid.NewGuid();
         var settings = parameters.CreateSettings();
+        var create = parameters.CreateShortToDo(id, Item.Id);
+        var files = parameters.CreateNeotomaPostRequest($"{id}/ToDo");
         await DialogService.CloseMessageBoxAsync(ct);
 
         await _objectStorage.SaveAsync(
@@ -219,9 +226,16 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             ct
         );
 
-        var create = parameters.CreateShortToDo();
-        create.ParentId = Item.Id;
+        var request = new HestiaPostRequest { Creates = [create] };
 
-        return await ToDoUiService.PostAsync(Guid.NewGuid(), new() { Creates = [create] }, ct);
+        var errors = await TaskHelper.WhenAllAsync(
+            [
+                ToDoUiService.PostAsync(Guid.NewGuid(), request, ct).ToValidationErrors(),
+                FileStorageUiService.PostAsync(Guid.NewGuid(), files, ct).ToValidationErrors(),
+            ],
+            ct
+        );
+
+        return errors.Combine();
     }
 }

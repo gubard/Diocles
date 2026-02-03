@@ -52,7 +52,7 @@ public static class DioclesCommands
 
             if (changeOrder is null)
             {
-                return new EmptyValidationErrors();
+                return new DefaultValidationErrors();
             }
 
             return await uiToDoService.PostAsync(

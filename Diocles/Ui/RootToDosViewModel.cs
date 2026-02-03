@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
@@ -149,7 +150,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct);
     }
 
-    private async ValueTask<IValidationErrors> CreateCore(
+    private async ValueTask<DefaultValidationErrors> CreateCore(
         ToDoParametersViewModel parameters,
         CancellationToken ct
     )
@@ -158,16 +159,25 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
         if (parameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new();
         }
 
+        var id = Guid.NewGuid();
         var settings = parameters.CreateSettings();
-        var create = parameters.CreateShortToDo();
+        var create = parameters.CreateShortToDo(id, null);
+        var files = parameters.CreateNeotomaPostRequest($"{id}/ToDo");
         await DialogService.CloseMessageBoxAsync(ct);
         await _objectStorage.SaveAsync($"{typeof(ToDoParametersSettings).FullName}", settings, ct);
         var request = new HestiaPostRequest { Creates = [create] };
-        var response = await ToDoUiService.PostAsync(Guid.NewGuid(), request, ct);
 
-        return response;
+        var errors = await TaskHelper.WhenAllAsync(
+            [
+                ToDoUiService.PostAsync(Guid.NewGuid(), request, ct).ToValidationErrors(),
+                FileStorageUiService.PostAsync(Guid.NewGuid(), files, ct).ToValidationErrors(),
+            ],
+            ct
+        );
+
+        return errors.Combine();
     }
 }

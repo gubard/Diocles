@@ -141,7 +141,7 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         {
             await DialogService.CloseMessageBoxAsync(ct);
 
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
         var edit = viewModel.CreateEditToDos(_editItem.Id);

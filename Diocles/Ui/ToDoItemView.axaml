@@ -47,7 +47,7 @@
                   IsVisible="{Binding Files.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hi:Numbers.Int32_0}}"
                   Header="{StaticResource Lang.Files}">
             <ScrollViewer Classes="horizontal-scroll">
-                <ItemsControl ItemsSource="{Binding Files}">
+                <ItemsControl Classes="align-left" ItemsSource="{Binding Files}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Panel>

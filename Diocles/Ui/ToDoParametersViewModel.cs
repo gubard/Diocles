@@ -8,6 +8,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -22,6 +23,7 @@ using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
+using Neotoma.Contract.Models;
 
 namespace Diocles.Ui;
 
@@ -294,11 +296,31 @@ public sealed partial class ToDoParametersViewModel
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public ShortToDo CreateShortToDo()
+    public NeotomaPostRequest CreateNeotomaPostRequest(string dir)
+    {
+        var request = new NeotomaPostRequest();
+
+        request.Creates.Add(
+            dir,
+            _files
+                .Where(x => x.Status == FileObjectNotifyStatus.Added)
+                .Select(x => x.ToFileData())
+                .ToArray()
+        );
+
+        request.Deletes = _files
+            .Where(x => x.Status == FileObjectNotifyStatus.Deleted)
+            .Select(x => x.Id)
+            .ToArray();
+
+        return request;
+    }
+
+    public ShortToDo CreateShortToDo(Guid id, Guid? parentId)
     {
         return new()
         {
-            Id = Guid.NewGuid(),
+            Id = id,
             Name = Name.Trim(),
             Description = Description.Trim(),
             Type = Type,
@@ -321,6 +343,7 @@ public sealed partial class ToDoParametersViewModel
             RemindDaysBefore = RemindDaysBefore,
             IsBookmark = IsBookmark,
             IsFavorite = IsFavorite,
+            ParentId = parentId,
         };
     }
 

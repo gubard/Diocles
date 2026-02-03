@@ -71,7 +71,14 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(title, commands, multiCommands, _appState, _toDoUiService);
+        return new(
+            title,
+            commands,
+            multiCommands,
+            _appState,
+            _toDoUiService,
+            _fileStorageUiService
+        );
     }
 
     public ToDoItemViewModel CreateToDos(ToDoNotify item)
