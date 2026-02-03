@@ -12,4 +12,7 @@ public partial class ToDoItemView : UserControl, IToDosView
 
     public IToDosViewModel ViewModel =>
         DataContext as IToDosViewModel ?? throw new InvalidOperationException();
+
+    public ToDoItemViewModel VM =>
+        DataContext as ToDoItemViewModel ?? throw new InvalidOperationException();
 }

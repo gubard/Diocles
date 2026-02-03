@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:dm="clr-namespace:Diocles.Models"
+             xmlns:s="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.FilesView"
+             x:DataType="ui:FilesViewModel">
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*">
+        <StackPanel Grid.ColumnSpan="2" Classes="align-left-top horizontal">
+            <Button Content="{ip:MaterialDesign Delete}"
+                    Command="{Binding DeleteFileCommand}" />
+            <Button Content="{ip:MaterialDesign Save}"
+                    Command="{Binding SaveCommand}" />
+            <TextBlock Classes="align-center" Text="{Binding SelectedFile.Name}" />
+        </StackPanel>
+
+        <Panel Grid.Row="1" Grid.ColumnSpan="2">
+            <Image Classes="align-stretch"
+                   Source="{Binding SelectedFile.Image}"
+                   IsVisible="{Binding SelectedFile.Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Image}}" />
+            <ip:PackIconMaterialDesign Classes="align-stretch"
+                                       Width="{x:Static s:Double.NaN}"
+                                       Height="{x:Static s:Double.NaN}"
+                                       Kind="PictureAsPdf"
+                                       IsVisible="{Binding SelectedFile.Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Pdf}}" />
+            <ip:PackIconMaterialDesign Classes="align-stretch"
+                                       Width="{x:Static s:Double.NaN}"
+                                       Height="{x:Static s:Double.NaN}"
+                                       Kind="FileCopy"
+                                       IsVisible="{Binding SelectedFile.Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Unknown}}" />
+        </Panel>
+
+        <Button Grid.Row="2"
+                Classes="align-stretch"
+                Content="{ip:MaterialDesign ArrowLeft}"
+                Command="{Binding PreviousFileCommand}" />
+        <Button Grid.Row="2"
+                Grid.Column="1"
+                Classes="align-stretch"
+                Content="{ip:MaterialDesign ArrowRight}"
+                Command="{Binding NextFileCommand}" />
+    </Grid>
+</UserControl>

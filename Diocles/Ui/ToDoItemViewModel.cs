@@ -118,6 +118,30 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 
+    [RelayCommand]
+    private async Task ShowImageAsync(FileObjectNotify item, CancellationToken ct)
+    {
+        await WrapCommandAsync(
+            () =>
+                DialogService.ShowMessageBoxAsync(
+                    new(
+                        Dispatcher.UIThread.Invoke(() =>
+                            StringFormater
+                                .Format(
+                                    AppResourceService.GetResource<string>("Lang.ImageItem"),
+                                    Item.Name
+                                )
+                                .ToDialogHeader()
+                        ),
+                        Factory.CreateFiles(Files, item),
+                        UiHelper.OkButton
+                    ),
+                    ct
+                ),
+            ct
+        );
+    }
+
     private async ValueTask SaveUiCore(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;

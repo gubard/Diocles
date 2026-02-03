@@ -16,6 +16,7 @@ public interface IDioclesViewModelFactory
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
+    FilesViewModel CreateFiles(AvaloniaList<FileObjectNotify> files, FileObjectNotify selectedFile);
 
     ToDoParametersViewModel CreateToDoParameters(
         ToDoParametersSettings settings,
@@ -78,6 +79,21 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _appState,
             _toDoUiService,
             _fileStorageUiService
+        );
+    }
+
+    public FilesViewModel CreateFiles(
+        AvaloniaList<FileObjectNotify> files,
+        FileObjectNotify selectedFile
+    )
+    {
+        return new(
+            files,
+            selectedFile,
+            _fileStorageUiService,
+            _app,
+            _appResourceService,
+            _stringFormater
         );
     }
 

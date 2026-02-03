@@ -50,17 +50,21 @@
                 <ItemsControl Classes="align-left horizontal-stack" ItemsSource="{Binding Files}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Panel>
-                                <Image Classes="h-100"
-                                       Source="{Binding Image}"
-                                       IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Image}}" />
-                                <ip:PackIconMaterialDesign Classes="s-100"
-                                                           Kind="PictureAsPdf"
-                                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Pdf}}" />
-                                <ip:PackIconMaterialDesign Classes="s-100"
-                                                           Kind="FileCopy"
-                                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Unknown}}" />
-                            </Panel>
+                            <Button Classes="mini" 
+                                    Command="{Binding $parent[ui:ToDoItemView].VM.ShowImageCommand}"
+                                    CommandParameter="{Binding}">
+                                <Panel>
+                                    <Image Classes="h-100"
+                                           Source="{Binding Image}"
+                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Image}}" />
+                                    <ip:PackIconMaterialDesign Classes="s-100"
+                                                               Kind="PictureAsPdf"
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Pdf}}" />
+                                    <ip:PackIconMaterialDesign Classes="s-100"
+                                                               Kind="FileCopy"
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:FileObjectNotifyType.Unknown}}" />
+                                </Panel>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
