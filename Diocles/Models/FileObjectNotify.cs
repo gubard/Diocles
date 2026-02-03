@@ -17,12 +17,10 @@ public sealed partial class FileObjectNotify
         _name = string.Empty;
         _dir = string.Empty;
         _data = [];
-        using var stream = new MemoryStream(_data);
-        _image = new(stream);
     }
 
     public Guid Id { get; }
-    public IImage Image => _image;
+    public IImage? Image => _image;
     public FileObjectNotifyType Type => ParseType();
 
     public static FileObjectNotify Create(Guid input)
@@ -40,20 +38,22 @@ public sealed partial class FileObjectNotify
                 OnPropertyChanged(nameof(Type));
 
                 break;
+            case nameof(Type):
+            {
+                UpdateImage();
+
+                break;
+            }
             case nameof(Data):
             {
-                _image.Dispose();
-                using var stream = new MemoryStream(Data);
-                stream.Position = 0;
-                _image = new(stream);
-                OnPropertyChanged(nameof(Image));
+                UpdateImage();
 
                 break;
             }
         }
     }
 
-    private Bitmap _image;
+    private Bitmap? _image;
 
     [ObservableProperty]
     private string _name;
@@ -69,6 +69,30 @@ public sealed partial class FileObjectNotify
 
     [ObservableProperty]
     private FileObjectNotifyStatus _status;
+
+    private void UpdateImage()
+    {
+        _image?.Dispose();
+
+        if (Data.Length == 0)
+        {
+            _image = null;
+
+            return;
+        }
+
+        if (Type != FileObjectNotifyType.Image)
+        {
+            _image = null;
+
+            return;
+        }
+
+        using var stream = new MemoryStream(Data);
+        stream.Position = 0;
+        _image = new(stream);
+        OnPropertyChanged(nameof(Image));
+    }
 
     private FileObjectNotifyType ParseType()
     {

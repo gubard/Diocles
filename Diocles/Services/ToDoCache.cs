@@ -128,6 +128,7 @@ public sealed class ToDoMemoryCache
             foreach (var (id, items) in source.Children)
             {
                 var notify = GetItem(id);
+
                 notify.UpdateChildren(
                     items
                         .OrderBy(x => x.Parameters.OrderIndex)
@@ -147,6 +148,7 @@ public sealed class ToDoMemoryCache
             foreach (var (id, items) in source.Parents)
             {
                 var notify = GetItem(id);
+
                 notify.UpdateParents(
                     items.Select(item => UpdateShortToDo(item, shortUpdatedIds)).ToArray()
                 );

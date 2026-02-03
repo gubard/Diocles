@@ -8,6 +8,7 @@
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:m="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
              xmlns:sc="clr-namespace:System.Collections;assembly=System.Runtime"
+             xmlns:dm="clr-namespace:Diocles.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoParametersView"
              x:DataType="ui:ToDoParametersViewModel">
@@ -403,10 +404,33 @@
                     </ListBox>
                 </StackPanel>
             </TabItem>
-            
-             <TabItem Header="{StaticResource Lang.Files}">
-                 
-             </TabItem>
+
+            <TabItem Header="{StaticResource Lang.Files}">
+                <Grid RowDefinitions="*,Auto">
+                    <ItemsControl ItemsSource="{Binding Files}" Classes="horizontal-wrap">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Panel>
+                                    <Image Classes="h-100"
+                                           Source="{Binding Image}"
+                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Image}}" />
+                                    <ip:PackIconMaterialDesign Classes="s-100"
+                                                               Kind="PictureAsPdf"
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Pdf}}" />
+                                    <ip:PackIconMaterialDesign Classes="s-100"
+                                                               Kind="FileCopy"
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Unknown}}" />
+                                </Panel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Grid.Row="1"
+                            Classes="align-stretch content-align-center h1"
+                            Content="{StaticResource Lang.Add}"
+                            Command="{Binding AddFilesCommand}" />
+                </Grid>
+            </TabItem>
         </TabControl>
     </ScrollViewer>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using Avalonia.Collections;
+﻿using Avalonia;
+using Avalonia.Collections;
 using Diocles.Models;
 using Diocles.Ui;
 using Gaia.Services;
@@ -47,7 +48,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IObjectStorage objectStorage,
         AppState appState,
         IFileStorageUiService fileStorageUiService,
-        IFileStorageUiCache fileStorageUiCache
+        IFileStorageUiCache fileStorageUiCache,
+        Application app
     )
     {
         _toDoValidator = toDoValidator;
@@ -60,6 +62,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         _appState = appState;
         _fileStorageUiService = fileStorageUiService;
         _fileStorageUiCache = fileStorageUiCache;
+        _app = app;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -123,7 +126,10 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             isShowEdit,
             _toDoValidator,
             this,
-            _fileStorageUiService
+            _fileStorageUiService,
+            _app,
+            _appResourceService,
+            _stringFormater
         );
     }
 
@@ -140,7 +146,10 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _toDoValidator,
             this,
             _fileStorageUiService,
-            _fileStorageUiCache
+            _fileStorageUiCache,
+            _app,
+            _appResourceService,
+            _stringFormater
         );
     }
 
@@ -159,4 +168,5 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly AppState _appState;
     private readonly IFileStorageUiService _fileStorageUiService;
     private readonly IFileStorageUiCache _fileStorageUiCache;
+    private readonly Application _app;
 }

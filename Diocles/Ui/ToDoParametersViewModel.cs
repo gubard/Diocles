@@ -1,13 +1,18 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Models;
+using Gaia.Services;
 using Hestia.Contract.Helpers;
 using Hestia.Contract.Models;
 using Hestia.Contract.Services;
@@ -40,7 +45,10 @@ public sealed partial class ToDoParametersViewModel
         bool isShowEdit,
         IToDoValidator toDoValidator,
         IDioclesViewModelFactory factory,
-        IFileStorageUiService fileStorageUiService
+        IFileStorageUiService fileStorageUiService,
+        Application app,
+        IAppResourceService appResourceService,
+        IStringFormater stringFormater
     )
         : base(validationMode, isShowEdit)
     {
@@ -48,6 +56,9 @@ public sealed partial class ToDoParametersViewModel
         _files = new();
         _toDoValidator = toDoValidator;
         _fileStorageUiService = fileStorageUiService;
+        _app = app;
+        _appResourceService = appResourceService;
+        _stringFormater = stringFormater;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -82,7 +93,10 @@ public sealed partial class ToDoParametersViewModel
         IToDoValidator toDoValidator,
         IDioclesViewModelFactory factory,
         IFileStorageUiService fileStorageUiService,
-        IFileStorageUiCache fileStorageUiCache
+        IFileStorageUiCache fileStorageUiCache,
+        Application app,
+        IAppResourceService appResourceService,
+        IStringFormater stringFormater
     )
         : base(validationMode, isShowEdit)
     {
@@ -90,6 +104,9 @@ public sealed partial class ToDoParametersViewModel
         _files = fileStorageUiCache.GetFiles(_filesDir);
         _toDoValidator = toDoValidator;
         _fileStorageUiService = fileStorageUiService;
+        _app = app;
+        _appResourceService = appResourceService;
+        _stringFormater = stringFormater;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -412,6 +429,55 @@ public sealed partial class ToDoParametersViewModel
     private readonly bool _isTypeHasDueDate;
     private readonly string _filesDir;
     private readonly IFileStorageUiService _fileStorageUiService;
+    private readonly Application _app;
+    private readonly IAppResourceService _appResourceService;
+    private readonly IStringFormater _stringFormater;
+
+    [RelayCommand]
+    private async Task AddFilesAsync(CancellationToken ct)
+    {
+        await WrapCommandAsync(
+            async () =>
+            {
+                var files = await _app.GetTopLevel()
+                    .ThrowIfNull()
+                    .StorageProvider.OpenFilePickerAsync(
+                        new()
+                        {
+                            AllowMultiple = true,
+                            Title = _stringFormater.Format(
+                                _appResourceService.GetResource<string>("Lang.AddFilesItem"),
+                                Name
+                            ),
+                        }
+                    );
+
+                if (files.Count == 0)
+                {
+                    return;
+                }
+
+                var addFiles = new FileObjectNotify[files.Count];
+
+                for (var index = 0; index < files.Count; index++)
+                {
+                    var file = files[index];
+
+                    addFiles[index] = new(Guid.NewGuid())
+                    {
+                        Name = file.Name,
+                        Data = await file.GetDataAsync(ct),
+                        Description = string.Empty,
+                        Dir = _filesDir,
+                        Status = FileObjectNotifyStatus.Added,
+                    };
+                }
+
+                Dispatcher.UIThread.Post(() => _files.AddRange(addFiles));
+            },
+            ct
+        );
+    }
 
     private void InitValidation()
     {
