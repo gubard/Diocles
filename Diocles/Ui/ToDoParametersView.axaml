@@ -420,6 +420,15 @@
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="FileCopy"
                                                                IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Unknown}}" />
+                                    <ip:PackIconMaterialDesign Classes="s-100"
+                                                               Kind="Close"
+                                                               Foreground="{DynamicResource SystemErrorTextColor}"
+                                                               IsVisible="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyStatus.Deleted}}" />
+                                    <Button Classes="align-right-top"
+                                            Content="{ip:MaterialDesign Delete}"
+                                            Command="{Binding $parent[ui:ToDoParametersView].ViewModel.DeleteFileCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding Status, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyStatus.Deleted}}" />
                                 </Panel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

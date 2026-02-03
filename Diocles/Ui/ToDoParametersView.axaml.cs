@@ -10,4 +10,7 @@ public partial class ToDoParametersView : UserControl
         InitializeComponent();
         Loaded += (_, _) => NameTextBox.FocusCaretIndex();
     }
+
+    public ToDoParametersViewModel ViewModel =>
+        DataContext as ToDoParametersViewModel ?? throw new InvalidOperationException();
 }

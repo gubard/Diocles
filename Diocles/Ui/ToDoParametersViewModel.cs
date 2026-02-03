@@ -455,6 +455,22 @@ public sealed partial class ToDoParametersViewModel
     private readonly IStringFormater _stringFormater;
 
     [RelayCommand]
+    private void DeleteFile(FileObjectNotify file)
+    {
+        WrapCommand(() =>
+        {
+            if (file.Status == FileObjectNotifyStatus.Added)
+            {
+                Dispatcher.UIThread.Post(() => _files.Remove(file));
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(() => file.Status = FileObjectNotifyStatus.Deleted);
+            }
+        });
+    }
+
+    [RelayCommand]
     private async Task AddFilesAsync(CancellationToken ct)
     {
         await WrapCommandAsync(
