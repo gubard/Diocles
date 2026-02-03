@@ -162,15 +162,27 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<HestiaPostResponse> DeleteToDoAsync(CancellationToken c)
+                async ValueTask<IValidationErrors> DeleteToDoAsync(CancellationToken c)
                 {
                     await dialogService.CloseMessageBoxAsync(c);
 
-                    return await uiToDoService.PostAsync(
-                        Guid.NewGuid(),
-                        new() { DeleteIds = [item.Id] },
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            uiToDoService
+                                .PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, c)
+                                .ToValidationErrors(),
+                            fileStorageUiService
+                                .PostAsync(
+                                    Guid.NewGuid(),
+                                    new() { DeleteDirs = [$"{item.Id}/ToDo"] },
+                                    c
+                                )
+                                .ToValidationErrors(),
+                        ],
                         c
                     );
+
+                    return errors.Combine();
                 }
 
                 return dialogService.ShowMessageBoxAsync(
@@ -212,15 +224,34 @@ public static class DioclesCommands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<HestiaPostResponse> DeleteToDosAsync(CancellationToken c)
+                async ValueTask<IValidationErrors> DeleteToDosAsync(CancellationToken c)
                 {
                     await dialogService.CloseMessageBoxAsync(c);
 
-                    return await uiToDoService.PostAsync(
-                        Guid.NewGuid(),
-                        new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            uiToDoService
+                                .PostAsync(
+                                    Guid.NewGuid(),
+                                    new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
+                                    c
+                                )
+                                .ToValidationErrors(),
+                            fileStorageUiService
+                                .PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        DeleteDirs = selected.Select(x => $"{x.Id}/ToDo").ToArray(),
+                                    },
+                                    c
+                                )
+                                .ToValidationErrors(),
+                        ],
                         c
                     );
+
+                    return errors.Combine();
                 }
 
                 return dialogService.ShowMessageBoxAsync(
