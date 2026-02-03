@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Helpers;
@@ -145,8 +146,19 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         }
 
         var edit = viewModel.CreateEditToDos(_editItem.Id);
+        var files = viewModel.CreateNeotomaPostRequest($"{_editItem.Id}/ToDo");
         await DialogService.CloseMessageBoxAsync(ct);
 
-        return await ToDoUiService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct);
+        var errors = await TaskHelper.WhenAllAsync(
+            [
+                ToDoUiService
+                    .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct)
+                    .ToValidationErrors(),
+                FileStorageUiService.PostAsync(Guid.NewGuid(), files, ct).ToValidationErrors(),
+            ],
+            ct
+        );
+
+        return errors.Combine();
     }
 }

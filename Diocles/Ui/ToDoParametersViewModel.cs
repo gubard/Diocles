@@ -296,17 +296,20 @@ public sealed partial class ToDoParametersViewModel
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public NeotomaPostRequest CreateNeotomaPostRequest(string dir)
+    public NeotomaPostRequest CreateNeotomaPostRequest(params string[] dirs)
     {
         var request = new NeotomaPostRequest();
 
-        request.Creates.Add(
-            dir,
-            _files
-                .Where(x => x.Status == FileObjectNotifyStatus.Added)
-                .Select(x => x.ToFileData())
-                .ToArray()
-        );
+        foreach (var dir in dirs)
+        {
+            request.Creates.Add(
+                dir,
+                _files
+                    .Where(x => x.Status == FileObjectNotifyStatus.Added)
+                    .Select(x => x.ToFileData())
+                    .ToArray()
+            );
+        }
 
         request.Deletes = _files
             .Where(x => x.Status == FileObjectNotifyStatus.Deleted)
@@ -375,12 +378,7 @@ public sealed partial class ToDoParametersViewModel
         };
     }
 
-    public EditToDos CreateEditToDos(Guid id)
-    {
-        return CreateEditToDos([id]);
-    }
-
-    public EditToDos CreateEditToDos(Guid[] ids)
+    public EditToDos CreateEditToDos(params Guid[] ids)
     {
         return new()
         {

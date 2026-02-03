@@ -25,6 +25,7 @@ public static class DioclesCommands
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var openerLink = DiHelper.ServiceProvider.GetService<IOpenerLink>();
+        var fileStorageUiService = DiHelper.ServiceProvider.GetService<IFileStorageUiService>();
 
         async ValueTask<HestiaGetResponse> OpenCurrentToDoAsync(CancellationToken ct)
         {
@@ -102,9 +103,14 @@ public static class DioclesCommands
                 true
             );
 
-            async ValueTask<HestiaPostResponse> EditToDosAsync(CancellationToken c)
+            async ValueTask<IValidationErrors> EditToDosAsync(CancellationToken c)
             {
                 var edit = viewModel.CreateEditToDos(selected.Select(x => x.Id).ToArray());
+
+                var files = viewModel.CreateNeotomaPostRequest(
+                    selected.Select(x => $"{x.Id}/ToDo").ToArray()
+                );
+
                 var newSettings = viewModel.CreateSettings();
                 await dialogService.CloseMessageBoxAsync(c);
 
@@ -114,7 +120,19 @@ public static class DioclesCommands
                     c
                 );
 
-                return await uiToDoService.PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c);
+                var errors = await TaskHelper.WhenAllAsync(
+                    [
+                        uiToDoService
+                            .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c)
+                            .ToValidationErrors(),
+                        fileStorageUiService
+                            .PostAsync(Guid.NewGuid(), files, ct)
+                            .ToValidationErrors(),
+                    ],
+                    c
+                );
+
+                return errors.Combine();
             }
 
             await dialogService.ShowMessageBoxAsync(
