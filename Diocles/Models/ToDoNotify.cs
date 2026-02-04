@@ -16,7 +16,8 @@ public partial class ToDoNotify
     : ObservableObject,
         IToDo,
         IStaticFactory<Guid, ToDoNotify>,
-        IOrderedItem
+        IOrderedItem,
+        IIsDrag
 {
     public ToDoNotify(Guid id)
     {
@@ -165,4 +166,7 @@ public partial class ToDoNotify
 
     [ObservableProperty]
     private bool _isChangingOrder;
+
+    [ObservableProperty]
+    private bool _isDrag;
 }

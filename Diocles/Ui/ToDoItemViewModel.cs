@@ -45,8 +45,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         Item = item;
         Files = fileStorageUiCache.GetFiles($"{Item.Id}/ToDo");
 
-        _header = factory.CreateToDosHeader(
-            item.Name,
+        _header = factory.CreateToDoItemHeader(
+            item,
             new AvaloniaList<InannaCommand>
             {
                 new(
@@ -109,7 +109,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     }
 
     private readonly IObjectStorage _objectStorage;
-    private readonly ToDosHeaderViewModel _header;
+    private readonly ToDoItemHeaderViewModel _header;
 
     [RelayCommand]
     private async Task ShowImageAsync(FileObjectNotify item, CancellationToken ct)
@@ -138,7 +138,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     private async ValueTask SaveUiCore(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
-        Item.PropertyChanged -= ItemPropertyChanged;
 
         await _objectStorage.SaveAsync(
             new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
@@ -147,14 +146,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         );
 
         await List.SaveUiAsync(ct);
-    }
-
-    private void ItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(Item.Name))
-        {
-            _header.Title = Item.Name;
-        }
     }
 
     private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -168,7 +159,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     private async ValueTask InitCore(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
-        Item.PropertyChanged += ItemPropertyChanged;
         var setting = await _objectStorage.LoadAsync<ToDosSetting>(Item.Id, ct);
 
         Dispatcher.UIThread.Post(() =>

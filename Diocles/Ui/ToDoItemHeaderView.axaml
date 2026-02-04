@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:h="clr-namespace:Diocles.Helpers"
+             xmlns:sm="clr-namespace:Inanna.Models;assembly=Inanna"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.ToDoItemHeaderView"
+             x:DataType="ui:ToDoItemHeaderViewModel">
+    <Panel>
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Classes="horizontal">
+                <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
+                <Button Content="{ip:MaterialDesign ArrowForward}"
+                        Command="{x:Static h:DioclesCommands.OpenCurrentToDoCommand}" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Column="1" Classes="horizontal-scroll">
+                <TextBlock Classes="h2 align-left-center" Text="{Binding Item.Name}" />
+            </ScrollViewer>
+
+            <StackPanel Grid.Column="2" Classes="horizontal">
+                <StackPanel.Styles>
+                    <Style Selector="MenuItem" x:DataType="sm:InannaCommand">
+                        <Setter Property="Command" Value="{Binding Command}" />
+                        <Setter Property="CommandParameter" Value="{Binding Parameter}" />
+                        <Setter Property="Icon" Value="{Binding Icon}" />
+                    </Style>
+
+                    <Style Selector="Panel.adaptive-buttons">
+                        <Setter Property="IsVisible" Value="False" />
+                    </Style>
+
+                    <Style Selector=":is(TopLevel):extra-small Panel.adaptive-buttons">
+                        <Setter Property="IsVisible" Value="True" />
+                    </Style>
+
+                    <Style Selector=":is(TopLevel):extra-small Panel.adaptive-items">
+                        <Setter Property="IsVisible" Value="False" />
+                    </Style>
+                </StackPanel.Styles>
+
+                <Panel Classes="adaptive-buttons">
+                    <Panel.DataTemplates>
+                        <DataTemplate x:DataType="sm:InannaCommand">
+                            <ContentControl Content="{Binding Content}" />
+                        </DataTemplate>
+                    </Panel.DataTemplates>
+
+                    <Panel
+                        IsVisible="{Binding Commands.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
+                        <Button IsVisible="{Binding !IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
+                            <Button.Flyout>
+                                <MenuFlyout ItemsSource="{Binding Commands}" />
+                            </Button.Flyout>
+                        </Button>
+                    </Panel>
+
+                    <Panel
+                        IsVisible="{Binding MultiCommands.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
+                        <Button IsVisible="{Binding IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
+                            <Button.Flyout>
+                                <MenuFlyout ItemsSource="{Binding MultiCommands}" />
+                            </Button.Flyout>
+                        </Button>
+                    </Panel>
+                </Panel>
+
+                <Panel Classes="adaptive-items">
+                    <ItemsControl Classes="horizontal-stack" IsVisible="{Binding !IsMulti}"
+                                  ItemsSource="{Binding Commands}" />
+                    <ItemsControl Classes="horizontal-stack"
+                                  IsVisible="{Binding IsMulti}"
+                                  ItemsSource="{Binding MultiCommands}" />
+                </Panel>
+            </StackPanel>
+        </Grid>
+        
+        <Grid DataContext="{Binding Item}" Classes="for-drop" ColumnDefinitions="*,*">
+            <Panel Tag="DropUp">
+                <Rectangle Classes="drop-aria" />
+                <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Up}" />
+            </Panel>
+
+            <Panel Grid.Column="1" Tag="DropDown">
+                <Rectangle Classes="drop-aria" />
+                <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Down}" />
+            </Panel>
+        </Grid>
+    </Panel>
+</UserControl>

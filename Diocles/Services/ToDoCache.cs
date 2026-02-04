@@ -432,7 +432,7 @@ public sealed class ToDoMemoryCache
                 }
             }
 
-            foreach (var changeOrder in source.ChangeOrder)
+            foreach (var changeOrder in source.ChangeOrders)
             {
                 var item = GetItem(changeOrder.StartId);
 

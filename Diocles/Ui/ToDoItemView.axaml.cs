@@ -1,9 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using Diocles.Controls;
 using Diocles.Models;
 
 namespace Diocles.Ui;
 
-public partial class ToDoItemView : UserControl, IToDosView
+public partial class ToDoItemView : ToDoDropUserControl, IToDosView
 {
     public ToDoItemView()
     {

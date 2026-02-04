@@ -60,7 +60,7 @@ public static class DioclesCommands
                 Guid.NewGuid(),
                 new()
                 {
-                    ChangeOrder =
+                    ChangeOrders =
                     [
                         new()
                         {

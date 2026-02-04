@@ -18,6 +18,12 @@ public interface IDioclesViewModelFactory
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
     FilesViewModel CreateFiles(AvaloniaList<FileObjectNotify> files, FileObjectNotify selectedFile);
 
+    ToDoItemHeaderViewModel CreateToDoItemHeader(
+        ToDoNotify item,
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+    );
+
     ToDoParametersViewModel CreateToDoParameters(
         ToDoParametersSettings settings,
         ValidationMode validationMode,
@@ -88,6 +94,15 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _appResourceService,
             _stringFormater
         );
+    }
+
+    public ToDoItemHeaderViewModel CreateToDoItemHeader(
+        ToDoNotify item,
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+    )
+    {
+        return new(commands, multiCommands, item);
     }
 
     public ToDoItemViewModel CreateToDos(ToDoNotify item)
