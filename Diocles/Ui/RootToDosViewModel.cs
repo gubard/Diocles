@@ -82,7 +82,6 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         _header.PropertyChanged -= HeaderPropertyChanged;
 
         await _objectStorage.SaveAsync(
-            $"{typeof(RootToDosViewModel).FullName}",
             new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
             ct
         );
@@ -93,11 +92,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     private async ValueTask InitCore(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
-
-        var setting = await _objectStorage.LoadAsync<ToDosSetting>(
-            $"{typeof(RootToDosViewModel).FullName}",
-            ct
-        );
+        var setting = await _objectStorage.LoadAsync<ToDosSetting>(ct);
 
         Dispatcher.UIThread.Post(() =>
         {
@@ -112,11 +107,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(
-            $"{typeof(ToDoParametersSettings).FullName}",
-            ct
-        );
-
+        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(ct);
         var parameters = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
@@ -167,7 +158,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
         var create = parameters.CreateShortToDo(id, null);
         var files = parameters.CreateNeotomaPostRequest($"{id}/ToDo");
         await DialogService.CloseMessageBoxAsync(ct);
-        await _objectStorage.SaveAsync($"{typeof(ToDoParametersSettings).FullName}", settings, ct);
+        await _objectStorage.SaveAsync(settings, ct);
         var request = new HestiaPostRequest { Creates = [create] };
 
         var errors = await TaskHelper.WhenAllAsync(

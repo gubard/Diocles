@@ -1,12 +1,13 @@
 ﻿using Avalonia.Media;
 using Gaia.Helpers;
 using Gaia.Models;
+using Gaia.Services;
 using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 
 namespace Diocles.Models;
 
-public class ToDoParametersSettings
+public sealed class ToDoParametersSettings : ObjectStorageValue<ToDoParametersSettings>
 {
     public bool IsBookmark { get; set; }
     public bool IsFavorite { get; set; }

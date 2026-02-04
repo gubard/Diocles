@@ -92,10 +92,7 @@ public static class DioclesCommands
                 .GetResource<string>("Lang.Edit")
                 .DispatchToDialogHeader();
 
-            var settings = await objectStorage.LoadAsync<ToDoParametersSettings>(
-                $"{typeof(ToDoParametersSettings).FullName}.multi",
-                ct
-            );
+            var settings = await objectStorage.LoadAsync<ToDoParametersSettings>(Guid.Empty, ct);
 
             var viewModel = factory.CreateToDoParameters(
                 settings,
@@ -113,12 +110,7 @@ public static class DioclesCommands
 
                 var newSettings = viewModel.CreateSettings();
                 await dialogService.CloseMessageBoxAsync(c);
-
-                await objectStorage.SaveAsync(
-                    $"{typeof(ToDoParametersSettings).FullName}.multi",
-                    newSettings,
-                    c
-                );
+                await objectStorage.SaveAsync(newSettings, Guid.Empty, c);
 
                 var errors = await TaskHelper.WhenAllAsync(
                     [

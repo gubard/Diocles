@@ -1,6 +1,8 @@
-﻿namespace Diocles.Models;
+﻿using Gaia.Services;
 
-public class ToDosSetting
+namespace Diocles.Models;
+
+public class ToDosSetting : ObjectStorageValue<ToDosSetting>
 {
     public ToDoGroupBy GroupBy { get; set; } = ToDoGroupBy.Status;
     public ToDoOrderBy OrderBy { get; set; }

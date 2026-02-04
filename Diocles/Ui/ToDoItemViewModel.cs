@@ -142,8 +142,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         Item.PropertyChanged -= ItemPropertyChanged;
 
         await _objectStorage.SaveAsync(
-            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
             new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            Item.Id,
             ct
         );
 
@@ -170,11 +170,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     {
         _header.PropertyChanged += HeaderPropertyChanged;
         Item.PropertyChanged += ItemPropertyChanged;
-
-        var setting = await _objectStorage.LoadAsync<ToDosSetting>(
-            $"{typeof(ToDoItemViewModel).FullName}.{Item.Id}",
-            ct
-        );
+        var setting = await _objectStorage.LoadAsync<ToDosSetting>(Item.Id, ct);
 
         Dispatcher.UIThread.Post(() =>
         {
@@ -189,11 +185,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(
-            $"{typeof(ToDoParametersSettings).FullName}.{Item.Id}",
-            ct
-        );
-
+        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(Item.Id, ct);
         var credential = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
@@ -244,13 +236,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         var create = parameters.CreateShortToDo(id, Item.Id);
         var files = parameters.CreateNeotomaPostRequest($"{id}/ToDo");
         await DialogService.CloseMessageBoxAsync(ct);
-
-        await _objectStorage.SaveAsync(
-            $"{typeof(ToDoParametersSettings).FullName}.{Item.Id}",
-            settings,
-            ct
-        );
-
+        await _objectStorage.SaveAsync(settings, Item.Id, ct);
         var request = new HestiaPostRequest { Creates = [create] };
 
         var errors = await TaskHelper.WhenAllAsync(
