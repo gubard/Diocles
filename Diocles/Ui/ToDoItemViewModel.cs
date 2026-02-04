@@ -14,7 +14,6 @@ using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
-using Neotoma.Contract.Models;
 
 namespace Diocles.Ui;
 

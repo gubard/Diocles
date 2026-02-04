@@ -1,4 +1,3 @@
-using Inanna.Models;
 using Inanna.Services;
 using Neotoma.Contract.Models;
 using Neotoma.Contract.Services;

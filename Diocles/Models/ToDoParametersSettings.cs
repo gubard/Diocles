@@ -1,5 +1,4 @@
-﻿using Avalonia.Media;
-using Gaia.Helpers;
+﻿using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
 using Hestia.Contract.Models;

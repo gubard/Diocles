@@ -1,9 +1,5 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Diocles.Services;
-using Gaia.Helpers;
-using Gaia.Services;
 using Inanna.Models;
 
 namespace Diocles.Ui;
