@@ -124,7 +124,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
                                     AppResourceService.GetResource<string>("Lang.ImageItem"),
                                     Item.Name
                                 )
-                                .ToDialogHeader()
+                                .DispatchToDialogHeader()
                         ),
                         Factory.CreateFiles(Files, item),
                         UiHelper.OkButton
