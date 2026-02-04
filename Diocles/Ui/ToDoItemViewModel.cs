@@ -109,12 +109,6 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         );
     }
 
-    public override void RefreshUi()
-    {
-        base.RefreshUi();
-        _header.RefreshUi();
-    }
-
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
 

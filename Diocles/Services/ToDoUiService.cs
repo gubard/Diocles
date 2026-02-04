@@ -12,7 +12,6 @@ public interface IToDoUiService
 public sealed class ToDoUiService(
     IToDoHttpService toDoHttpService,
     IToDoDbService toDoDbService,
-    AppState appState,
     IToDoUiCache uiCache,
     INavigator navigator,
     string serviceName,
@@ -26,5 +25,5 @@ public sealed class ToDoUiService(
         IToDoHttpService,
         IToDoDbService,
         IToDoUiCache
-    >(toDoHttpService, toDoDbService, appState, uiCache, navigator, serviceName, responseHandler),
+    >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName, responseHandler),
         IToDoUiService;

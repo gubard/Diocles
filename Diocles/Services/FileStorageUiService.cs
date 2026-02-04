@@ -11,7 +11,6 @@ public interface IFileStorageUiService
 public sealed class FileStorageUiService(
     IFileStorageHttpService httpService,
     IFileStorageDbService dbService,
-    AppState appState,
     IFileStorageUiCache uiCache,
     INavigator navigator,
     string serviceName,
@@ -25,5 +24,5 @@ public sealed class FileStorageUiService(
         IFileStorageHttpService,
         IFileStorageDbService,
         IFileStorageUiCache
-    >(httpService, dbService, appState, uiCache, navigator, serviceName, responseHandler),
+    >(httpService, dbService, uiCache, navigator, serviceName, responseHandler),
         IFileStorageUiService;

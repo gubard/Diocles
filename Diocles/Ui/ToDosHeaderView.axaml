@@ -42,10 +42,6 @@
                 </Style>
             </StackPanel.Styles>
 
-            <Button IsVisible="{Binding IsOffline}"
-                    Command="{Binding SwitchToOnlineCommand}"
-                    Content="{StaticResource Lang.SwitchToOnline}" />
-
             <Panel Classes="adaptive-buttons">
                 <Panel.DataTemplates>
                     <DataTemplate x:DataType="sm:InannaCommand">
