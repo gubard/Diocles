@@ -8,4 +8,7 @@ public partial class ToDoListView : UserControl
     {
         InitializeComponent();
     }
+
+    public ToDoListViewModel ViewModel =>
+        DataContext as ToDoListViewModel ?? throw new InvalidOperationException();
 }

@@ -4,7 +4,8 @@
         xmlns:h="clr-namespace:Diocles.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
-        xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna">
+        xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna"
+        xmlns:ui="clr-namespace:Diocles.Ui">
     <Style Selector="ItemsControl.todo-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
@@ -17,7 +18,8 @@
                     <Panel>
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <StackPanel Classes="horizontal">
-                                <Panel>
+                                <Panel
+                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
                                     <Button Classes="align-stretch mini"
                                             IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
                                             Content="{ip:MaterialDesign Reorder}"
