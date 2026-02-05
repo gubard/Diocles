@@ -11,4 +11,5 @@
     <StyleInclude Source="ItemsControl.axaml" />
     <StyleInclude Source="ListBox.axaml" />
     <StyleInclude Source="TextBlock.axaml" />
+    <StyleInclude Source="GridColumnStackPanel.axaml" />
 </Styles>

@@ -75,8 +75,8 @@
                         </Expander>
                     </StackPanel>
 
-                    <StackPanel
-                        IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
+                    <c:GridColumnStackPanel Classes="todo-view"
+                                            IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
                         <Expander
                             IsVisible="{Binding Circle.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
@@ -228,10 +228,10 @@
                                          Classes="todo-view" />
                             </StackPanel>
                         </Expander>
-                    </StackPanel>
+                    </c:GridColumnStackPanel>
 
-                    <StackPanel
-                        IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Status}}">
+                    <c:GridColumnStackPanel Classes="todo-view"
+                                            IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Status}}">
                         <Expander
                             IsVisible="{Binding Miss.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
@@ -326,7 +326,7 @@
                                          Classes="todo-view" />
                             </StackPanel>
                         </Expander>
-                    </StackPanel>
+                    </c:GridColumnStackPanel>
                 </Panel>
             </StackPanel>
         </ScrollViewer>

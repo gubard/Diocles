@@ -1,0 +1,19 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna">
+    <Style Selector=":is(TopLevel):small c|GridColumnStackPanel.todo-view">
+        <Setter Property="Columns" Value="2" />
+    </Style>
+
+    <Style Selector=":is(TopLevel):medium c|GridColumnStackPanel.todo-view">
+        <Setter Property="Columns" Value="3" />
+    </Style>
+
+    <Style Selector=":is(TopLevel):large c|GridColumnStackPanel.todo-view">
+        <Setter Property="Columns" Value="4" />
+    </Style>
+
+    <Style Selector=":is(TopLevel):extra-large c|GridColumnStackPanel.todo-view">
+        <Setter Property="Columns" Value="5" />
+    </Style>
+</Styles>
