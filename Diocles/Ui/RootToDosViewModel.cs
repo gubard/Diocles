@@ -93,15 +93,23 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     private async ValueTask InitCore(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
-        var setting = await _objectStorage.LoadAsync<ToDosSetting>(ct);
 
-        Dispatcher.UIThread.Post(() =>
-        {
-            List.GroupBy = setting.GroupBy;
-            List.OrderBy = setting.OrderBy;
-        });
+        await WrapCommandAsync(
+            async () =>
+            {
+                var setting = await _objectStorage.LoadAsync<ToDosSetting>(ct);
 
-        await List.InitUiAsync(ct);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    List.GroupBy = setting.GroupBy;
+                    List.OrderBy = setting.OrderBy;
+                });
+
+                await List.InitUiAsync(ct);
+            },
+            ct
+        );
+
         await RefreshAsync(ct);
     }
 
