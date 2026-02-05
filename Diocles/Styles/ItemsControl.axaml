@@ -19,7 +19,7 @@
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <StackPanel Classes="horizontal">
                                 <Panel
-                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
+                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
                                     <Button Classes="align-stretch mini"
                                             IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
                                             Content="{ip:MaterialDesign Reorder}"
