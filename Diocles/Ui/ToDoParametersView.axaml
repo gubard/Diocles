@@ -8,7 +8,7 @@
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:m="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
              xmlns:sc="clr-namespace:System.Collections;assembly=System.Runtime"
-             xmlns:dm="clr-namespace:Diocles.Models"
+             xmlns:wm="clr-namespace:Weber.Models;assembly=Weber"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoParametersView"
              x:DataType="ui:ToDoParametersViewModel">
@@ -413,22 +413,22 @@
                                 <Panel>
                                     <Image Classes="h-100"
                                            Source="{Binding Image}"
-                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Image}}" />
+                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Image}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="PictureAsPdf"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Pdf}}" />
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Pdf}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="FileCopy"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyType.Unknown}}" />
+                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Unknown}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="Close"
                                                                Foreground="{DynamicResource SystemErrorTextColor}"
-                                                               IsVisible="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyStatus.Deleted}}" />
+                                                               IsVisible="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
                                     <Button Classes="align-right-top"
                                             Content="{ip:MaterialDesign Delete}"
                                             Command="{Binding $parent[ui:ToDoParametersView].ViewModel.DeleteFileCommand}"
                                             CommandParameter="{Binding}"
-                                            IsVisible="{Binding Status, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static dm:FileObjectNotifyStatus.Deleted}}" />
+                                            IsVisible="{Binding Status, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
                                 </Panel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

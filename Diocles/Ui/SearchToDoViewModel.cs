@@ -9,6 +9,7 @@ using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Models;
 using Inanna.Services;
+using Weber.Services;
 
 namespace Diocles.Ui;
 

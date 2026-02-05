@@ -7,7 +7,6 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -23,6 +22,9 @@ using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
 using Neotoma.Contract.Models;
+using Weber.Helpers;
+using Weber.Models;
+using Weber.Services;
 
 namespace Diocles.Ui;
 

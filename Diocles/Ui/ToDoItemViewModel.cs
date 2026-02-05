@@ -14,6 +14,8 @@ using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
+using Weber.Models;
+using Weber.Services;
 
 namespace Diocles.Ui;
 
@@ -29,7 +31,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         IDioclesViewModelFactory factory,
         IObjectStorage objectStorage,
         IFileStorageUiService fileStorageUiService,
-        IFileStorageUiCache fileStorageUiCache
+        IFileStorageUiCache fileStorageUiCache,
+        IWeberViewModelFactory weberFactory
     )
         : base(
             dialogService,
@@ -67,6 +70,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
         );
 
         _objectStorage = objectStorage;
+        _weberFactory = weberFactory;
     }
 
     public object Header => _header;
@@ -110,6 +114,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
 
     private readonly IObjectStorage _objectStorage;
     private readonly ToDoItemHeaderViewModel _header;
+    private readonly IWeberViewModelFactory _weberFactory;
 
     [RelayCommand]
     private async Task ShowImageAsync(FileObjectNotify item, CancellationToken ct)
@@ -126,7 +131,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
                                 )
                                 .DispatchToDialogHeader()
                         ),
-                        Factory.CreateFiles(Files, item),
+                        _weberFactory.CreateFiles(Files, item),
                         UiHelper.OkButton
                     ),
                     ct

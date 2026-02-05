@@ -13,13 +13,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Hestia\Hestia.Contract\Hestia.Contract.csproj" />
+    <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
     <ProjectReference
       Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj"
       ReferenceOutputAssembly="false"
       OutputItemType="Analyzer"
     />
-    <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
-    <ProjectReference Include="..\..\Neotoma\Neotoma.Contract\Neotoma.Contract.csproj" />
+    <ProjectReference Include="..\..\Weber\Weber\Weber.csproj" />
   </ItemGroup>
 
   <ItemGroup>

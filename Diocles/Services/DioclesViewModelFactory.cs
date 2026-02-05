@@ -6,6 +6,7 @@ using Gaia.Services;
 using Hestia.Contract.Services;
 using Inanna.Models;
 using Inanna.Services;
+using Weber.Services;
 
 namespace Diocles.Services;
 
@@ -16,7 +17,6 @@ public interface IDioclesViewModelFactory
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
-    FilesViewModel CreateFiles(AvaloniaList<FileObjectNotify> files, FileObjectNotify selectedFile);
 
     ToDoItemHeaderViewModel CreateToDoItemHeader(
         ToDoNotify item,
@@ -53,10 +53,10 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IObjectStorage objectStorage,
-        AppState appState,
         IFileStorageUiService fileStorageUiService,
         IFileStorageUiCache fileStorageUiCache,
-        Application app
+        Application app,
+        IWeberViewModelFactory weberFactory
     )
     {
         _toDoValidator = toDoValidator;
@@ -66,10 +66,10 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         _dialogService = dialogService;
         _appResourceService = appResourceService;
         _objectStorage = objectStorage;
-        _appState = appState;
         _fileStorageUiService = fileStorageUiService;
         _fileStorageUiCache = fileStorageUiCache;
         _app = app;
+        _weberFactory = weberFactory;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -79,21 +79,6 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     )
     {
         return new(title, commands, multiCommands);
-    }
-
-    public FilesViewModel CreateFiles(
-        AvaloniaList<FileObjectNotify> files,
-        FileObjectNotify selectedFile
-    )
-    {
-        return new(
-            files,
-            selectedFile,
-            _fileStorageUiService,
-            _app,
-            _appResourceService,
-            _stringFormater
-        );
     }
 
     public ToDoItemHeaderViewModel CreateToDoItemHeader(
@@ -117,7 +102,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             this,
             _objectStorage,
             _fileStorageUiService,
-            _fileStorageUiCache
+            _fileStorageUiCache,
+            _weberFactory
         );
     }
 
@@ -196,8 +182,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IDialogService _dialogService;
     private readonly IAppResourceService _appResourceService;
     private readonly IObjectStorage _objectStorage;
-    private readonly AppState _appState;
     private readonly IFileStorageUiService _fileStorageUiService;
     private readonly IFileStorageUiCache _fileStorageUiCache;
     private readonly Application _app;
+    private readonly IWeberViewModelFactory _weberFactory;
 }
