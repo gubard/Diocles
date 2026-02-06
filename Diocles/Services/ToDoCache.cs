@@ -181,7 +181,10 @@ public sealed class ToDoMemoryCache
             if (source.Bookmarks is not null)
             {
                 _bookmarks.UpdateOrder(
-                    source.Bookmarks.Select(x => UpdateShortToDo(x, shortUpdatedIds)).ToArray()
+                    source
+                        .Bookmarks.OrderBy(x => x.Name)
+                        .Select(x => UpdateShortToDo(x, shortUpdatedIds))
+                        .ToArray()
                 );
             }
 
