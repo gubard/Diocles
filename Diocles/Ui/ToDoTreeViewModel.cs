@@ -21,7 +21,7 @@ public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
-            () => _toDoUiService.GetAsync(new() { IsSelectors = true }, ct),
+            () => _toDoUiService.GetAsync(new() { IsGetSelectors = true }, ct),
             ct
         );
     }

@@ -131,7 +131,7 @@ public sealed class ToDoMemoryCache
 
                 notify.UpdateChildren(
                     items
-                        .OrderBy(x => x.Parameters.OrderIndex)
+                        .OrderBy(x => x.Item.OrderIndex)
                         .Select(item => UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds))
                         .ToArray()
                 );
@@ -192,7 +192,7 @@ public sealed class ToDoMemoryCache
             {
                 _roots.UpdateOrder(
                     source
-                        .Roots.OrderBy(x => x.Parameters.OrderIndex)
+                        .Roots.OrderBy(x => x.Item.OrderIndex)
                         .Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
                         .ToArray()
                 );
@@ -200,8 +200,8 @@ public sealed class ToDoMemoryCache
 
             _search.UpdateOrder(
                 source
-                    .Search.OrderBy(x => x.Parameters.Name)
-                    .ThenBy(x => x.Parameters.OrderIndex)
+                    .Search.OrderBy(x => x.Item.Name)
+                    .ThenBy(x => x.Item.OrderIndex)
                     .Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
                     .ToArray()
             );
@@ -565,12 +565,12 @@ public sealed class ToDoMemoryCache
         HashSet<Guid> shortUpdatedIds
     )
     {
-        if (fullUpdatedIds.Contains(toDo.Parameters.Id))
+        if (fullUpdatedIds.Contains(toDo.Item.Id))
         {
-            return GetItem(toDo.Parameters.Id);
+            return GetItem(toDo.Item.Id);
         }
 
-        var item = UpdateShortToDo(toDo.Parameters, shortUpdatedIds);
+        var item = UpdateShortToDo(toDo.Item, shortUpdatedIds);
 
         item.Active = toDo.Active is not null
             ? UpdateShortToDo(toDo.Active, shortUpdatedIds)

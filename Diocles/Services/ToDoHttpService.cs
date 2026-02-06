@@ -22,6 +22,6 @@ public sealed class ToDoHttpService(
 {
     protected override HestiaGetRequest CreateHealthCheckGetRequest()
     {
-        return new() { IsSelectors = true };
+        return new() { IsGetSelectors = true };
     }
 }

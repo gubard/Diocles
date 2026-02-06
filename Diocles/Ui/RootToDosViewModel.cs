@@ -62,7 +62,7 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
 
     public override ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
-        var request = new HestiaGetRequest { IsRoots = true, IsSelectors = true };
+        var request = new HestiaGetRequest { IsRoots = true, IsGetSelectors = true };
 
         return WrapCommandAsync(() => ToDoUiService.GetAsync(request, ct), ct);
     }
