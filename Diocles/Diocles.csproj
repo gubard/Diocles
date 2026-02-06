@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.11" />
+    <PackageReference Include="LiveMarkdown.Avalonia" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>

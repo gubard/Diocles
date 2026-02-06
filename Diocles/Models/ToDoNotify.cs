@@ -1,4 +1,5 @@
-﻿using Avalonia.Collections;
+﻿using System.ComponentModel;
+using Avalonia.Collections;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Helpers;
@@ -9,6 +10,7 @@ using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
+using LiveMarkdown.Avalonia;
 
 namespace Diocles.Models;
 
@@ -27,6 +29,7 @@ public partial class ToDoNotify
         _weeklyDays = [];
         _monthlyDays = [];
         _annuallyDays = [];
+        MarkdownBuilder = new();
     }
 
     public Guid Id { get; }
@@ -36,6 +39,7 @@ public partial class ToDoNotify
     public IEnumerable<int> MonthlyDays => _monthlyDays;
     public IEnumerable<DayOfYear> AnnuallyDays => _annuallyDays;
     public ToDoNotify ActualItem => Type == ToDoType.Reference ? Reference ?? this : this;
+    public ObservableStringBuilder MarkdownBuilder { get; }
 
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
@@ -152,6 +156,27 @@ public partial class ToDoNotify
 
     Guid? IToDo.ReferenceId => Reference?.Id;
 
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        switch (e.PropertyName)
+        {
+            case nameof(Description):
+            {
+                UpdateMarkdown();
+
+                break;
+            }
+            case nameof(DescriptionType):
+            {
+                UpdateMarkdown();
+
+                break;
+            }
+        }
+    }
+
     private readonly AvaloniaList<ToDoNotify> _children;
     private readonly AvaloniaList<object> _parents;
     private readonly AvaloniaList<DayOfWeek> _weeklyDays;
@@ -169,4 +194,14 @@ public partial class ToDoNotify
 
     [ObservableProperty]
     private bool _isDrag;
+
+    private void UpdateMarkdown()
+    {
+        MarkdownBuilder.Clear();
+
+        if (DescriptionType == DescriptionType.Markdown)
+        {
+            MarkdownBuilder.Append(Description);
+        }
+    }
 }

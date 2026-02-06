@@ -11,6 +11,8 @@
              xmlns:in="clr-namespace:Inanna.Models;assembly=Inanna"
              xmlns:hi="clr-namespace:Inanna.Helpers;assembly=Inanna"
              xmlns:wm="clr-namespace:Weber.Models;assembly=Weber"
+             xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
+             xmlns:md="clr-namespace:LiveMarkdown.Avalonia;assembly=LiveMarkdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoItemView"
              x:DataType="ui:ToDoItemViewModel">
@@ -41,7 +43,12 @@
         <Expander Grid.Row="1"
                   IsVisible="{Binding Item.Description, Converter={x:Static s:IsNotNullOrWhiteSpaceConverter.Instance}}"
                   Header="{StaticResource Lang.Description}">
-            <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
+            <Panel>
+                <TextBlock  Classes="text-wrap" 
+                            IsVisible="{Binding Item.DescriptionType, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:DescriptionType.PlainText}}"
+                            Text="{Binding Item.Description}"/>
+                <md:MarkdownRenderer MarkdownBuilder="{Binding Item.MarkdownBuilder}" />
+            </Panel>
         </Expander>
 
         <Expander Grid.Row="2"
@@ -51,7 +58,7 @@
                 <ItemsControl Classes="align-left horizontal-stack" ItemsSource="{Binding Files}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Classes="mini" 
+                            <Button Classes="mini"
                                     Command="{Binding $parent[ui:ToDoItemView].VM.ShowImageCommand}"
                                     CommandParameter="{Binding}">
                                 <Panel>
