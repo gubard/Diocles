@@ -16,7 +16,7 @@
                         Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
                         Background="{Binding Color, Converter={x:Static is:ColorToBrushConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Byte_51}}"
                         IsEnabled="{Binding !IsDrag}"
-                        ToolTip.Tip="{Binding Description, Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
+                        ToolTip.Tip="{Binding Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
                     <Panel>
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <StackPanel Classes="horizontal">
@@ -59,18 +59,6 @@
                                         IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
                                     <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center small" />
                                 </Button>
-
-                                <OnPlatform>
-                                    <On Options="Android, iOS">
-                                        <TextBlock Classes="h6 align-center"
-                                                   IsVisible="{Binding Description, Converter={x:Static is:IsNotNullOrWhiteSpaceConverter.Instance}}"
-                                                   Text="{Binding Description, Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.AndroidDescriptionStringParameters}}" />
-                                    </On>
-
-                                    <On Options="Default">
-                                        <Control />
-                                    </On>
-                                </OnPlatform>
                             </StackPanel>
 
                             <Grid Grid.Column="2" RowDefinitions="Auto,Auto,Auto">
