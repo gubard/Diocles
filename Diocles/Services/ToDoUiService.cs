@@ -24,4 +24,17 @@ public sealed class ToDoUiService(
         IToDoDbService,
         IToDoUiCache
     >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName, responseHandler),
-        IToDoUiService;
+        IToDoUiService
+{
+    protected override HestiaGetRequest CreateGetRequestRefresh()
+    {
+        return new()
+        {
+            IsGetSelectors = true,
+            IsRoots = true,
+            IsCurrentActive = true,
+            IsBookmarks = true,
+            IsFavorites = true,
+        };
+    }
+}
