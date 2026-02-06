@@ -39,13 +39,13 @@
         </ScrollViewer>
 
         <Expander Grid.Row="1"
-                  IsVisible="{Binding Item.Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
+                  IsVisible="{Binding Item.Description, Converter={x:Static s:IsNotNullOrWhiteSpaceConverter.Instance}}"
                   Header="{StaticResource Lang.Description}">
             <TextBlock Text="{Binding Item.Description}" Classes="text-wrap" />
         </Expander>
 
         <Expander Grid.Row="2"
-                  IsVisible="{Binding Files.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hi:Numbers.Int32_0}}"
+                  IsVisible="{Binding Files.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static hi:Numbers.Int32_0}}"
                   Header="{StaticResource Lang.Files}">
             <ScrollViewer Classes="horizontal-scroll">
                 <ItemsControl Classes="align-left horizontal-stack" ItemsSource="{Binding Files}">
@@ -57,13 +57,13 @@
                                 <Panel>
                                     <Image Classes="h-100"
                                            Source="{Binding Image}"
-                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Image}}" />
+                                           IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Image}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="PictureAsPdf"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Pdf}}" />
+                                                               IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Pdf}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="FileCopy"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Unknown}}" />
+                                                               IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Unknown}}" />
                                 </Panel>
                             </Button>
                         </DataTemplate>

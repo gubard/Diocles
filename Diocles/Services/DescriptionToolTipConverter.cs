@@ -5,8 +5,10 @@ using Inanna.Models;
 
 namespace Diocles.Services;
 
-public class DescriptionToolTipConverter : IValueConverter
+public sealed class DescriptionToolTipConverter : IValueConverter
 {
+    public static readonly DescriptionToolTipConverter Instance = new();
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not string str)

@@ -5,21 +5,23 @@
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
         xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna"
-        xmlns:ui="clr-namespace:Diocles.Ui">
+        xmlns:ui="clr-namespace:Diocles.Ui"
+        xmlns:is="clr-namespace:Inanna.Services;assembly=Inanna"
+        xmlns:s="clr-namespace:Diocles.Services">
     <Style Selector="ItemsControl.todo-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
                 <Button Classes="align-stretch"
                         CommandParameter="{Binding}"
                         Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
-                        Background="{Binding Color, Converter={StaticResource ColorToBrushConverter}, ConverterParameter={x:Static ih:Numbers.Byte_51}}"
+                        Background="{Binding Color, Converter={x:Static is:ColorToBrushConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Byte_51}}"
                         IsEnabled="{Binding !IsDrag}"
-                        ToolTip.Tip="{Binding Description, Converter={StaticResource DescriptionToolTipConverter}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
+                        ToolTip.Tip="{Binding Description, Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
                     <Panel>
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <StackPanel Classes="horizontal">
                                 <Panel
-                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
+                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
                                     <Button Classes="align-stretch mini"
                                             IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
                                             Content="{ip:MaterialDesign Reorder}"
@@ -33,36 +35,36 @@
                                 </Panel>
 
                                 <ToggleButton Classes="s-40"
-                                              IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
-                                              IsVisible="{Binding IsCanDo, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
+                                              IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
+                                              IsVisible="{Binding IsCanDo, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
                                               CommandParameter="{Binding}"
                                               Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
                                     <ip:PackIconMaterialDesign Kind="Check"
                                                                Classes="h2 align-center"
-                                                               IsVisible="{Binding IsCanDo, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
+                                                               IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
                                 </ToggleButton>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Classes="align-left-center">
                                 <TextBlock Classes="text-wrap m-l-5 h5"
-                                           Classes.miss="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
-                                           Classes.ready-for-complete="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
-                                           Classes.planned="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
-                                           Classes.completed="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
-                                           Classes.coming-soon="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                                           Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                                           Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                                           Classes.planned="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                                           Classes.completed="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                                           Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
                                            Text="{Binding Name}" />
 
                                 <Button Command="{x:Static h:DioclesCommands.OpenParentCommand}"
                                         CommandParameter="{Binding Active}"
-                                        IsVisible="{Binding Active, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Null}}">
+                                        IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
                                     <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center small" />
                                 </Button>
 
                                 <OnPlatform>
                                     <On Options="Android, iOS">
                                         <TextBlock Classes="h6 align-center"
-                                                   IsVisible="{Binding Description, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}"
-                                                   Text="{Binding Description, Converter={StaticResource DescriptionToolTipConverter}, ConverterParameter={x:Static h:DiocleHelper.AndroidDescriptionStringParameters}}" />
+                                                   IsVisible="{Binding Description, Converter={x:Static is:IsNotNullOrWhiteSpaceConverter.Instance}}"
+                                                   Text="{Binding Description, Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.AndroidDescriptionStringParameters}}" />
                                     </On>
 
                                     <On Options="Default">
@@ -109,7 +111,7 @@
                                                           Header="{StaticResource Lang.OpenLink}"
                                                           Command="{x:Static h:DioclesCommands.OpenLinkCommand}"
                                                           CommandParameter="{Binding}"
-                                                          IsVisible="{Binding Link, Converter={StaticResource IsNotNullOrWhiteSpaceConverter}}" />
+                                                          IsVisible="{Binding Link, Converter={x:Static is:IsNotNullOrWhiteSpaceConverter.Instance}}" />
                                             </MenuFlyout>
                                         </Button.Flyout>
                                     </Button>

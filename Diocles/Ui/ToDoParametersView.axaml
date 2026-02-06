@@ -9,6 +9,7 @@
              xmlns:m="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
              xmlns:sc="clr-namespace:System.Collections;assembly=System.Runtime"
              xmlns:wm="clr-namespace:Weber.Models;assembly=Weber"
+             xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoParametersView"
              x:DataType="ui:ToDoParametersViewModel">
@@ -17,7 +18,7 @@
             <TabItem Header="{StaticResource Lang.Parameters}">
                 <StackPanel>
                     <WrapPanel Classes="horizontal"
-                               IsVisible="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
+                               IsVisible="{Binding Type, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Reference}}">
                         <StackPanel>
                             <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditIsBookmark}">
                                 <ToggleSwitch.OffContent>
@@ -46,7 +47,7 @@
 
                         <StackPanel>
                             <StackPanel.IsVisible>
-                                <Binding Path="Type" Converter="{StaticResource AnyOfConverter}">
+                                <Binding Path="Type" Converter="{x:Static s:AnyOfConverter.Instance}">
                                     <Binding.ConverterParameter>
                                         <sc:ArrayList>
                                             <m:ToDoType>Periodicity</m:ToDoType>
@@ -85,7 +86,7 @@
                     <TextBox x:Name="NameTextBox" Text="{Binding Name}" />
 
                     <StackPanel
-                        IsVisible="{Binding Type, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
+                        IsVisible="{Binding Type, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Reference}}">
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditLink}">
                             <ToggleSwitch.OffContent>
                                 <TextBlock Text="{StaticResource Lang.Link}" />
@@ -113,7 +114,7 @@
 
                     <StackPanel>
                         <StackPanel.IsVisible>
-                            <Binding Path="Type" Converter="{StaticResource AnyOfConverter}">
+                            <Binding Path="Type" Converter="{x:Static s:AnyOfConverter.Instance}">
                                 <Binding.ConverterParameter>
                                     <sc:ArrayList>
                                         <m:ToDoType>Periodicity</m:ToDoType>
@@ -138,7 +139,7 @@
                                 <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}"
                                            Text="{StaticResource Lang.DueDate}" />
                                 <CalendarDatePicker
-                                    SelectedDate="{Binding DueDate, Converter={StaticResource DateOnlyToDateTimeConverter}}" />
+                                    SelectedDate="{Binding DueDate, Converter={x:Static s:DateOnlyToDateTimeConverter.Instance}}" />
                             </StackPanel>
 
                             <StackPanel Grid.Column="1">
@@ -161,7 +162,7 @@
 
                     <StackPanel>
                         <StackPanel.IsVisible>
-                            <Binding Path="Type" Converter="{StaticResource AnyOfConverter}">
+                            <Binding Path="Type" Converter="{x:Static s:AnyOfConverter.Instance}">
                                 <Binding.ConverterParameter>
                                     <sc:ArrayList>
                                         <m:ToDoType>Periodicity</m:ToDoType>
@@ -191,7 +192,7 @@
                     </StackPanel>
 
                     <StackPanel
-                        IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoType.Periodicity}}">
+                        IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Periodicity}}">
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditTypeOfPeriodicity}">
                             <ToggleSwitch.OffContent>
                                 <TextBlock Text="{StaticResource Lang.TypeOfPeriodicity}" />
@@ -215,7 +216,7 @@
                         </ToggleSwitch>
 
                         <c:DaysOfYearSelectorControl
-                            IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:TypeOfPeriodicity.Annually}}"
+                            IsVisible="{Binding TypeOfPeriodicity, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:TypeOfPeriodicity.Annually}}"
                             ItemsSource="{Binding AnnuallyDays}" />
 
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditMonthlyDays}">
@@ -228,7 +229,7 @@
                         </ToggleSwitch>
 
                         <c:IntegersSelectorControl
-                            IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:TypeOfPeriodicity.Monthly}}"
+                            IsVisible="{Binding TypeOfPeriodicity, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:TypeOfPeriodicity.Monthly}}"
                             SelectedIntegers="{Binding MonthlyDays}"
                             Min="1"
                             Max="31" />
@@ -243,12 +244,12 @@
                         </ToggleSwitch>
 
                         <c:EnumsSelectorControl
-                            IsVisible="{Binding TypeOfPeriodicity, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:TypeOfPeriodicity.Weekly}}"
+                            IsVisible="{Binding TypeOfPeriodicity, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:TypeOfPeriodicity.Weekly}}"
                             SelectedEnums="{Binding WeeklyDays}" />
                     </StackPanel>
 
                     <UniformGrid Columns="2"
-                                 IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoType.PeriodicityOffset}}">
+                                 IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.PeriodicityOffset}}">
                         <StackPanel>
                             <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditDaysOffset}">
                                 <ToggleSwitch.OffContent>
@@ -311,7 +312,7 @@
                     </UniformGrid>
 
                     <StackPanel
-                        IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoType.Reference}}">
+                        IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Reference}}">
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditReference}">
                             <ToggleSwitch.OffContent>
                                 <TextBlock Text="{StaticResource Lang.Reference}" />
@@ -377,7 +378,7 @@
                              ItemsSource="{x:Static h:MaterialDesignColors.ColorsA400}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Ellipse Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Width="20"
+                                <Ellipse Fill="{Binding Converter={x:Static s:ColorToBrushConverter.Instance}}" Width="20"
                                          Height="20" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -413,22 +414,22 @@
                                 <Panel>
                                     <Image Classes="h-100"
                                            Source="{Binding Image}"
-                                           IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Image}}" />
+                                           IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Image}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="PictureAsPdf"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Pdf}}" />
+                                                               IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Pdf}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="FileCopy"
-                                                               IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyType.Unknown}}" />
+                                                               IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyType.Unknown}}" />
                                     <ip:PackIconMaterialDesign Classes="s-100"
                                                                Kind="Close"
                                                                Foreground="{DynamicResource SystemErrorTextColor}"
-                                                               IsVisible="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
+                                                               IsVisible="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
                                     <Button Classes="align-right-top"
                                             Content="{ip:MaterialDesign Delete}"
                                             Command="{Binding $parent[ui:ToDoParametersView].ViewModel.DeleteFileCommand}"
                                             CommandParameter="{Binding}"
-                                            IsVisible="{Binding Status, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
+                                            IsVisible="{Binding Status, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static wm:FileObjectNotifyStatus.Deleted}}" />
                                 </Panel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

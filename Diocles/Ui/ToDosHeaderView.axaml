@@ -7,6 +7,7 @@
              xmlns:h="clr-namespace:Diocles.Helpers"
              xmlns:sm="clr-namespace:Inanna.Models;assembly=Inanna"
              xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDosHeaderView"
              x:DataType="ui:ToDosHeaderViewModel">
@@ -50,7 +51,7 @@
                 </Panel.DataTemplates>
 
                 <Panel
-                    IsVisible="{Binding Commands.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
+                    IsVisible="{Binding Commands.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
                     <Button IsVisible="{Binding !IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
                         <Button.Flyout>
                             <MenuFlyout ItemsSource="{Binding Commands}" />
@@ -59,7 +60,7 @@
                 </Panel>
 
                 <Panel
-                    IsVisible="{Binding MultiCommands.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
+                    IsVisible="{Binding MultiCommands.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_0}}">
                     <Button IsVisible="{Binding IsMulti}" Content="{ip:MaterialDesign MoreHoriz}">
                         <Button.Flyout>
                             <MenuFlyout ItemsSource="{Binding MultiCommands}" />

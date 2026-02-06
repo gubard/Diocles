@@ -1,18 +1,19 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:m="clr-namespace:Diocles.Models"
-        xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract">
+        xmlns:hm="clr-namespace:Hestia.Contract.Models;assembly=Hestia.Contract"
+        xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna">
     <Style Selector="ListBox.todo-view">
         <Setter Property="SelectionMode" Value="Multiple" />
 
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:ToDoNotify">
                 <TextBlock Classes="text-wrap field h5"
-                           Classes.miss="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
-                           Classes.ready-for-complete="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
-                           Classes.planned="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
-                           Classes.completed="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
-                           Classes.coming-soon="{Binding Status, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                           Classes.miss="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                           Classes.ready-for-complete="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                           Classes.planned="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                           Classes.completed="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                           Classes.coming-soon="{Binding Status, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
                            Text="{Binding Name}" />
             </DataTemplate>
         </Setter>

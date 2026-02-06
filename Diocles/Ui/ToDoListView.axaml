@@ -6,6 +6,7 @@
              xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
              xmlns:m="clr-namespace:Diocles.Models"
              xmlns:h="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoListView"
              x:DataType="ui:ToDoListViewModel">
@@ -35,7 +36,7 @@
         <ScrollViewer Grid.Row="1" Classes="vertical-scroll">
             <StackPanel>
                 <Expander
-                    IsVisible="{Binding Favorites.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                    IsVisible="{Binding Favorites.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                     <Expander.Header>
                         <StackPanel Classes="horizontal align-center">
                             <TextBlock Classes="align-center" Text="{StaticResource Lang.Favorites}" />
@@ -54,9 +55,9 @@
 
                 <Panel>
                     <StackPanel
-                        IsVisible="{Binding Items.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                        IsVisible="{Binding Items.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                         <Expander
-                            IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
+                            IsVisible="{Binding GroupBy, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoGroupBy.None}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Tasks}" />
@@ -76,9 +77,9 @@
                     </StackPanel>
 
                     <c:GridColumnStackPanel Classes="todo-view"
-                                            IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
+                                            IsVisible="{Binding GroupBy, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoGroupBy.Type}}">
                         <Expander
-                            IsVisible="{Binding Circle.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Circle.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Circle}" />
@@ -97,7 +98,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Group.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Group.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Group}" />
@@ -116,7 +117,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Periodicity.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Periodicity.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Periodicity}" />
@@ -135,7 +136,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding PeriodicityOffset.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding PeriodicityOffset.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.PeriodicityOffset}" />
@@ -154,7 +155,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding FixedDate.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding FixedDate.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.FixedDate}" />
@@ -173,7 +174,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Reference.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Reference.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Reference}" />
@@ -192,7 +193,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Step.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Step.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Step}" />
@@ -211,7 +212,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Value.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Value.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Value}" />
@@ -231,9 +232,9 @@
                     </c:GridColumnStackPanel>
 
                     <c:GridColumnStackPanel Classes="todo-view"
-                                            IsVisible="{Binding GroupBy, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:ToDoGroupBy.Status}}">
+                                            IsVisible="{Binding GroupBy, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:ToDoGroupBy.Status}}">
                         <Expander
-                            IsVisible="{Binding Miss.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Miss.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Miss}" />
@@ -252,7 +253,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding ReadyForComplete.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding ReadyForComplete.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.ReadyForComplete}" />
@@ -271,7 +272,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding ComingSoon.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding ComingSoon.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.ComingSoon}" />
@@ -290,7 +291,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Planned.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Planned.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Planned}" />
@@ -309,7 +310,7 @@
                         </Expander>
 
                         <Expander
-                            IsVisible="{Binding Completed.Count, Converter={StaticResource IsNotValueConverter}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
+                            IsVisible="{Binding Completed.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static h:Numbers.Int32_0}}">
                             <Expander.Header>
                                 <StackPanel Classes="horizontal align-center">
                                     <TextBlock Classes="align-center" Text="{StaticResource Lang.Completed}" />

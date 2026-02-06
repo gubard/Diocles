@@ -5,8 +5,10 @@ using Hestia.Contract.Models;
 
 namespace Diocles.Services;
 
-public class ToDoNotifyTreeVisibleConverter : IValueConverter
+public sealed class ToDoNotifyTreeVisibleConverter : IValueConverter
 {
+    public static readonly ToDoNotifyTreeVisibleConverter Instance = new();
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not ToDoNotify item)

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Diocles.Ui"
              xmlns:dm="clr-namespace:Diocles.Models"
+             xmlns:s="clr-namespace:Diocles.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoTreeView"
              x:DataType="ui:ToDoTreeViewModel">
@@ -11,7 +12,7 @@
         <TreeView.Styles>
             <Style Selector="TreeViewItem" x:DataType="dm:ToDoNotify">
                 <Setter Property="IsVisible"
-                        Value="{Binding Converter={StaticResource ToDoNotifyTreeVisibleConverter}}" />
+                        Value="{Binding Converter={x:Static s:ToDoNotifyTreeVisibleConverter.Instance}}" />
             </Style>
         </TreeView.Styles>
 
