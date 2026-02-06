@@ -112,7 +112,7 @@ public sealed class ToDoMemoryCache
     {
         var shortUpdatedIds = new HashSet<Guid>();
 
-        if (source.CurrentActive.IsResponse)
+        if (source.CurrentActive.HasResponse)
         {
             Dispatcher.UIThread.Invoke(() =>
                 CurrentActive = source.CurrentActive.Item is not null

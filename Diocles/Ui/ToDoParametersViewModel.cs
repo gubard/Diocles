@@ -85,7 +85,7 @@ public sealed partial class ToDoParametersViewModel
         IsBookmark = item.IsBookmark;
         IsFavorite = item.IsFavorite;
         Icon = item.Icon;
-        _isTypeHasDueDate = item.Type.IsHasDueDate();
+        _isTypeHasDueDate = item.Type.HasDueDate();
         ResetEdit();
     }
 
@@ -134,7 +134,7 @@ public sealed partial class ToDoParametersViewModel
         IsBookmark = item.IsBookmark;
         IsFavorite = item.IsFavorite;
         Icon = item.Icon;
-        _isTypeHasDueDate = item.Type.IsHasDueDate();
+        _isTypeHasDueDate = item.Type.HasDueDate();
         ResetEdit();
     }
 
