@@ -4,7 +4,7 @@ using Inanna.Models;
 
 namespace Diocles.Ui;
 
-public partial class ChangeParentToDoViewModel : ViewModelBase
+public sealed partial class ChangeParentToDoViewModel : ViewModelBase
 {
     public ChangeParentToDoViewModel(IDioclesViewModelFactory factory)
     {
