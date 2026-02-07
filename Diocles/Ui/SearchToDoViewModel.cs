@@ -1,10 +1,13 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Diocles.Helpers;
+using Diocles.Models;
 using Diocles.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using Inanna.Models;
@@ -27,7 +30,8 @@ public sealed partial class SearchToDoViewModel
         IDialogService dialogService,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
-        IFileStorageUiService fileStorageUiService
+        IFileStorageUiService fileStorageUiService,
+        IObjectStorage objectStorage
     )
         : base(
             dialogService,
@@ -47,6 +51,7 @@ public sealed partial class SearchToDoViewModel
         );
 
         _toDoUiService = toDoUiService;
+        _objectStorage = objectStorage;
         _types = new();
     }
 
@@ -62,16 +67,41 @@ public sealed partial class SearchToDoViewModel
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
 
-        return List.SaveUiAsync(ct);
+        return WrapCommandAsync(
+            async () =>
+            {
+                await List.SaveUiAsync(ct);
+
+                await _objectStorage.SaveAsync(
+                    new SearchToDoSettings { SearchText = SearchText, Types = _types.ToArray() },
+                    ct
+                );
+            },
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
 
-        return List.InitUiAsync(ct);
+        return WrapCommandAsync(
+            async () =>
+            {
+                await List.InitUiAsync(ct);
+                var settings = await _objectStorage.LoadAsync<SearchToDoSettings>(ct);
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    SearchText = settings.SearchText;
+                    _types.AddRange(settings.Types);
+                });
+            },
+            ct
+        );
     }
 
+    private readonly IObjectStorage _objectStorage;
     private readonly IToDoUiService _toDoUiService;
     private readonly ToDosHeaderViewModel _header;
     private readonly AvaloniaList<ToDoType> _types;
