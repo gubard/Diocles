@@ -56,7 +56,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IFileStorageUiService fileStorageUiService,
         IFileStorageUiCache fileStorageUiCache,
         Application app,
-        IWeberViewModelFactory weberFactory
+        IWeberViewModelFactory weberFactory,
+        IInannaViewModelFactory inannaViewModelFactor
     )
     {
         _toDoValidator = toDoValidator;
@@ -70,6 +71,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         _fileStorageUiCache = fileStorageUiCache;
         _app = app;
         _weberFactory = weberFactory;
+        _inannaViewModelFactor = inannaViewModelFactor;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -146,7 +148,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _fileStorageUiService,
             _app,
             _appResourceService,
-            _stringFormater
+            _stringFormater,
+            _dialogService,
+            _inannaViewModelFactor
         );
     }
 
@@ -166,7 +170,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _fileStorageUiCache,
             _app,
             _appResourceService,
-            _stringFormater
+            _stringFormater,
+            _dialogService,
+            _inannaViewModelFactor
         );
     }
 
@@ -186,4 +192,5 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly IFileStorageUiCache _fileStorageUiCache;
     private readonly Application _app;
     private readonly IWeberViewModelFactory _weberFactory;
+    private readonly IInannaViewModelFactory _inannaViewModelFactor;
 }

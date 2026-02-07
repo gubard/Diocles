@@ -378,7 +378,8 @@
                              ItemsSource="{x:Static h:MaterialDesignColors.ColorsA400}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Ellipse Fill="{Binding Converter={x:Static s:ColorToBrushConverter.Instance}}" Width="20"
+                                <Ellipse Fill="{Binding Converter={x:Static s:ColorToBrushConverter.Instance}}"
+                                         Width="20"
                                          Height="20" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -407,8 +408,15 @@
             </TabItem>
 
             <TabItem Header="{StaticResource Lang.Files}">
-                <Grid RowDefinitions="*,Auto">
-                    <ItemsControl ItemsSource="{Binding Files}" Classes="horizontal-wrap">
+                <Grid RowDefinitions="Auto,*">
+                    <StackPanel Classes="horizontal">
+                        <Button Content="{StaticResource Lang.AddFiles}"
+                                Command="{Binding AddFilesCommand}" />
+                        <Button Content="{StaticResource Lang.GenerateLinearBarcode}"
+                                Command="{Binding ShowGenerateLinearBarcodeCommand}" />
+                    </StackPanel>
+
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding Files}" Classes="horizontal-wrap">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Panel>
@@ -434,11 +442,6 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
-                    <Button Grid.Row="1"
-                            Classes="align-stretch content-align-center h1"
-                            Content="{StaticResource Lang.Add}"
-                            Command="{Binding AddFilesCommand}" />
                 </Grid>
             </TabItem>
         </TabControl>

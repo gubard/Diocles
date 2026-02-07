@@ -51,7 +51,9 @@ public sealed partial class ToDoParametersViewModel
         IFileStorageUiService fileStorageUiService,
         Application app,
         IAppResourceService appResourceService,
-        IStringFormater stringFormater
+        IStringFormater stringFormater,
+        IDialogService dialogService,
+        IInannaViewModelFactory inannaViewModelFactor
     )
         : base(validationMode, isShowEdit)
     {
@@ -62,6 +64,8 @@ public sealed partial class ToDoParametersViewModel
         _app = app;
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
+        _dialogService = dialogService;
+        _inannaViewModelFactor = inannaViewModelFactor;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -99,7 +103,9 @@ public sealed partial class ToDoParametersViewModel
         IFileStorageUiCache fileStorageUiCache,
         Application app,
         IAppResourceService appResourceService,
-        IStringFormater stringFormater
+        IStringFormater stringFormater,
+        IDialogService dialogService,
+        IInannaViewModelFactory inannaViewModelFactor
     )
         : base(validationMode, isShowEdit)
     {
@@ -110,6 +116,8 @@ public sealed partial class ToDoParametersViewModel
         _app = app;
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
+        _dialogService = dialogService;
+        _inannaViewModelFactor = inannaViewModelFactor;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -454,6 +462,54 @@ public sealed partial class ToDoParametersViewModel
     private readonly Application _app;
     private readonly IAppResourceService _appResourceService;
     private readonly IStringFormater _stringFormater;
+    private readonly IDialogService _dialogService;
+    private readonly IInannaViewModelFactory _inannaViewModelFactor;
+
+    [RelayCommand]
+    private async Task ShowGenerateLinearBarcodeAsync(CancellationToken ct)
+    {
+        await WrapCommandAsync(
+            () =>
+            {
+                var linearBarcodeGenerator = _inannaViewModelFactor.CreateLinearBarcodeGenerator();
+
+                return _dialogService.ShowMessageBoxAsync(
+                    new(
+                        _appResourceService
+                            .GetResource<string>("Lang.GenerateLinearBarcode")
+                            .DispatchToDialogHeader(),
+                        linearBarcodeGenerator,
+                        new(
+                            _appResourceService.GetResource<string>("Lang.AddBarcode"),
+                            UiHelper.CreateCommand(async c =>
+                            {
+                                await using var stream =
+                                    linearBarcodeGenerator.Barcode.GetPngStream();
+
+                                await _dialogService.CloseMessageBoxAsync(c);
+
+                                var file = new FileObjectNotify(Guid.NewGuid())
+                                {
+                                    Name = $"{linearBarcodeGenerator.Barcode.Text}.png",
+                                    Data = stream.ToByteSpan().ToArray(),
+                                    Description = string.Empty,
+                                    Dir = _filesDir,
+                                    Status = FileObjectNotifyStatus.Added,
+                                };
+
+                                Dispatcher.UIThread.Post(() => _files.Add(file));
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            },
+            ct
+        );
+    }
 
     [RelayCommand]
     private void DeleteFile(FileObjectNotify file)
