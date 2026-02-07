@@ -56,7 +56,7 @@ public sealed class ToDoMemoryCache
     : MemoryCache<ToDoNotify, HestiaPostRequest, HestiaGetResponse>,
         IToDoMemoryCache
 {
-    public ToDoNotify? CurrentActive { get; set; }
+    public ToDoNotify? CurrentActive { get; private set; }
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => _bookmarks;
@@ -75,11 +75,6 @@ public sealed class ToDoMemoryCache
             item.IsChangingOrder = false;
             item.IsHideOnTree = false;
         }
-    }
-
-    public ToDoNotify Get(Guid id)
-    {
-        return GetItem(id);
     }
 
     public override ConfiguredValueTaskAwaitable UpdateAsync(
@@ -215,6 +210,84 @@ public sealed class ToDoMemoryCache
         });
     }
 
+    private void SetupDueToDo(ToDoNotify item)
+    {
+        var now = DateTime.Now.ToDateOnly();
+
+        if (item.DueDate == now)
+        {
+            item.IsCanDo = ToDoIsCanDo.CanComplete;
+            item.Status = ToDoStatus.ReadyForComplete;
+        }
+        else if (item.DueDate > now)
+        {
+            item.IsCanDo = ToDoIsCanDo.None;
+            item.Status = ToDoStatus.Planned;
+        }
+        else
+        {
+            item.IsCanDo = ToDoIsCanDo.CanComplete;
+            item.Status = ToDoStatus.Miss;
+        }
+    }
+
+    private void SetupCreatedToDo(ShortToDo todo, HashSet<Guid> shortUpdatedIds)
+    {
+        var item = UpdateShortToDo(todo, shortUpdatedIds);
+
+        item.OrderIndex = item.Parent is null
+            ? (uint)_roots.Count + 1
+            : (uint)item.Parent.Children.Count + 1;
+
+        switch (item.Type)
+        {
+            case ToDoType.Value:
+                item.IsCanDo = ToDoIsCanDo.CanComplete;
+                item.Status = ToDoStatus.ReadyForComplete;
+
+                break;
+            case ToDoType.Step:
+                item.IsCanDo = ToDoIsCanDo.CanComplete;
+                item.Status = ToDoStatus.ReadyForComplete;
+
+                break;
+            case ToDoType.Circle:
+                item.IsCanDo = ToDoIsCanDo.CanComplete;
+                item.Status = ToDoStatus.ReadyForComplete;
+
+                break;
+            case ToDoType.Group:
+                item.IsCanDo = ToDoIsCanDo.None;
+                item.Status = ToDoStatus.Completed;
+
+                break;
+            case ToDoType.FixedDate:
+                SetupDueToDo(item);
+
+                break;
+            case ToDoType.Periodicity:
+                SetupDueToDo(item);
+
+                break;
+            case ToDoType.PeriodicityOffset:
+                SetupDueToDo(item);
+
+                break;
+            case ToDoType.Reference:
+                if (item.Reference is null)
+                {
+                    break;
+                }
+
+                item.IsCanDo = item.Reference.IsCanDo;
+                item.Status = item.Reference.Status;
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     private void Update(HestiaPostRequest source)
     {
         Dispatcher.UIThread.Post(() =>
@@ -223,12 +296,7 @@ public sealed class ToDoMemoryCache
 
             foreach (var create in source.Creates)
             {
-                var item = UpdateShortToDo(create, shortUpdatedIds);
-                item.Status = ToDoStatus.ReadyForComplete;
-
-                item.OrderIndex = item.Parent is null
-                    ? (uint)_roots.Count + 1
-                    : (uint)item.Parent.Children.Count + 1;
+                SetupCreatedToDo(create, shortUpdatedIds);
             }
 
             foreach (var edit in source.Edits)

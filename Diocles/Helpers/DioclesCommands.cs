@@ -21,7 +21,7 @@ public static class DioclesCommands
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         var uiToDoService = DiHelper.ServiceProvider.GetService<IToDoUiService>();
-        var toDoCache = DiHelper.ServiceProvider.GetService<IToDoMemoryCache>();
+        var toDoUiCache = DiHelper.ServiceProvider.GetService<IToDoUiCache>();
         var factory = DiHelper.ServiceProvider.GetService<IDioclesViewModelFactory>();
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
@@ -32,14 +32,14 @@ public static class DioclesCommands
         {
             var response = await uiToDoService.GetAsync(new() { IsCurrentActive = true }, ct);
 
-            if (toDoCache.CurrentActive?.Parent is null)
+            if (toDoUiCache.CurrentActive?.Parent is null)
             {
                 await navigator.NavigateToAsync(factory.CreateRootToDos(), ct);
             }
             else
             {
                 await navigator.NavigateToAsync(
-                    factory.CreateToDos(toDoCache.CurrentActive.Parent.ActualItem),
+                    factory.CreateToDos(toDoUiCache.CurrentActive.Parent.ActualItem),
                     ct
                 );
             }
@@ -49,7 +49,7 @@ public static class DioclesCommands
 
         async ValueTask<IValidationErrors> ChangeOrderAsync(ToDoNotify item, CancellationToken ct)
         {
-            var items = item.Parent is null ? toDoCache.Roots : item.Parent.Children;
+            var items = item.Parent is null ? toDoUiCache.Roots : item.Parent.Children;
             var changeOrder = await UiHelper.ShowChangeOrderAsync(items.ToArray(), [item], ct);
 
             if (changeOrder is null)
@@ -81,7 +81,7 @@ public static class DioclesCommands
 
             Dispatcher.UIThread.Post(() =>
             {
-                toDoCache.ResetItems();
+                toDoUiCache.ResetItems();
 
                 foreach (var s in selected)
                 {
@@ -344,7 +344,7 @@ public static class DioclesCommands
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    toDoCache.ResetItems();
+                    toDoUiCache.ResetItems();
                     item.IsHideOnTree = true;
                 });
 
@@ -404,7 +404,7 @@ public static class DioclesCommands
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    toDoCache.ResetItems();
+                    toDoUiCache.ResetItems();
 
                     foreach (var item in selected)
                     {
@@ -461,7 +461,7 @@ public static class DioclesCommands
             (item, ct) =>
             {
                 var viewModel = factory.CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() => toDoCache.ResetItems());
+                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
 
                 async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
                 {
@@ -503,7 +503,7 @@ public static class DioclesCommands
             {
                 var selected = items.Where(x => x.IsSelected).ToArray();
                 var viewModel = factory.CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() => toDoCache.ResetItems());
+                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
 
                 async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
                 {
