@@ -64,7 +64,16 @@ public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave
     {
         var request = new HestiaGetRequest { IsRoots = true, IsGetSelectors = true };
 
-        return WrapCommandAsync(() => ToDoUiService.GetAsync(request, ct), ct);
+        return WrapCommandAsync(
+            async () =>
+            {
+                var response = await ToDoUiService.GetAsync(request, ct);
+                Dispatcher.UIThread.Post(() => List.Refresh());
+
+                return response;
+            },
+            ct
+        );
     }
 
     private readonly IObjectStorage _objectStorage;

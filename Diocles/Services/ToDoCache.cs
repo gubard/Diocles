@@ -62,11 +62,6 @@ public sealed class ToDoMemoryCache
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => _bookmarks;
     public IAvaloniaReadOnlyList<ToDoNotify> Search => _search;
 
-    public ToDoMemoryCache(INavigator navigator)
-    {
-        _navigator = navigator;
-    }
-
     public void ResetItems()
     {
         foreach (var (_, item) in Items)
@@ -101,7 +96,6 @@ public sealed class ToDoMemoryCache
     private readonly AvaloniaList<ToDoNotify> _favorites = [];
     private readonly AvaloniaList<ToDoNotify> _bookmarks = [];
     private readonly AvaloniaList<ToDoNotify> _search = [];
-    private readonly INavigator _navigator;
 
     private void Update(HestiaGetResponse source)
     {
@@ -205,8 +199,6 @@ public sealed class ToDoMemoryCache
             {
                 UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds);
             }
-
-            _navigator.RefreshUiCurrentView();
         });
     }
 
@@ -564,8 +556,6 @@ public sealed class ToDoMemoryCache
                         );
                 }
             }
-
-            _navigator.RefreshUiCurrentView();
         });
     }
 

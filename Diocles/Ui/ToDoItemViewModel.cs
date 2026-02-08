@@ -106,6 +106,8 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
                     ct
                 );
 
+                Dispatcher.UIThread.Post(() => List.Refresh());
+
                 return errors.Combine();
             },
             ct
