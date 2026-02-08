@@ -490,7 +490,7 @@ public sealed partial class ToDoParametersViewModel
 
                                 var file = new FileObjectNotify(Guid.NewGuid())
                                 {
-                                    Name = $"{linearBarcodeGenerator.Barcode.Text}.png",
+                                    Name = $"{linearBarcodeGenerator.Barcode.BottomText}.png",
                                     Data = stream.ToByteSpan().ToArray(),
                                     Description = string.Empty,
                                     Dir = _filesDir,
