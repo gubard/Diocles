@@ -12,6 +12,7 @@ namespace Diocles.Services;
 
 public interface IDioclesViewModelFactory
 {
+    AddBarcodeFileViewModel CreateAddBarcodeFile();
     ToDoItemViewModel CreateToDos(ToDoNotify item);
     ChangeParentToDoViewModel CreateChangeParentToDo();
     RootToDosViewModel CreateRootToDos();
@@ -92,6 +93,11 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         return new(commands, multiCommands, item);
     }
 
+    public AddBarcodeFileViewModel CreateAddBarcodeFile()
+    {
+        return new(_inannaViewModelFactor);
+    }
+
     public ToDoItemViewModel CreateToDos(ToDoNotify item)
     {
         return new(
@@ -149,8 +155,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _app,
             _appResourceService,
             _stringFormater,
-            _dialogService,
-            _inannaViewModelFactor
+            _dialogService
         );
     }
 
@@ -171,8 +176,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _app,
             _appResourceService,
             _stringFormater,
-            _dialogService,
-            _inannaViewModelFactor
+            _dialogService
         );
     }
 

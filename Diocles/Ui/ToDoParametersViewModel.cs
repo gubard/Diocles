@@ -52,8 +52,7 @@ public sealed partial class ToDoParametersViewModel
         Application app,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
-        IDialogService dialogService,
-        IInannaViewModelFactory inannaViewModelFactor
+        IDialogService dialogService
     )
         : base(validationMode, isShowEdit)
     {
@@ -65,7 +64,7 @@ public sealed partial class ToDoParametersViewModel
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
-        _inannaViewModelFactor = inannaViewModelFactor;
+        _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -104,8 +103,7 @@ public sealed partial class ToDoParametersViewModel
         Application app,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
-        IDialogService dialogService,
-        IInannaViewModelFactory inannaViewModelFactor
+        IDialogService dialogService
     )
         : base(validationMode, isShowEdit)
     {
@@ -117,7 +115,7 @@ public sealed partial class ToDoParametersViewModel
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
-        _inannaViewModelFactor = inannaViewModelFactor;
+        _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
         Name = item.Name;
@@ -463,7 +461,7 @@ public sealed partial class ToDoParametersViewModel
     private readonly IAppResourceService _appResourceService;
     private readonly IStringFormater _stringFormater;
     private readonly IDialogService _dialogService;
-    private readonly IInannaViewModelFactory _inannaViewModelFactor;
+    private readonly IDioclesViewModelFactory _factory;
 
     [RelayCommand]
     private async Task ShowGenerateLinearBarcodeAsync(CancellationToken ct)
@@ -471,26 +469,26 @@ public sealed partial class ToDoParametersViewModel
         await WrapCommandAsync(
             () =>
             {
-                var linearBarcodeGenerator = _inannaViewModelFactor.CreateLinearBarcodeGenerator();
+                var addBarcodeFile = _factory.CreateAddBarcodeFile();
 
                 return _dialogService.ShowMessageBoxAsync(
                     new(
                         _appResourceService
                             .GetResource<string>("Lang.GenerateLinearBarcode")
                             .DispatchToDialogHeader(),
-                        linearBarcodeGenerator,
+                        addBarcodeFile,
                         new(
                             _appResourceService.GetResource<string>("Lang.AddBarcode"),
                             UiHelper.CreateCommand(async c =>
                             {
                                 await using var stream =
-                                    linearBarcodeGenerator.Barcode.GetPngStream();
+                                    addBarcodeFile.LinearBarcodeGenerator.Barcode.GetPngStream();
 
                                 await _dialogService.CloseMessageBoxAsync(c);
 
                                 var file = new FileObjectNotify(Guid.NewGuid())
                                 {
-                                    Name = $"{linearBarcodeGenerator.Barcode.BottomText}.png",
+                                    Name = $"{addBarcodeFile.FileName}.png",
                                     Data = stream.ToByteSpan().ToArray(),
                                     Description = string.Empty,
                                     Dir = _filesDir,

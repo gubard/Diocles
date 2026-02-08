@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Diocles.Ui"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Diocles.Ui.AddBarcodeFileView"
+             x:DataType="ui:AddBarcodeFileViewModel">
+    <StackPanel>
+        <TextBlock Classes="field" Text="{StaticResource Lang.FileName}" />
+        <TextBox Text="{Binding FileName}" />
+
+        <ContentControl Content="{Binding LinearBarcodeGenerator}" />
+    </StackPanel>
+</UserControl>
