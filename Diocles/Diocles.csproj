@@ -15,12 +15,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Hestia\Hestia.Contract\Hestia.Contract.csproj" />
     <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
+    <ProjectReference Include="..\..\Weber\Weber\Weber.csproj" />
     <ProjectReference
       Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj"
       ReferenceOutputAssembly="false"
       OutputItemType="Analyzer"
     />
-    <ProjectReference Include="..\..\Weber\Weber\Weber.csproj" />
   </ItemGroup>
 
   <ItemGroup>
