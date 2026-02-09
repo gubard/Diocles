@@ -90,13 +90,13 @@
                                                 <MenuItem Icon="{ip:MaterialDesign AccountTree}"
                                                           Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
                                                           CommandParameter="{Binding}"
-                                                          Header="{StaticResource Lang.ChangeParent}" />
+                                                          Header="{DynamicResource Lang.ChangeParent}" />
                                                 <MenuItem Icon="{ip:MaterialDesign CopyrightOutline}"
-                                                          Header="{StaticResource Lang.Clone}"
+                                                          Header="{DynamicResource Lang.Clone}"
                                                           Command="{x:Static h:DioclesCommands.ShowCloneCommand}"
                                                           CommandParameter="{Binding}" />
                                                 <MenuItem Icon="{ip:MaterialDesign Link}"
-                                                          Header="{StaticResource Lang.OpenLink}"
+                                                          Header="{DynamicResource Lang.OpenLink}"
                                                           Command="{x:Static h:DioclesCommands.OpenLinkCommand}"
                                                           CommandParameter="{Binding}"
                                                           IsVisible="{Binding Link, Converter={x:Static is:IsNotNullOrWhiteSpaceConverter.Instance}}" />
@@ -113,17 +113,17 @@
                             <Grid Classes="for-drop" ColumnDefinitions="*,*,*">
                                 <Panel Tag="DropUp">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Up}" />
+                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
                                 </Panel>
 
                                 <Panel Grid.Column="1" Tag="DropParent">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Parent}" />
+                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Parent}" />
                                 </Panel>
 
                                 <Panel Grid.Column="2" Tag="DropDown">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Down}" />
+                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
                                 </Panel>
                             </Grid>
                         </Panel>

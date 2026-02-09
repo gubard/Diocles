@@ -83,12 +83,12 @@
         <Grid DataContext="{Binding Item}" Classes="for-drop" ColumnDefinitions="*,*">
             <Panel Tag="DropUp">
                 <Rectangle Classes="drop-aria" />
-                <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Up}" />
+                <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
             </Panel>
 
             <Panel Grid.Column="1" Tag="DropDown">
                 <Rectangle Classes="drop-aria" />
-                <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Down}" />
+                <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
             </Panel>
         </Grid>
     </Panel>

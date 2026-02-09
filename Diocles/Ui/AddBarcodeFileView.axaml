@@ -7,7 +7,7 @@
              x:Class="Diocles.Ui.AddBarcodeFileView"
              x:DataType="ui:AddBarcodeFileViewModel">
     <StackPanel>
-        <TextBlock Classes="field" Text="{StaticResource Lang.FileName}" />
+        <TextBlock Classes="field" Text="{DynamicResource Lang.FileName}" />
         <TextBox Text="{Binding FileName}" />
 
         <ContentControl Content="{Binding LinearBarcodeGenerator}" />

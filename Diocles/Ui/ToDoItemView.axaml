@@ -42,7 +42,7 @@
 
         <Expander Grid.Row="1"
                   IsVisible="{Binding Item.Description, Converter={x:Static s:IsNotNullOrWhiteSpaceConverter.Instance}}"
-                  Header="{StaticResource Lang.Description}">
+                  Header="{DynamicResource Lang.Description}">
             <Panel>
                 <TextBlock  Classes="text-wrap" 
                             IsVisible="{Binding Item.DescriptionType, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:DescriptionType.PlainText}}"
@@ -53,7 +53,7 @@
 
         <Expander Grid.Row="2"
                   IsVisible="{Binding Files.Count, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static hi:Numbers.Int32_0}}"
-                  Header="{StaticResource Lang.Files}">
+                  Header="{DynamicResource Lang.Files}">
             <ScrollViewer Classes="horizontal-scroll">
                 <ItemsControl Classes="align-left horizontal-stack" ItemsSource="{Binding Files}">
                     <ItemsControl.ItemTemplate>
@@ -82,7 +82,7 @@
         <ContentControl Grid.Row="3" Content="{Binding List}" />
         <Button Grid.Row="4"
                 Classes="align-stretch content-align-center h1"
-                Content="{StaticResource Lang.Create}"
+                Content="{DynamicResource Lang.Create}"
                 Command="{Binding ShowCreateViewCommand}" />
     </Grid>
 </UserControl>

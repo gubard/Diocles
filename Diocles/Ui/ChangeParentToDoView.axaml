@@ -7,7 +7,7 @@
              x:Class="Diocles.Ui.ChangeParentToDoView"
              x:DataType="ui:ChangeParentToDoViewModel">
     <Grid RowDefinitions="Auto,*">
-        <ToggleButton Content="{StaticResource Lang.IsRoot}" IsChecked="{Binding IsRoot}" />
+        <ToggleButton Content="{DynamicResource Lang.IsRoot}" IsChecked="{Binding IsRoot}" />
         <ContentControl Grid.Row="1" IsEnabled="{Binding !IsRoot}" Content="{Binding Tree}" />
     </Grid>
 </UserControl>
