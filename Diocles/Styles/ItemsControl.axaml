@@ -105,7 +105,9 @@
                                     </Button>
                                 </StackPanel>
 
-                                <TextBlock Grid.Row="2" Classes="align-center" Text="{Binding Type}" />
+                                <TextBlock Grid.Row="2"
+                                           Classes="align-center"
+                                           Text="{Binding Type, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
                             </Grid>
                         </Grid>
 
