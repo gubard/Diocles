@@ -464,6 +464,12 @@ public sealed partial class ToDoParametersViewModel
     private readonly IDioclesViewModelFactory _factory;
 
     [RelayCommand]
+    private void SetCurrentDateToName()
+    {
+        WrapCommand(() => Dispatcher.UIThread.Post(() => Name = $"{DateTime.Now}"));
+    }
+
+    [RelayCommand]
     private async Task ShowGenerateLinearBarcodeAsync(CancellationToken ct)
     {
         await WrapCommandAsync(

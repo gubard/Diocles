@@ -85,6 +85,11 @@
                     <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{DynamicResource Lang.Name}" />
                     <TextBox x:Name="NameTextBox" Text="{Binding Name}" />
 
+                    <StackPanel Classes="horizontal">
+                        <Button Command="{Binding SetCurrentDateToNameCommand}"
+                                Content="{ip:MaterialDesign CalendarToday}" />
+                    </StackPanel>
+
                     <StackPanel
                         IsVisible="{Binding Type, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Reference}}">
                         <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditLink}">
