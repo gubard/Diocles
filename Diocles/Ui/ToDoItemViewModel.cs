@@ -65,8 +65,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
                     PackIconMaterialDesignKind.Delete,
                     ButtonType.Danger
                 ),
-            },
-            DiocleHelper.CreateMultiCommands(item.Children)
+            }
         );
 
         _objectStorage = objectStorage;

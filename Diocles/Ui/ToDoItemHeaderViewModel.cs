@@ -11,13 +11,12 @@ public sealed partial class ToDoItemHeaderViewModel : ViewModelBase
 {
     public ToDoItemHeaderViewModel(
         IAvaloniaReadOnlyList<InannaCommand> commands,
-        IAvaloniaReadOnlyList<InannaCommand> multiCommands,
         ToDoNotify item,
         IInannaViewModelFactory factory
     )
     {
         Commands = factory.CreateAdaptiveButtons(commands);
-        MultiCommands = factory.CreateAdaptiveButtons(multiCommands);
+        MultiCommands = factory.CreateAdaptiveButtons(item.MultiCommands);
         Item = item;
     }
 

@@ -21,8 +21,7 @@ public interface IDioclesViewModelFactory
 
     ToDoItemHeaderViewModel CreateToDoItemHeader(
         ToDoNotify item,
-        IAvaloniaReadOnlyList<InannaCommand> commands,
-        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+        IAvaloniaReadOnlyList<InannaCommand> commands
     );
 
     ToDoParametersViewModel CreateToDoParameters(
@@ -86,11 +85,10 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDoItemHeaderViewModel CreateToDoItemHeader(
         ToDoNotify item,
-        IAvaloniaReadOnlyList<InannaCommand> commands,
-        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+        IAvaloniaReadOnlyList<InannaCommand> commands
     )
     {
-        return new(commands, multiCommands, item, _inannaViewModelFactor);
+        return new(commands, item, _inannaViewModelFactor);
     }
 
     public AddBarcodeFileViewModel CreateAddBarcodeFile()

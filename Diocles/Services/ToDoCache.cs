@@ -2,6 +2,7 @@
 using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Diocles.Helpers;
 using Diocles.Models;
 using Gaia.Helpers;
 using Gaia.Services;
@@ -9,6 +10,7 @@ using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Diocles.Services;
@@ -38,9 +40,13 @@ public sealed class ToDoUiCache
         IToDoUiCache
 {
     public ToDoUiCache(IToDoDbCache dbCache, IToDoMemoryCache memoryCache)
-        : base(dbCache, memoryCache) { }
+        : base(dbCache, memoryCache)
+    {
+        RootCommands = DiocleHelper.CreateMultiCommands(Roots);
+    }
 
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => MemoryCache.Roots;
+    public IAvaloniaReadOnlyList<InannaCommand> RootCommands { get; }
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => MemoryCache.Favorites;
     public IAvaloniaReadOnlyList<ToDoNotify> Bookmarks => MemoryCache.Bookmarks;
     public IAvaloniaReadOnlyList<ToDoNotify> Search => MemoryCache.Search;

@@ -2,6 +2,7 @@
 using Avalonia.Collections;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Diocles.Helpers;
 using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
@@ -29,10 +30,12 @@ public partial class ToDoNotify
         _weeklyDays = [];
         _monthlyDays = [];
         _annuallyDays = [];
+        MultiCommands = DiocleHelper.CreateMultiCommands(_children);
         MarkdownBuilder = new();
     }
 
     public Guid Id { get; }
+    public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
     public IAvaloniaReadOnlyList<ToDoNotify> Children => _children;
     public IEnumerable<object> Parents => _parents;
     public IEnumerable<DayOfWeek> WeeklyDays => _weeklyDays;

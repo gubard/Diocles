@@ -13,7 +13,6 @@ public static class DiocleHelper
         DiHelper.ServiceProvider.GetService<IAppResourceService>();
 
     public static readonly StringCutParameters DesktopDescriptionStringParameters = new(5, 100);
-    public static readonly StringCutParameters AndroidDescriptionStringParameters = new(1, 20);
 
     public static IAvaloniaReadOnlyList<InannaCommand> CreateMultiCommands(
         IEnumerable<ToDoNotify> parameter
@@ -45,6 +44,20 @@ public static class DiocleHelper
                 parameter,
                 AppResourceService.GetResource<string>("Lang.Clone"),
                 PackIconMaterialDesignKind.CopyrightOutline
+            ),
+        };
+    }
+
+    public static IAvaloniaReadOnlyList<InannaCommand> CreateCommands(ToDoNotify parameter)
+    {
+        return new AvaloniaList<InannaCommand>
+        {
+            new(
+                DioclesCommands.ShowDeleteToDoCommand,
+                parameter,
+                AppResourceService.GetResource<string>("Lang.Delete"),
+                PackIconMaterialDesignKind.Delete,
+                ButtonType.Danger
             ),
         };
     }
