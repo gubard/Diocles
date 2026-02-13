@@ -23,12 +23,12 @@
             </StackPanel.Styles>
 
             <StackPanel>
-                <TextBlock Text="{DynamicResource Lang.GroupBy}" />
+                <TextBlock Classes="field" Text="{DynamicResource Lang.GroupBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding GroupBy}" />
             </StackPanel>
 
             <StackPanel>
-                <TextBlock Text="{DynamicResource Lang.OrderBy}" />
+                <TextBlock Classes="field" Text="{DynamicResource Lang.OrderBy}" />
                 <c:EnumSelectorControl SelectedEnum="{Binding OrderBy}" />
             </StackPanel>
         </StackPanel>
