@@ -10,9 +10,9 @@ public partial class ToDoItemView : ToDoDropUserControl, IToDosView
         InitializeComponent();
     }
 
-    public IToDosViewModel ViewModel =>
-        DataContext as IToDosViewModel ?? throw new InvalidOperationException();
-
-    public ToDoItemViewModel VM =>
+    public ToDoItemViewModel ViewModel =>
         DataContext as ToDoItemViewModel ?? throw new InvalidOperationException();
+
+    IToDosViewModel IToDosView.ViewModel =>
+        DataContext as IToDosViewModel ?? throw new InvalidOperationException();
 }

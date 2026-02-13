@@ -153,7 +153,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _app,
             _appResourceService,
             _stringFormater,
-            _dialogService
+            _dialogService,
+            _toDoUiService
         );
     }
 
@@ -174,7 +175,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _app,
             _appResourceService,
             _stringFormater,
-            _dialogService
+            _dialogService,
+            _toDoUiService
         );
     }
 

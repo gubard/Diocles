@@ -65,7 +65,7 @@
                                 <StackPanel Classes="horizontal align-right">
                                     <Button Content="{ip:MaterialDesign Edit}"
                                             CommandParameter="{Binding}"
-                                            Command="{Binding $parent[m:IToDosView].ViewModel.ShowEditCommand}" />
+                                            Command="{x:Static h:DioclesCommands.ShowEditToDoCommand}" />
                                     <Button Classes="danger"
                                             Content="{ip:MaterialDesign Delete}"
                                             CommandParameter="{Binding}"

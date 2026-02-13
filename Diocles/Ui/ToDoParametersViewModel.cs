@@ -52,7 +52,8 @@ public sealed partial class ToDoParametersViewModel
         Application app,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
-        IDialogService dialogService
+        IDialogService dialogService,
+        IToDoUiService toDoUiService
     )
         : base(validationMode, isShowEdit)
     {
@@ -64,6 +65,7 @@ public sealed partial class ToDoParametersViewModel
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
+        _toDoUiService = toDoUiService;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -103,7 +105,8 @@ public sealed partial class ToDoParametersViewModel
         Application app,
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
-        IDialogService dialogService
+        IDialogService dialogService,
+        IToDoUiService toDoUiService
     )
         : base(validationMode, isShowEdit)
     {
@@ -115,6 +118,7 @@ public sealed partial class ToDoParametersViewModel
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
         _dialogService = dialogService;
+        _toDoUiService = toDoUiService;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -462,6 +466,35 @@ public sealed partial class ToDoParametersViewModel
     private readonly IStringFormater _stringFormater;
     private readonly IDialogService _dialogService;
     private readonly IDioclesViewModelFactory _factory;
+    private readonly IToDoUiService _toDoUiService;
+
+    [RelayCommand]
+    private async Task EditItemAsync(ToDoNotify item, CancellationToken ct)
+    {
+        await WrapCommandAsync(
+            async () =>
+            {
+                var edit = CreateEditToDos(item.Id);
+                var files = CreateNeotomaPostRequest($"{item.Id}/ToDo");
+                await _dialogService.CloseMessageBoxAsync(ct);
+
+                var errors = await TaskHelper.WhenAllAsync(
+                    [
+                        _toDoUiService
+                            .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct)
+                            .ToValidationErrors(),
+                        _fileStorageUiService
+                            .PostAsync(Guid.NewGuid(), files, ct)
+                            .ToValidationErrors(),
+                    ],
+                    ct
+                );
+
+                return errors.Combine();
+            },
+            ct
+        );
+    }
 
     [RelayCommand]
     private void SetCurrentDateToName()

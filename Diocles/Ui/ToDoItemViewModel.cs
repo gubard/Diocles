@@ -53,7 +53,7 @@ public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveU
             new AvaloniaList<InannaCommand>
             {
                 new(
-                    ShowEditCommand,
+                    DioclesCommands.ShowEditToDoCommand,
                     item,
                     appResourceService.GetResource<string>("Lang.Edit"),
                     PackIconMaterialDesignKind.Edit

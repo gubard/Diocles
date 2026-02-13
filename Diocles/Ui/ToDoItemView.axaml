@@ -59,7 +59,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button Classes="mini"
-                                    Command="{Binding $parent[ui:ToDoItemView].VM.ShowImageCommand}"
+                                    Command="{Binding $parent[ui:ToDoItemView].ViewModel.ShowImageCommand}"
                                     CommandParameter="{Binding}">
                                 <Panel>
                                     <Image Classes="h-100"

@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-
-namespace Diocles.Models;
+﻿namespace Diocles.Models;
 
 public interface IToDosView
 {
@@ -10,5 +8,4 @@ public interface IToDosView
 public interface IToDosViewModel
 {
     bool IsMulti { get; }
-    IAsyncRelayCommand<ToDoNotify> ShowEditCommand { get; }
 }

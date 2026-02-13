@@ -550,6 +550,43 @@ public static class DioclesCommands
         OpenLinkCommand = UiHelper.CreateCommand<ToDoNotify>(
             (item, ct) => openerLink.OpenLinkAsync(item.Link.ToUri(), ct)
         );
+
+        ShowEditToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
+            (item, ct) =>
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    toDoUiCache.ResetItems();
+                    item.IsHideOnTree = true;
+                });
+
+                var edit = factory.CreateToDoParameters(
+                    item,
+                    ValidationMode.ValidateOnlyEdited,
+                    false
+                );
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.EditItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        edit,
+                        new(
+                            appResourceService.GetResource<string>("Lang.Edit"),
+                            edit.EditItemCommand,
+                            item,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
     }
 
     public static readonly ICommand OpenLinkCommand;
@@ -560,6 +597,7 @@ public static class DioclesCommands
     public static readonly ICommand ShowDeleteToDoCommand;
     public static readonly ICommand ShowDeleteToDosCommand;
     public static readonly ICommand ShowEditToDosCommand;
+    public static readonly ICommand ShowEditToDoCommand;
     public static readonly ICommand SwitchToDoCommand;
     public static readonly ICommand OpenCurrentToDoCommand;
     public static readonly ICommand SwitchFavoriteCommand;
