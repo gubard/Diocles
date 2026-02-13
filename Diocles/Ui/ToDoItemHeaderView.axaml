@@ -24,16 +24,18 @@
             <ContentControl Grid.Column="2" IsVisible="{Binding IsMulti}" Content="{Binding MultiCommands}" />
         </Grid>
 
-        <Grid DataContext="{Binding Item}" Classes="for-drop" ColumnDefinitions="*,*">
-            <Panel Tag="DropUp">
-                <Rectangle Classes="drop-aria" />
-                <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
-            </Panel>
+        <Border Classes="for-drop">
+            <Grid DataContext="{Binding Item}" ColumnDefinitions="*,*">
+                <Panel Tag="DropUp">
+                    <Rectangle Classes="drop-aria" />
+                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
+                </Panel>
 
-            <Panel Grid.Column="1" Tag="DropDown">
-                <Rectangle Classes="drop-aria" />
-                <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
-            </Panel>
-        </Grid>
+                <Panel Grid.Column="1" Tag="DropDown">
+                    <Rectangle Classes="drop-aria" />
+                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
+                </Panel>
+            </Grid>
+        </Border>
     </Panel>
 </UserControl>

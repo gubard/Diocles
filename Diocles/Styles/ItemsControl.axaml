@@ -112,22 +112,37 @@
                         </Grid>
 
                         <Panel IsVisible="{Binding !IsDrag}">
-                            <Grid Classes="for-drop" ColumnDefinitions="*,*,*">
-                                <Panel Tag="DropUp">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
-                                </Panel>
+                            <Border Classes="for-drop">
+                                <Grid RowDefinitions="Auto,*">
+                                    <TextBlock Classes="text-wrap m-l-5 h5 align-center"
+                                               Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                                               Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                                               Classes.planned="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                                               Classes.completed="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                                               Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                                               Text="{Binding Name}" />
 
-                                <Panel Grid.Column="1" Tag="DropParent">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Parent}" />
-                                </Panel>
+                                    <Grid Grid.Row="1" Classes="align-stretch" ColumnDefinitions="*,*,*">
+                                        <Panel Tag="DropUp">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10 text-wrap"
+                                                       Text="{DynamicResource Lang.Up}" />
+                                        </Panel>
 
-                                <Panel Grid.Column="2" Tag="DropDown">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
-                                </Panel>
-                            </Grid>
+                                        <Panel Grid.Column="1" Tag="DropParent">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10 text-wrap"
+                                                       Text="{DynamicResource Lang.Parent}" />
+                                        </Panel>
+
+                                        <Panel Grid.Column="2" Tag="DropDown">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10 text-wrap"
+                                                       Text="{DynamicResource Lang.Down}" />
+                                        </Panel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </Panel>
                     </Panel>
                 </Button>
