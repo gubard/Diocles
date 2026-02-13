@@ -1,6 +1,8 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Inanna.Models;
+using Inanna.Services;
+using Inanna.Ui;
 
 namespace Diocles.Ui;
 
@@ -9,16 +11,17 @@ public partial class ToDosHeaderViewModel : ViewModelBase
     public ToDosHeaderViewModel(
         string title,
         IAvaloniaReadOnlyList<InannaCommand> commands,
-        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands,
+        IInannaViewModelFactory factory
     )
     {
         _title = title;
-        Commands = commands;
-        MultiCommands = multiCommands;
+        Commands = factory.CreateAdaptiveButtons(commands);
+        MultiCommands = factory.CreateAdaptiveButtons(multiCommands);
     }
 
-    public IAvaloniaReadOnlyList<InannaCommand> Commands { get; }
-    public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
+    public AdaptiveButtonsViewModel Commands { get; }
+    public AdaptiveButtonsViewModel MultiCommands { get; }
 
     [ObservableProperty]
     private bool _isMulti;

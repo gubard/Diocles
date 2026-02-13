@@ -2,6 +2,8 @@ using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Inanna.Models;
+using Inanna.Services;
+using Inanna.Ui;
 
 namespace Diocles.Ui;
 
@@ -10,16 +12,17 @@ public sealed partial class ToDoItemHeaderViewModel : ViewModelBase
     public ToDoItemHeaderViewModel(
         IAvaloniaReadOnlyList<InannaCommand> commands,
         IAvaloniaReadOnlyList<InannaCommand> multiCommands,
-        ToDoNotify item
+        ToDoNotify item,
+        IInannaViewModelFactory factory
     )
     {
-        Commands = commands;
-        MultiCommands = multiCommands;
+        Commands = factory.CreateAdaptiveButtons(commands);
+        MultiCommands = factory.CreateAdaptiveButtons(multiCommands);
         Item = item;
     }
 
-    public IAvaloniaReadOnlyList<InannaCommand> Commands { get; }
-    public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
+    public AdaptiveButtonsViewModel Commands { get; }
+    public AdaptiveButtonsViewModel MultiCommands { get; }
     public ToDoNotify Item { get; }
 
     [ObservableProperty]

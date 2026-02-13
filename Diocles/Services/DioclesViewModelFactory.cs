@@ -81,7 +81,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(title, commands, multiCommands);
+        return new(title, commands, multiCommands, _inannaViewModelFactor);
     }
 
     public ToDoItemHeaderViewModel CreateToDoItemHeader(
@@ -90,7 +90,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(commands, multiCommands, item);
+        return new(commands, multiCommands, item, _inannaViewModelFactor);
     }
 
     public AddBarcodeFileViewModel CreateAddBarcodeFile()
