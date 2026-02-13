@@ -15,7 +15,7 @@ using LiveMarkdown.Avalonia;
 
 namespace Diocles.Models;
 
-public partial class ToDoNotify
+public sealed partial class ToDoNotify
     : ObservableObject,
         IToDo,
         IStaticFactory<Guid, ToDoNotify>,

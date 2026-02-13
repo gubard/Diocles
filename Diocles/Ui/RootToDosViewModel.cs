@@ -16,7 +16,7 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
+public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public RootToDosViewModel(
         IToDoUiService toDoUiService,

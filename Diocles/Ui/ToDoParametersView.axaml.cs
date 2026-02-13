@@ -3,7 +3,7 @@ using Inanna.Helpers;
 
 namespace Diocles.Ui;
 
-public partial class ToDoParametersView : UserControl
+public sealed partial class ToDoParametersView : UserControl
 {
     public ToDoParametersView()
     {

@@ -2,7 +2,7 @@ using Avalonia.Controls;
 
 namespace Diocles.Ui;
 
-public partial class ChangeParentToDoView : UserControl
+public sealed partial class ChangeParentToDoView : UserControl
 {
     public ChangeParentToDoView()
     {

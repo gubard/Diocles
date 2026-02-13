@@ -13,7 +13,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
+public sealed partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
 {
     public ToDoListViewModel(
         IAvaloniaReadOnlyList<ToDoNotify> itemsSource,

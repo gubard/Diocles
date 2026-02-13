@@ -2,7 +2,7 @@
 
 namespace Diocles.Ui;
 
-public partial class ToDoListView : UserControl
+public sealed partial class ToDoListView : UserControl
 {
     public ToDoListView()
     {

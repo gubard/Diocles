@@ -3,7 +3,7 @@ using Diocles.Models;
 
 namespace Diocles.Ui;
 
-public partial class SearchToDoView : UserControl, IToDosView
+public sealed partial class SearchToDoView : UserControl, IToDosView
 {
     public SearchToDoView()
     {

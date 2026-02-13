@@ -2,7 +2,7 @@
 
 namespace Diocles.Ui;
 
-public partial class ToDosHeaderView : UserControl
+public sealed partial class ToDosHeaderView : UserControl
 {
     public ToDosHeaderView()
     {

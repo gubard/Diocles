@@ -19,7 +19,7 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
+public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
 {
     public ToDoItemViewModel(
         ToDoNotify item,

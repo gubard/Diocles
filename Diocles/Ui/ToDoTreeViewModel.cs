@@ -7,7 +7,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public partial class ToDoTreeViewModel : ViewModelBase, IInitUi
+public sealed partial class ToDoTreeViewModel : ViewModelBase, IInitUi
 {
     public ToDoTreeViewModel(IToDoUiCache toDoUiCache, IToDoUiService toDoUiService)
     {

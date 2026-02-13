@@ -6,7 +6,7 @@ using Inanna.Ui;
 
 namespace Diocles.Ui;
 
-public partial class ToDosHeaderViewModel : ViewModelBase
+public sealed partial class ToDosHeaderViewModel : ViewModelBase
 {
     public ToDosHeaderViewModel(
         string title,
