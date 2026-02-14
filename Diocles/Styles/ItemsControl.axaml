@@ -74,7 +74,7 @@
 
                             </Grid>
 
-                            <Grid Grid.Column="1" RowDefinitions="Auto,Auto">
+                            <StackPanel Grid.Column="1" Classes="align-center">
                                 <StackPanel Classes="horizontal align-right">
                                     <Button Content="{ip:MaterialDesign Edit}"
                                             CommandParameter="{Binding}"
@@ -86,7 +86,7 @@
                                 </StackPanel>
 
 
-                                <StackPanel Grid.Row="1" Classes="horizontal align-right">
+                                <StackPanel Classes="horizontal align-right">
                                     <Button Command="{x:Static h:DioclesCommands.SwitchFavoriteCommand}"
                                             CommandParameter="{Binding}">
                                         <StackPanel>
@@ -116,7 +116,7 @@
                                         </Button.Flyout>
                                     </Button>
                                 </StackPanel>
-                            </Grid>
+                            </StackPanel>
                         </Grid>
 
                         <Panel IsVisible="{Binding !IsDrag}">
