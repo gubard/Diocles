@@ -83,7 +83,7 @@
                     </ToggleSwitch>
 
                     <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{DynamicResource Lang.Name}" />
-                    <TextBox x:Name="NameTextBox" Text="{Binding Name}" />
+                    <TextBox x:Name="NameTextBox" Classes="clear-all select-all" Text="{Binding Name}" />
 
                     <StackPanel Classes="horizontal">
                         <Button Command="{Binding SetCurrentDateToNameCommand}"
@@ -102,7 +102,7 @@
                         </ToggleSwitch>
 
                         <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{DynamicResource Lang.Link}" />
-                        <TextBox Text="{Binding Link}" />
+                        <TextBox Classes="clear-all select-all" Text="{Binding Link}" />
                     </StackPanel>
 
                     <ToggleSwitch IsVisible="{Binding IsShowEdit}" IsChecked="{Binding IsEditType}">
