@@ -23,7 +23,7 @@
                                 <TextBlock Classes="small"
                                            Text="{Binding Type, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
 
-                                <StackPanel Grid.Row="1" Classes="horizontal">
+                                <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*">
                                     <Panel
                                         IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
                                         <Button Classes="align-stretch mini"
@@ -38,7 +38,8 @@
                                                                    IsVisible="{OnPlatform  Default=True, Android=False, iOS=False, Browser=False}" />
                                     </Panel>
 
-                                    <ToggleButton Classes="s-40"
+                                    <ToggleButton Grid.Column="1"
+                                                  Classes="s-40"
                                                   IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
                                                   IsVisible="{Binding IsCanDo, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
                                                   CommandParameter="{Binding}"
@@ -48,7 +49,7 @@
                                                                    IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
                                     </ToggleButton>
 
-                                    <StackPanel Classes="align-left-center">
+                                    <Grid Grid.Column="2" Classes="align-left-center" RowDefinitions="Auto,Auto">
                                         <TextBlock Classes="text-wrap m-l-5 h5"
                                                    Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
                                                    Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
@@ -57,14 +58,14 @@
                                                    Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
                                                    Text="{Binding Name}" />
 
-                                        <Button Command="{x:Static h:DioclesCommands.OpenParentCommand}"
+                                        <Button Grid.Row="1" Command="{x:Static h:DioclesCommands.OpenParentCommand}"
                                                 CommandParameter="{Binding Active}"
                                                 IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
                                             <TextBlock Text="{Binding Active.Name}"
                                                        Classes="text-wrap align-center small" />
                                         </Button>
-                                    </StackPanel>
-                                </StackPanel>
+                                    </Grid>
+                                </Grid>
 
                                 <TextBlock Grid.Row="2"
                                            Classes="small"
