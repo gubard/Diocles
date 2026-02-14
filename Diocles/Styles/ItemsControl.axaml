@@ -18,50 +18,62 @@
                         IsEnabled="{Binding !IsDrag}"
                         ToolTip.Tip="{Binding Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
                     <Panel>
-                        <Grid ColumnDefinitions="Auto,*,Auto">
-                            <StackPanel Classes="horizontal">
-                                <Panel
-                                    IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
-                                    <Button Classes="align-stretch mini"
-                                            IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
-                                            Content="{ip:MaterialDesign Reorder}"
-                                            CommandParameter="{Binding}"
-                                            Command="{x:Static h:DioclesCommands.ChangeOrderCommand}" />
-                                    <ip:PackIconMaterialDesign Kind="Reorder"
-                                                               Classes="s-20 align-center"
-                                                               Background="Transparent"
-                                                               ih:InputElementAssist.IsDragHandle="True"
-                                                               IsVisible="{OnPlatform  Default=True, Android=False, iOS=False, Browser=False}" />
-                                </Panel>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Grid RowDefinitions="Auto,*,Auto">
+                                <TextBlock Classes="small"
+                                           Text="{Binding Type, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
 
-                                <ToggleButton Classes="s-40"
-                                              IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
-                                              IsVisible="{Binding IsCanDo, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
-                                              CommandParameter="{Binding}"
-                                              Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
-                                    <ip:PackIconMaterialDesign Kind="Check"
-                                                               Classes="h2 align-center"
-                                                               IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
-                                </ToggleButton>
-                            </StackPanel>
+                                <StackPanel Grid.Row="1" Classes="horizontal">
+                                    <Panel
+                                        IsVisible="{Binding $parent[ui:ToDoListView].ViewModel.Items.Count, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Int32_1}}">
+                                        <Button Classes="align-stretch mini"
+                                                IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
+                                                Content="{ip:MaterialDesign Reorder}"
+                                                CommandParameter="{Binding}"
+                                                Command="{x:Static h:DioclesCommands.ChangeOrderCommand}" />
+                                        <ip:PackIconMaterialDesign Kind="Reorder"
+                                                                   Classes="s-20 align-center"
+                                                                   Background="Transparent"
+                                                                   ih:InputElementAssist.IsDragHandle="True"
+                                                                   IsVisible="{OnPlatform  Default=True, Android=False, iOS=False, Browser=False}" />
+                                    </Panel>
 
-                            <StackPanel Grid.Column="1" Classes="align-left-center">
-                                <TextBlock Classes="text-wrap m-l-5 h5"
-                                           Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
-                                           Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
-                                           Classes.planned="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
-                                           Classes.completed="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
-                                           Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
-                                           Text="{Binding Name}" />
+                                    <ToggleButton Classes="s-40"
+                                                  IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
+                                                  IsVisible="{Binding IsCanDo, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
+                                                  CommandParameter="{Binding}"
+                                                  Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
+                                        <ip:PackIconMaterialDesign Kind="Check"
+                                                                   Classes="h2 align-center"
+                                                                   IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
+                                    </ToggleButton>
 
-                                <Button Command="{x:Static h:DioclesCommands.OpenParentCommand}"
-                                        CommandParameter="{Binding Active}"
-                                        IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
-                                    <TextBlock Text="{Binding Active.Name}" Classes="text-wrap align-center small" />
-                                </Button>
-                            </StackPanel>
+                                    <StackPanel Classes="align-left-center">
+                                        <TextBlock Classes="text-wrap m-l-5 h5"
+                                                   Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
+                                                   Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
+                                                   Classes.planned="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
+                                                   Classes.completed="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Completed}}"
+                                                   Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
+                                                   Text="{Binding Name}" />
 
-                            <Grid Grid.Column="2" RowDefinitions="Auto,Auto,Auto">
+                                        <Button Command="{x:Static h:DioclesCommands.OpenParentCommand}"
+                                                CommandParameter="{Binding Active}"
+                                                IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
+                                            <TextBlock Text="{Binding Active.Name}"
+                                                       Classes="text-wrap align-center small" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="2"
+                                           Classes="small"
+                                           IsVisible="{Binding HasDueDate}"
+                                           Text="{Binding DueDate, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
+
+                            </Grid>
+
+                            <Grid Grid.Column="1" RowDefinitions="Auto,Auto">
                                 <StackPanel Classes="horizontal align-right">
                                     <Button Content="{ip:MaterialDesign Edit}"
                                             CommandParameter="{Binding}"
@@ -83,8 +95,7 @@
                                         </StackPanel>
                                     </Button>
 
-                                    <Button
-                                        Content="{ip:MaterialDesign MoreHoriz}">
+                                    <Button Content="{ip:MaterialDesign MoreHoriz}">
                                         <Button.Flyout>
                                             <MenuFlyout>
                                                 <MenuItem Icon="{ip:MaterialDesign AccountTree}"
@@ -104,10 +115,6 @@
                                         </Button.Flyout>
                                     </Button>
                                 </StackPanel>
-
-                                <TextBlock Grid.Row="2"
-                                           Classes="align-center"
-                                           Text="{Binding Type, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
                             </Grid>
                         </Grid>
 

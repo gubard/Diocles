@@ -116,6 +116,20 @@ public sealed partial class ToDoNotify
     [ObservableProperty]
     public partial ToDoNotify? Parent { get; set; }
 
+    public bool HasDueDate =>
+        Type switch
+        {
+            ToDoType.Value => false,
+            ToDoType.Step => false,
+            ToDoType.Circle => false,
+            ToDoType.Group => false,
+            ToDoType.FixedDate => true,
+            ToDoType.Periodicity => true,
+            ToDoType.PeriodicityOffset => true,
+            ToDoType.Reference => Reference?.HasDueDate ?? false,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
+
     public void UpdateChildren(ToDoNotify[] children)
     {
         _children.UpdateOrder(children);
@@ -174,6 +188,18 @@ public sealed partial class ToDoNotify
             case nameof(DescriptionType):
             {
                 UpdateMarkdown();
+
+                break;
+            }
+            case nameof(Type):
+            {
+                OnPropertyChanged(nameof(HasDueDate));
+
+                break;
+            }
+            case nameof(Reference):
+            {
+                OnPropertyChanged(nameof(HasDueDate));
 
                 break;
             }
