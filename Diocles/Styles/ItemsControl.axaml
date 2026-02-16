@@ -49,8 +49,8 @@
                                                                    IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
                                     </ToggleButton>
 
-                                    <Grid Grid.Column="2" Classes="align-left-center" RowDefinitions="Auto,Auto">
-                                        <TextBlock Classes="text-wrap m-l-5 h5"
+                                    <Grid Grid.Column="2" Classes="align-left-center m-l-5" RowDefinitions="Auto,Auto">
+                                        <TextBlock Classes="text-wrap h5"
                                                    Classes.miss="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Miss}}"
                                                    Classes.ready-for-complete="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ReadyForComplete}}"
                                                    Classes.planned="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.Planned}}"
@@ -59,7 +59,7 @@
                                                    Text="{Binding Name}" />
 
                                         <Button Grid.Row="1"
-                                                Classes="m-0 p-4"
+                                                Classes="p-4 m-0"
                                                 Command="{x:Static h:DioclesCommands.OpenParentCommand}"
                                                 CommandParameter="{Binding Active}"
                                                 IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
