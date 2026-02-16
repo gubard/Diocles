@@ -76,8 +76,14 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
             OrderBy switch
             {
                 ToDoOrderBy.OrderIndex => _itemsSource.OrderBy(x => x.OrderIndex).ToArray(),
-                ToDoOrderBy.Name => _itemsSource.OrderBy(x => x.Name).ToArray(),
-                ToDoOrderBy.DueDate => _itemsSource.OrderBy(x => x.DueDate).ToArray(),
+                ToDoOrderBy.Name => _itemsSource
+                    .OrderBy(x => x.Name)
+                    .ThenBy(x => x.OrderIndex)
+                    .ToArray(),
+                ToDoOrderBy.DueDate => _itemsSource
+                    .OrderBy(x => x.DueDate)
+                    .ThenBy(x => x.OrderIndex)
+                    .ToArray(),
                 _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),
             }
         );
