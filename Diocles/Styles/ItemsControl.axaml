@@ -58,7 +58,9 @@
                                                    Classes.coming-soon="{Binding Status, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoStatus.ComingSoon}}"
                                                    Text="{Binding Name}" />
 
-                                        <Button Grid.Row="1" Command="{x:Static h:DioclesCommands.OpenParentCommand}"
+                                        <Button Grid.Row="1"
+                                                Classes="m-0 p-4"
+                                                Command="{x:Static h:DioclesCommands.OpenParentCommand}"
                                                 CommandParameter="{Binding Active}"
                                                 IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
                                             <TextBlock Text="{Binding Active.Name}"
