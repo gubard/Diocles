@@ -71,6 +71,7 @@
 
                                 <TextBlock Grid.Row="2"
                                            Classes="small"
+                                           Classes.due-date-tomorrow="{Binding IsDueDateTomorrow}"
                                            IsVisible="{Binding HasDueDate}"
                                            Text="{Binding DueDate, Converter={x:Static is:EnumLocalizationConverter.Instance}}" />
 

@@ -116,6 +116,8 @@ public sealed partial class ToDoNotify
     [ObservableProperty]
     public partial ToDoNotify? Parent { get; set; }
 
+    public bool IsDueDateTomorrow => DueDate == DateTime.Now.ToDateOnly().AddDays(1);
+
     public bool HasDueDate =>
         Type switch
         {
@@ -180,11 +182,6 @@ public sealed partial class ToDoNotify
         switch (e.PropertyName)
         {
             case nameof(Description):
-            {
-                UpdateMarkdown();
-
-                break;
-            }
             case nameof(DescriptionType):
             {
                 UpdateMarkdown();
@@ -192,14 +189,15 @@ public sealed partial class ToDoNotify
                 break;
             }
             case nameof(Type):
+            case nameof(Reference):
             {
                 OnPropertyChanged(nameof(HasDueDate));
 
                 break;
             }
-            case nameof(Reference):
+            case nameof(DueDate):
             {
-                OnPropertyChanged(nameof(HasDueDate));
+                OnPropertyChanged(nameof(IsDueDateTomorrow));
 
                 break;
             }

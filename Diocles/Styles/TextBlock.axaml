@@ -4,6 +4,10 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
     </Style>
 
+    <Style Selector="TextBlock.due-date-tomorrow">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundAccentBrush}" />
+    </Style>
+
     <Style Selector="TextBlock.ready-for-complete" />
 
     <Style Selector="TextBlock.planned">
