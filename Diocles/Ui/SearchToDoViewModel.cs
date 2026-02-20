@@ -21,7 +21,7 @@ public sealed partial class SearchToDoViewModel
         IHeader,
         IRefresh,
         ISaveUi,
-        IInitUi
+        IInit
 {
     public SearchToDoViewModel(
         IDioclesViewModelFactory factory,
@@ -81,14 +81,14 @@ public sealed partial class SearchToDoViewModel
         );
     }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         _header.PropertyChanged += HeaderPropertyChanged;
 
         return WrapCommandAsync(
             async () =>
             {
-                await List.InitUiAsync(ct);
+                await List.InitAsync(ct);
                 var settings = await _objectStorage.LoadAsync<SearchToDoSettings>(ct);
 
                 Dispatcher.UIThread.Post(() =>

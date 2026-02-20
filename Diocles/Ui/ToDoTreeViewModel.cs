@@ -7,7 +7,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class ToDoTreeViewModel : ViewModelBase, IInitUi
+public sealed partial class ToDoTreeViewModel : ViewModelBase, IInit
 {
     public ToDoTreeViewModel(IToDoUiCache toDoUiCache, IToDoUiService toDoUiService)
     {
@@ -18,7 +18,7 @@ public sealed partial class ToDoTreeViewModel : ViewModelBase, IInitUi
 
     public IEnumerable<ToDoNotify> Roots { get; }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             () => _toDoUiService.GetAsync(new() { IsGetSelectors = true }, ct),

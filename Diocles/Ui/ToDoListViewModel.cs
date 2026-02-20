@@ -13,7 +13,7 @@ using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
+public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISaveUi
 {
     public ToDoListViewModel(
         IAvaloniaReadOnlyList<ToDoNotify> itemsSource,
@@ -56,7 +56,7 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInitUi, ISaveUi
     public IAvaloniaReadOnlyList<ToDoNotify> Miss => _miss;
     public IAvaloniaReadOnlyList<ToDoNotify> ReadyForComplete => _readyForComplete;
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         _itemsSource.CollectionChanged += ItemsSourceCollectionChanged;
 

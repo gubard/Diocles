@@ -16,7 +16,7 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInitUi
+public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInit
 {
     public RootToDosViewModel(
         IToDoUiService toDoUiService,
@@ -55,7 +55,7 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
         return SaveUiCore(ct).ConfigureAwait(false);
     }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         return InitCore(ct).ConfigureAwait(false);
     }
@@ -114,7 +114,7 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
                     List.OrderBy = setting.OrderBy;
                 });
 
-                await List.InitUiAsync(ct);
+                await List.InitAsync(ct);
             },
             ct
         );
