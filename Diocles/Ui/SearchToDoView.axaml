@@ -10,7 +10,7 @@
     <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel>
             <TextBlock Classes="field" Text="{DynamicResource Lang.SearchText}" />
-            <TextBox Text="{Binding SearchText}" />
+            <TextBox x:Name="SearchTextTextBox" Text="{Binding SearchText}" />
             
             <TextBlock Classes="field" Text="{DynamicResource Lang.Type}" />
             <c:EnumsSelectorControl  SelectedEnums="{Binding Types}"/>
