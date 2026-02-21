@@ -20,7 +20,7 @@ public sealed partial class SearchToDoViewModel
     : ToDosViewModelBase,
         IHeader,
         IRefresh,
-        ISaveUi,
+        ISave,
         IInit
 {
     public SearchToDoViewModel(
@@ -63,14 +63,14 @@ public sealed partial class SearchToDoViewModel
         return WrapCommandAsync(() => SearchCore(ct).ConfigureAwait(false), ct);
     }
 
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
 
         return WrapCommandAsync(
             async () =>
             {
-                await List.SaveUiAsync(ct);
+                await List.SaveAsync(ct);
 
                 await _objectStorage.SaveAsync(
                     new SearchToDoSettings { SearchText = SearchText, Types = _types.ToArray() },

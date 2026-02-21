@@ -29,7 +29,7 @@ using Weber.Services;
 namespace Diocles.Ui;
 
 [EditNotify]
-public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, IInit, ISaveUi
+public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, IToDo, IInit, ISave
 {
     public static IEnumerable<PackIconMaterialDesignKind> Icons => IconsList;
 
@@ -293,7 +293,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         );
     }
 
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
         Tree.PropertyChanged -= TreePropertyChanged;
         _annuallyDays.CollectionChanged -= AnnuallyDaysCollectionChanged;

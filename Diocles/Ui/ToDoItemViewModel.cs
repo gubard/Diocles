@@ -19,7 +19,7 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISaveUi, IInit
+public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISave, IInit
 {
     public ToDoItemViewModel(
         ToDoNotify item,
@@ -76,7 +76,7 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
     public ToDoNotify Item { get; }
     public AvaloniaList<FileObjectNotify> Files { get; }
 
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
         return SaveUiCore(ct).ConfigureAwait(false);
     }
@@ -151,7 +151,7 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
             ct
         );
 
-        await List.SaveUiAsync(ct);
+        await List.SaveAsync(ct);
     }
 
     private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
