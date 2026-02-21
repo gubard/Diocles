@@ -125,12 +125,18 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(ct);
-        var parameters = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
-
         await WrapCommandAsync(
-            () =>
-                DialogService.ShowMessageBoxAsync(
+            async () =>
+            {
+                var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(ct);
+
+                var parameters = Factory.CreateToDoParameters(
+                    settings,
+                    ValidationMode.ValidateAll,
+                    false
+                );
+
+                await DialogService.ShowMessageBoxAsync(
                     new(
                         StringFormater
                             .Format(
@@ -148,7 +154,8 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
                         UiHelper.CancelButton
                     ),
                     ct
-                ),
+                );
+            },
             ct
         );
     }

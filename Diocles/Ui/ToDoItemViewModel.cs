@@ -188,12 +188,17 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(Item.Id, ct);
-        var credential = Factory.CreateToDoParameters(settings, ValidationMode.ValidateAll, false);
-
         await WrapCommandAsync(
-            () =>
+            async () =>
             {
+                var settings = await _objectStorage.LoadAsync<ToDoParametersSettings>(Item.Id, ct);
+
+                var credential = Factory.CreateToDoParameters(
+                    settings,
+                    ValidationMode.ValidateAll,
+                    false
+                );
+
                 var header = StringFormater
                     .Format(
                         AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
@@ -210,7 +215,7 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
 
                 var dialog = new DialogViewModel(header, credential, button, UiHelper.CancelButton);
 
-                return DialogService.ShowMessageBoxAsync(dialog, ct);
+                await DialogService.ShowMessageBoxAsync(dialog, ct);
             },
             ct
         );
