@@ -12,8 +12,7 @@ public sealed class ToDoUiService(
     IToDoDbService toDoDbService,
     IToDoUiCache uiCache,
     INavigator navigator,
-    string serviceName,
-    IResponseHandler responseHandler
+    string serviceName
 )
     : UiService<
         HestiaGetRequest,
@@ -23,7 +22,7 @@ public sealed class ToDoUiService(
         IToDoHttpService,
         IToDoDbService,
         IToDoUiCache
-    >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName, responseHandler),
+    >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName),
         IToDoUiService
 {
     protected override HestiaGetRequest CreateGetRequestRefresh()
