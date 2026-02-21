@@ -10,14 +10,9 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh, IRefreshUi
+public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh
 {
     public abstract ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct);
-
-    public virtual void RefreshUi()
-    {
-        List.Refresh();
-    }
 
     protected ToDosMainViewModelBase(
         IDialogService dialogService,
