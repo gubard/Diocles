@@ -493,6 +493,12 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
     }
 
     [RelayCommand]
+    private void SetCurrentDateToDueDate()
+    {
+        WrapCommand(() => Dispatcher.UIThread.Post(() => DueDate = DateTime.Now.ToDateOnly()));
+    }
+
+    [RelayCommand]
     private void SetCurrentDateToName()
     {
         WrapCommand(() => Dispatcher.UIThread.Post(() => Name = $"{DateTime.Now}"));

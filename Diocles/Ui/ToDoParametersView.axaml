@@ -83,12 +83,14 @@
                     </ToggleSwitch>
 
                     <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}" Text="{DynamicResource Lang.Name}" />
-                    <TextBox x:Name="NameTextBox" Classes="clear-all select-all" Text="{Binding Name}" />
 
-                    <StackPanel Classes="horizontal">
-                        <Button Command="{Binding SetCurrentDateToNameCommand}"
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBox x:Name="NameTextBox" Classes="clear-all select-all" Text="{Binding Name}" />
+                        <Button Grid.Column="1"
+                                Classes="align-right-top m-5"
+                                Command="{Binding SetCurrentDateToNameCommand}"
                                 Content="{ip:MaterialDesign CalendarToday}" />
-                    </StackPanel>
+                    </Grid>
 
                     <StackPanel
                         IsVisible="{Binding Type, Converter={x:Static s:IsNotValueConverter.Instance}, ConverterParameter={x:Static m:ToDoType.Reference}}">
@@ -143,8 +145,13 @@
 
                                 <TextBlock Classes="field" IsVisible="{Binding !IsShowEdit}"
                                            Text="{DynamicResource Lang.DueDate}" />
-                                <CalendarDatePicker
-                                    SelectedDate="{Binding DueDate, Converter={x:Static s:DateOnlyToDateTimeConverter.Instance}}" />
+
+                                <StackPanel Classes="horizontal">
+                                    <CalendarDatePicker
+                                        SelectedDate="{Binding DueDate, Converter={x:Static s:DateOnlyToDateTimeConverter.Instance}}" />
+                                    <Button Command="{Binding SetCurrentDateToDueDateCommand}"
+                                            Content="{ip:MaterialDesign CalendarToday}" />
+                                </StackPanel>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1">
