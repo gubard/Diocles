@@ -231,11 +231,7 @@ public sealed class ToDoMemoryCache
 
     private void SetupCreatedToDo(ShortToDo todo, HashSet<Guid> shortUpdatedIds)
     {
-        var item = UpdateShortToDo(todo, shortUpdatedIds);
-
-        item.OrderIndex = item.Parent is null
-            ? (uint)_roots.Count + 1
-            : (uint)item.Parent.Children.Count + 1;
+        var item = UpdateShortToDo(todo, shortUpdatedIds, true);
 
         switch (item.Type)
         {
@@ -578,7 +574,11 @@ public sealed class ToDoMemoryCache
         return item;
     }
 
-    private ToDoNotify UpdateShortToDo(ShortToDo toDo, HashSet<Guid> updatedIds)
+    private ToDoNotify UpdateShortToDo(
+        ShortToDo toDo,
+        HashSet<Guid> updatedIds,
+        bool updateOrder = false
+    )
     {
         if (updatedIds.Contains(toDo.Id))
         {
@@ -615,7 +615,7 @@ public sealed class ToDoMemoryCache
 
         if (item.Parent?.Id != toDo.ParentId)
         {
-            ChangeParent(item, toDo.ParentId);
+            ChangeParent(item, toDo.ParentId, updateOrder);
         }
 
         updatedIds.Add(item.Id);
@@ -647,7 +647,7 @@ public sealed class ToDoMemoryCache
         return item;
     }
 
-    private void ChangeParent(ToDoNotify item, Guid? newParentId)
+    private void ChangeParent(ToDoNotify item, Guid? newParentId, bool updateOrder = false)
     {
         if (newParentId == item.Parent?.Id)
         {
@@ -664,6 +664,13 @@ public sealed class ToDoMemoryCache
         }
 
         item.Parent = newParentId.HasValue ? GetItem(newParentId.Value) : null;
+
+        if (updateOrder)
+        {
+            item.OrderIndex = item.Parent is null
+                ? (uint)_roots.Count + 1
+                : (uint)item.Parent.Children.Count + 1;
+        }
 
         if (item.Parent is not null)
         {
