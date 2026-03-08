@@ -88,7 +88,6 @@ public sealed partial class SearchToDoViewModel
         return WrapCommandAsync(
             async () =>
             {
-                await List.InitAsync(ct);
                 var settings = await _objectStorage.LoadAsync<SearchToDoSettings>(ct);
 
                 Dispatcher.UIThread.Post(() =>

@@ -113,8 +113,6 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
                     List.GroupBy = setting.GroupBy;
                     List.OrderBy = setting.OrderBy;
                 });
-
-                await List.InitAsync(ct);
             },
             ct
         );

@@ -176,8 +176,6 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
                     List.GroupBy = setting.GroupBy;
                     List.OrderBy = setting.OrderBy;
                 });
-
-                await List.InitAsync(ct);
             },
             ct
         );

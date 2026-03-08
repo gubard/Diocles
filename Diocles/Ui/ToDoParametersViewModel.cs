@@ -277,7 +277,20 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
-        return InitCore(ct).ConfigureAwait(false);
+        Tree.PropertyChanged += TreePropertyChanged;
+        _annuallyDays.CollectionChanged += AnnuallyDaysCollectionChanged;
+        _monthlyDays.CollectionChanged += MonthlyDaysCollectionChanged;
+        _weeklyDays.CollectionChanged += WeeklyDaysCollectionChanged;
+
+        if (_filesDir.IsNullOrWhiteSpace())
+        {
+            return TaskHelper.ConfiguredCompletedTask;
+        }
+
+        return WrapCommandAsync(
+            () => _fileStorageUiService.GetAsync(new() { GetFiles = [_filesDir] }, ct),
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
@@ -595,25 +608,6 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
 
                 Dispatcher.UIThread.Post(() => _files.AddRange(addFiles));
             },
-            ct
-        );
-    }
-
-    private async ValueTask InitCore(CancellationToken ct)
-    {
-        Tree.PropertyChanged += TreePropertyChanged;
-        _annuallyDays.CollectionChanged += AnnuallyDaysCollectionChanged;
-        _monthlyDays.CollectionChanged += MonthlyDaysCollectionChanged;
-        _weeklyDays.CollectionChanged += WeeklyDaysCollectionChanged;
-        await Tree.InitAsync(ct);
-
-        if (_filesDir.IsNullOrWhiteSpace())
-        {
-            return;
-        }
-
-        await WrapCommandAsync(
-            () => _fileStorageUiService.GetAsync(new() { GetFiles = [_filesDir] }, ct),
             ct
         );
     }
