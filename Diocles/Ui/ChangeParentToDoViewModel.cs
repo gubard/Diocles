@@ -1,10 +1,12 @@
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Services;
 using Inanna.Models;
+using Inanna.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class ChangeParentToDoViewModel : ViewModelBase
+public sealed partial class ChangeParentToDoViewModel : ViewModelBase, IInit
 {
     public ChangeParentToDoViewModel(IDioclesViewModelFactory factory)
     {
@@ -15,4 +17,9 @@ public sealed partial class ChangeParentToDoViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isRoot;
+
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    {
+        return Tree.InitAsync(ct);
+    }
 }
