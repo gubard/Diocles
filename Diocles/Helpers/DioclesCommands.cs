@@ -145,7 +145,8 @@ public static class DioclesCommands
         }
 
         OpenToDosCommand = UiHelper.CreateCommand<ToDoNotify>(
-            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item.ActualItem), ct)
+            (item, ct) => navigator.NavigateToAsync(factory.CreateToDos(item.ActualItem), ct),
+            true
         );
 
         ShowDeleteToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
@@ -296,7 +297,8 @@ public static class DioclesCommands
                     new() { SwitchCompleteIds = [item.Id] },
                     ct
                 ),
-            true
+            true,
+            false
         );
 
         OpenCurrentToDoCommand = UiHelper.CreateCommand(ct =>
