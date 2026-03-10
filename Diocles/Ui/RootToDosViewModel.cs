@@ -161,7 +161,7 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
     [RelayCommand]
     private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct);
+        await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct, true);
     }
 
     private async ValueTask<DefaultValidationErrors> CreateCore(

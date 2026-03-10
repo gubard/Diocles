@@ -7,13 +7,13 @@ using Hestia.Contract.Services;
 namespace Diocles.Services;
 
 public sealed class ToDoHttpService(
-    HttpClient httpClient,
+    IFactory<HttpClient> httpClientFactory,
     JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
     IFactory<Memory<HttpHeader>> headersFactory
 )
     : HttpService<HestiaGetRequest, HestiaPostRequest, HestiaGetResponse, HestiaPostResponse>(
-        httpClient,
+        httpClientFactory,
         options,
         tryPolicyService,
         headersFactory

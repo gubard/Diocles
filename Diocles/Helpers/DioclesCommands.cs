@@ -289,17 +289,14 @@ public static class DioclesCommands
             }
         );
 
-        SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify>(
+        SwitchToDoCommand = UiHelper.CreateCommand<ToDoNotify, HestiaPostResponse>(
             (item, ct) =>
-            {
                 uiToDoService.PostAsync(
                     Guid.NewGuid(),
                     new() { SwitchCompleteIds = [item.Id] },
                     ct
-                );
-
-                return TaskHelper.ConfiguredCompletedTask;
-            }
+                ),
+            true
         );
 
         OpenCurrentToDoCommand = UiHelper.CreateCommand(ct =>
