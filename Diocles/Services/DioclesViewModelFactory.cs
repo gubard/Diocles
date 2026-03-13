@@ -57,7 +57,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IFileStorageUiCache fileStorageUiCache,
         Application app,
         IWeberViewModelFactory weberFactory,
-        IInannaViewModelFactory inannaViewModelFactor
+        IInannaViewModelFactory inannaViewModelFactor,
+        InannaCommands inannaCommands
     )
     {
         _toDoValidator = toDoValidator;
@@ -72,6 +73,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         _app = app;
         _weberFactory = weberFactory;
         _inannaViewModelFactor = inannaViewModelFactor;
+        _inannaCommands = inannaCommands;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -109,7 +111,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _objectStorage,
             _fileStorageUiService,
             _fileStorageUiCache,
-            _weberFactory
+            _weberFactory,
+            _inannaCommands
         );
     }
 
@@ -182,7 +185,7 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 
     public ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input)
     {
-        return new(input, _toDoUiCache);
+        return new(input, _toDoUiCache, _inannaCommands);
     }
 
     private readonly IToDoValidator _toDoValidator;
@@ -197,4 +200,5 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
     private readonly Application _app;
     private readonly IWeberViewModelFactory _weberFactory;
     private readonly IInannaViewModelFactory _inannaViewModelFactor;
+    private readonly InannaCommands _inannaCommands;
 }

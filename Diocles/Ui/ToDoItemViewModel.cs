@@ -32,7 +32,8 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
         IObjectStorage objectStorage,
         IFileStorageUiService fileStorageUiService,
         IFileStorageUiCache fileStorageUiCache,
-        IWeberViewModelFactory weberFactory
+        IWeberViewModelFactory weberFactory,
+        InannaCommands inannaCommands
     )
         : base(
             dialogService,
@@ -70,11 +71,13 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
 
         _objectStorage = objectStorage;
         _weberFactory = weberFactory;
+        InannaCommands = inannaCommands;
     }
 
     public object Header => _header;
     public ToDoNotify Item { get; }
     public AvaloniaList<FileObjectNotify> Files { get; }
+    public InannaCommands InannaCommands { get; }
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {

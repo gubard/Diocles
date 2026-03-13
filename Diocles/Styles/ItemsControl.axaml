@@ -112,7 +112,7 @@
                                                           CommandParameter="{Binding}" />
                                                 <MenuItem Icon="{ip:MaterialDesign Link}"
                                                           Header="{DynamicResource Lang.OpenLink}"
-                                                          Command="{x:Static ih:InannaCommands.OpenLinkCommand}"
+                                                          Command="{Binding $parent[ui:ToDoListView].ViewModel.InannaCommands.OpenLinkCommand}"
                                                           CommandParameter="{Binding Link, Converter={x:Static is:StringToUriConverter.Instance}}"
                                                           IsVisible="{Binding Link, Converter={x:Static is:IsNotNullOrWhiteSpaceConverter.Instance}}" />
                                             </MenuFlyout>

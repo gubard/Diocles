@@ -32,7 +32,7 @@
                         <DataTemplate DataType="{x:Type in:HomeMark}">
                             <Button Classes="align-center"
                                     Content="{ip:MaterialDesign Home}"
-                                    Command="{x:Static hi:InannaCommands.NavigateToCommand}"
+                                    Command="{Binding $parent[ui:ToDoItemView].ViewModel.InannaCommands.NavigateToCommand}"
                                     CommandParameter="{x:Type ui:RootToDosViewModel}" />
                         </DataTemplate>
                     </s:SelectorDataTemplate>
