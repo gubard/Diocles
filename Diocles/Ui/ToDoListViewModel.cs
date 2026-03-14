@@ -18,13 +18,17 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
     public ToDoListViewModel(
         IAvaloniaReadOnlyList<ToDoNotify> itemsSource,
         IToDoUiCache toDoUiCache,
-        InannaCommands inannaCommands
+        InannaCommands inannaCommands,
+        DioclesCommands dioclesCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         _favorites = toDoUiCache.Favorites;
         _groupBy = ToDoGroupBy.Status;
         _itemsSource = itemsSource;
         InannaCommands = inannaCommands;
+        DioclesCommands = dioclesCommands;
         _items = new();
         _circle = new();
         _group = new();
@@ -58,6 +62,7 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
     public IAvaloniaReadOnlyList<ToDoNotify> Miss => _miss;
     public IAvaloniaReadOnlyList<ToDoNotify> ReadyForComplete => _readyForComplete;
     public InannaCommands InannaCommands { get; }
+    public DioclesCommands DioclesCommands { get; }
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {

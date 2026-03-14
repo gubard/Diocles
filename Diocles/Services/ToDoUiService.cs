@@ -12,7 +12,9 @@ public sealed class ToDoUiService(
     IToDoDbService toDoDbService,
     IToDoUiCache uiCache,
     INavigator navigator,
-    string serviceName
+    string serviceName,
+    IStatusBarService statusBarService,
+    IInannaViewModelFactory factory
 )
     : UiService<
         HestiaGetRequest,
@@ -22,7 +24,7 @@ public sealed class ToDoUiService(
         IToDoHttpService,
         IToDoDbService,
         IToDoUiCache
-    >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName),
+    >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName, statusBarService, factory),
         IToDoUiService
 {
     protected override HestiaGetRequest CreateGetRequestRefresh()

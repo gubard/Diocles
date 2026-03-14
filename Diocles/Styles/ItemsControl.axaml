@@ -13,7 +13,7 @@
             <DataTemplate DataType="m:ToDoNotify">
                 <Button Classes="align-stretch"
                         CommandParameter="{Binding}"
-                        Command="{x:Static h:DioclesCommands.OpenToDosCommand}"
+                        Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.OpenToDosCommand}"
                         Background="{Binding Color, Converter={x:Static is:ColorToBrushConverter.Instance}, ConverterParameter={x:Static ih:Numbers.Byte_51}}"
                         IsEnabled="{Binding !IsDrag}"
                         ToolTip.Tip="{Binding Converter={x:Static s:DescriptionToolTipConverter.Instance}, ConverterParameter={x:Static h:DiocleHelper.DesktopDescriptionStringParameters}}">
@@ -30,7 +30,7 @@
                                                 IsVisible="{OnPlatform Default=False, Android=True, iOS=True, Browser=True}"
                                                 Content="{ip:MaterialDesign Reorder}"
                                                 CommandParameter="{Binding}"
-                                                Command="{x:Static h:DioclesCommands.ChangeOrderCommand}" />
+                                                Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.ChangeOrderCommand}" />
                                         <ip:PackIconMaterialDesign Kind="Reorder"
                                                                    Classes="s-20 align-center"
                                                                    Background="Transparent"
@@ -43,7 +43,7 @@
                                                   IsChecked="{Binding IsCanDo, Mode=OneWay, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}"
                                                   IsVisible="{Binding IsCanDo, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.None}}"
                                                   CommandParameter="{Binding}"
-                                                  Command="{x:Static h:DioclesCommands.SwitchToDoCommand}">
+                                                  Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.SwitchToDoCommand}">
                                         <ip:PackIconMaterialDesign Kind="Check"
                                                                    Classes="h2 align-center"
                                                                    IsVisible="{Binding IsCanDo, Converter={x:Static is:IsValueConverter.Instance}, ConverterParameter={x:Static hm:ToDoIsCanDo.CanIncomplete}}" />
@@ -60,7 +60,7 @@
 
                                         <Button Grid.Row="1"
                                                 Classes="p-4 m-0"
-                                                Command="{x:Static h:DioclesCommands.OpenParentCommand}"
+                                                Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.OpenParentCommand}"
                                                 CommandParameter="{Binding Active}"
                                                 IsVisible="{Binding Active, Converter={x:Static is:IsNotValueConverter.Instance}, ConverterParameter={x:Null}}">
                                             <TextBlock Text="{Binding Active.Name}"
@@ -81,16 +81,16 @@
                                 <StackPanel Classes="horizontal align-right">
                                     <Button Content="{ip:MaterialDesign Edit}"
                                             CommandParameter="{Binding}"
-                                            Command="{x:Static h:DioclesCommands.ShowEditToDoCommand}" />
+                                            Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.ShowEditToDoCommand}" />
                                     <Button Classes="danger"
                                             Content="{ip:MaterialDesign Delete}"
                                             CommandParameter="{Binding}"
-                                            Command="{x:Static h:DioclesCommands.ShowDeleteToDoCommand}" />
+                                            Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.ShowDeleteToDoCommand}" />
                                 </StackPanel>
 
 
                                 <StackPanel Classes="horizontal align-right">
-                                    <Button Command="{x:Static h:DioclesCommands.SwitchFavoriteCommand}"
+                                    <Button Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.SwitchFavoriteCommand}"
                                             CommandParameter="{Binding}">
                                         <StackPanel>
                                             <ip:PackIconMaterialDesign IsVisible="{Binding IsFavorite}" Kind="Favorite" />
@@ -103,12 +103,12 @@
                                         <Button.Flyout>
                                             <MenuFlyout>
                                                 <MenuItem Icon="{ip:MaterialDesign AccountTree}"
-                                                          Command="{x:Static h:DioclesCommands.ShowChangeParentCommand}"
+                                                          Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.ShowChangeParentCommand}"
                                                           CommandParameter="{Binding}"
                                                           Header="{DynamicResource Lang.ChangeParent}" />
                                                 <MenuItem Icon="{ip:MaterialDesign CopyrightOutline}"
                                                           Header="{DynamicResource Lang.Clone}"
-                                                          Command="{x:Static h:DioclesCommands.ShowCloneCommand}"
+                                                          Command="{Binding $parent[ui:ToDoListView].ViewModel.DioclesCommands.ShowCloneCommand}"
                                                           CommandParameter="{Binding}" />
                                                 <MenuItem Icon="{ip:MaterialDesign Link}"
                                                           Header="{DynamicResource Lang.OpenLink}"

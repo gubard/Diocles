@@ -7,6 +7,7 @@ using Hestia.Contract.Services;
 using Inanna.Models;
 using Inanna.Services;
 using Weber.Services;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Diocles.Services;
 
@@ -18,6 +19,7 @@ public interface IDioclesViewModelFactory
     RootToDosViewModel CreateRootToDos();
     ToDoTreeViewModel CreateToDoTree();
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
+    SearchToDoViewModel CreSearchToDo();
 
     ToDoItemHeaderViewModel CreateToDoItemHeader(
         ToDoNotify item,
@@ -45,35 +47,9 @@ public interface IDioclesViewModelFactory
 
 public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
 {
-    public DioclesViewModelFactory(
-        IToDoValidator toDoValidator,
-        IToDoUiCache toDoUiCache,
-        IToDoUiService toDoUiService,
-        IStringFormater stringFormater,
-        IDialogService dialogService,
-        IAppResourceService appResourceService,
-        IObjectStorage objectStorage,
-        IFileStorageUiService fileStorageUiService,
-        IFileStorageUiCache fileStorageUiCache,
-        Application app,
-        IWeberViewModelFactory weberFactory,
-        IInannaViewModelFactory inannaViewModelFactor,
-        InannaCommands inannaCommands
-    )
+    public DioclesViewModelFactory(IServiceProvider serviceProvider)
     {
-        _toDoValidator = toDoValidator;
-        _toDoUiCache = toDoUiCache;
-        _toDoUiService = toDoUiService;
-        _stringFormater = stringFormater;
-        _dialogService = dialogService;
-        _appResourceService = appResourceService;
-        _objectStorage = objectStorage;
-        _fileStorageUiService = fileStorageUiService;
-        _fileStorageUiCache = fileStorageUiCache;
-        _app = app;
-        _weberFactory = weberFactory;
-        _inannaViewModelFactor = inannaViewModelFactor;
-        _inannaCommands = inannaCommands;
+        _serviceProvider = serviceProvider;
     }
 
     public ToDosHeaderViewModel CreateToDosHeader(
@@ -82,7 +58,30 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(title, commands, multiCommands, _inannaViewModelFactor);
+        return new(
+            title,
+            commands,
+            multiCommands,
+            _serviceProvider.GetService<IInannaViewModelFactory>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>(),
+            _serviceProvider.GetService<DioclesCommands>()
+        );
+    }
+
+    public SearchToDoViewModel CreSearchToDo()
+    {
+        return new(
+            this,
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<IToDoUiCache>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IAppResourceService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IFileStorageUiService>(),
+            _serviceProvider.GetService<IObjectStorage>(),
+            _serviceProvider.GetService<DioclesCommands>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public ToDoItemHeaderViewModel CreateToDoItemHeader(
@@ -90,54 +89,70 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> commands
     )
     {
-        return new(commands, item, _inannaViewModelFactor);
+        return new(
+            commands,
+            item,
+            _serviceProvider.GetService<IInannaViewModelFactory>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>(),
+            _serviceProvider.GetService<DioclesCommands>()
+        );
     }
 
     public AddBarcodeFileViewModel CreateAddBarcodeFile()
     {
-        return new(_inannaViewModelFactor);
+        return new(
+            _serviceProvider.GetService<IInannaViewModelFactory>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public ToDoItemViewModel CreateToDos(ToDoNotify item)
     {
         return new(
             item,
-            _toDoUiService,
-            _toDoUiCache,
-            _stringFormater,
-            _dialogService,
-            _appResourceService,
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IAppResourceService>(),
             this,
-            _objectStorage,
-            _fileStorageUiService,
-            _fileStorageUiCache,
-            _weberFactory,
-            _inannaCommands
+            _serviceProvider.GetService<IObjectStorage>(),
+            _serviceProvider.GetService<IFileStorageUiService>(),
+            _serviceProvider.GetService<IFileStorageUiCache>(),
+            _serviceProvider.GetService<IWeberViewModelFactory>(),
+            _serviceProvider.GetService<InannaCommands>(),
+            _serviceProvider.GetService<DioclesCommands>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
         );
     }
 
     public ChangeParentToDoViewModel CreateChangeParentToDo()
     {
-        return new(this);
+        return new(this, _serviceProvider.GetService<ISafeExecuteWrapper>());
     }
 
     public RootToDosViewModel CreateRootToDos()
     {
         return new(
-            _toDoUiService,
-            _toDoUiCache,
-            _stringFormater,
-            _dialogService,
-            _appResourceService,
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<IToDoUiCache>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IAppResourceService>(),
             this,
-            _objectStorage,
-            _fileStorageUiService
+            _serviceProvider.GetService<IObjectStorage>(),
+            _serviceProvider.GetService<IFileStorageUiService>(),
+            _serviceProvider.GetService<DioclesCommands>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
         );
     }
 
     public ToDoTreeViewModel CreateToDoTree()
     {
-        return new(_toDoUiCache, _toDoUiService);
+        return new(
+            _serviceProvider.GetService<IToDoUiCache>(),
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public ToDoParametersViewModel CreateToDoParameters(
@@ -150,14 +165,16 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             settings,
             validationMode,
             isShowEdit,
-            _toDoValidator,
+            _serviceProvider.GetService<IToDoValidator>(),
             this,
-            _fileStorageUiService,
-            _app,
-            _appResourceService,
-            _stringFormater,
-            _dialogService,
-            _toDoUiService
+            _serviceProvider.GetService<IFileStorageUiService>(),
+            _serviceProvider.GetService<Application>(),
+            _serviceProvider.GetService<IAppResourceService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>(),
+            _serviceProvider.GetService<ICommandFactory>()
         );
     }
 
@@ -171,34 +188,30 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             item,
             validationMode,
             isShowEdit,
-            _toDoValidator,
+            _serviceProvider.GetService<IToDoValidator>(),
             this,
-            _fileStorageUiService,
-            _fileStorageUiCache,
-            _app,
-            _appResourceService,
-            _stringFormater,
-            _dialogService,
-            _toDoUiService
+            _serviceProvider.GetService<IFileStorageUiService>(),
+            _serviceProvider.GetService<IFileStorageUiCache>(),
+            _serviceProvider.GetService<Application>(),
+            _serviceProvider.GetService<IAppResourceService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IToDoUiService>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>(),
+            _serviceProvider.GetService<ICommandFactory>()
         );
     }
 
     public ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input)
     {
-        return new(input, _toDoUiCache, _inannaCommands);
+        return new(
+            input,
+            _serviceProvider.GetService<IToDoUiCache>(),
+            _serviceProvider.GetService<InannaCommands>(),
+            _serviceProvider.GetService<DioclesCommands>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
-    private readonly IToDoValidator _toDoValidator;
-    private readonly IToDoUiCache _toDoUiCache;
-    private readonly IToDoUiService _toDoUiService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IDialogService _dialogService;
-    private readonly IAppResourceService _appResourceService;
-    private readonly IObjectStorage _objectStorage;
-    private readonly IFileStorageUiService _fileStorageUiService;
-    private readonly IFileStorageUiCache _fileStorageUiCache;
-    private readonly Application _app;
-    private readonly IWeberViewModelFactory _weberFactory;
-    private readonly IInannaViewModelFactory _inannaViewModelFactor;
-    private readonly InannaCommands _inannaCommands;
+    private readonly IServiceProvider _serviceProvider;
 }

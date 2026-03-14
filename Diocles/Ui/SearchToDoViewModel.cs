@@ -4,7 +4,6 @@ using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -31,7 +30,9 @@ public sealed partial class SearchToDoViewModel
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
         IFileStorageUiService fileStorageUiService,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        DioclesCommands dioclesCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
         : base(
             dialogService,
@@ -39,15 +40,15 @@ public sealed partial class SearchToDoViewModel
             stringFormater,
             factory,
             toDoUiService,
-            toDoUiCache,
             toDoUiCache.Search,
-            fileStorageUiService
+            fileStorageUiService,
+            safeExecuteWrapper
         )
     {
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.SearchToDos"),
             new AvaloniaList<InannaCommand>(),
-            DiocleHelper.CreateMultiCommands(toDoUiCache.Search)
+            dioclesCommands.CreateMultiCommands(toDoUiCache.Search)
         );
 
         _toDoUiService = toDoUiService;

@@ -2,7 +2,7 @@
 using Avalonia.Collections;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Diocles.Helpers;
+using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
@@ -12,17 +12,18 @@ using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using LiveMarkdown.Avalonia;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Diocles.Models;
 
 public sealed partial class ToDoNotify
     : ObservableObject,
         IToDo,
-        IStaticFactory<Guid, ToDoNotify>,
+        IStaticServiceFactory<Guid, ToDoNotify>,
         IOrderedItem,
         IIsDrag
 {
-    public ToDoNotify(Guid id)
+    public ToDoNotify(Guid id, DioclesCommands dioclesCommands)
     {
         Id = id;
         _children = [];
@@ -30,7 +31,7 @@ public sealed partial class ToDoNotify
         _weeklyDays = [];
         _monthlyDays = [];
         _annuallyDays = [];
-        MultiCommands = DiocleHelper.CreateMultiCommands(_children);
+        MultiCommands = dioclesCommands.CreateMultiCommands(_children);
         MarkdownBuilder = new();
     }
 
@@ -168,9 +169,12 @@ public sealed partial class ToDoNotify
         _children.Remove(child);
     }
 
-    public static ToDoNotify Create(Guid input)
+    public static ToDoNotify Create(Guid input, IServiceProvider serviceProvider)
     {
-        return new(input) { Status = ToDoStatus.ReadyForComplete };
+        return new(input, serviceProvider.GetService<DioclesCommands>())
+        {
+            Status = ToDoStatus.ReadyForComplete,
+        };
     }
 
     Guid? IToDo.ReferenceId => Reference?.Id;

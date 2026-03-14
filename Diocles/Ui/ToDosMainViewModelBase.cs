@@ -20,9 +20,9 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh
         IStringFormater stringFormater,
         IDioclesViewModelFactory factory,
         IToDoUiService toDoUiService,
-        IToDoUiCache toDoUiCache,
         IAvaloniaReadOnlyList<ToDoNotify> items,
-        IFileStorageUiService fileStorageUiService
+        IFileStorageUiService fileStorageUiService,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
         : base(
             dialogService,
@@ -30,9 +30,9 @@ public abstract class ToDosMainViewModelBase : ToDosViewModelBase, IRefresh
             stringFormater,
             factory,
             toDoUiService,
-            toDoUiCache,
             items,
-            fileStorageUiService
+            fileStorageUiService,
+            safeExecuteWrapper
         ) { }
 }
 
@@ -45,7 +45,6 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
     protected readonly IStringFormater StringFormater;
     protected readonly IDioclesViewModelFactory Factory;
     protected readonly IToDoUiService ToDoUiService;
-    protected readonly IToDoUiCache ToDoUiCache;
     protected readonly IFileStorageUiService FileStorageUiService;
 
     protected ToDosViewModelBase(
@@ -54,17 +53,17 @@ public abstract partial class ToDosViewModelBase : ViewModelBase, IToDosViewMode
         IStringFormater stringFormater,
         IDioclesViewModelFactory factory,
         IToDoUiService toDoUiService,
-        IToDoUiCache toDoUiCache,
         IAvaloniaReadOnlyList<ToDoNotify> items,
-        IFileStorageUiService fileStorageUiService
+        IFileStorageUiService fileStorageUiService,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         DialogService = dialogService;
         AppResourceService = appResourceService;
         StringFormater = stringFormater;
         Factory = factory;
         ToDoUiService = toDoUiService;
-        ToDoUiCache = toDoUiCache;
         FileStorageUiService = fileStorageUiService;
         List = factory.CreateToDoList(items);
     }

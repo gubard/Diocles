@@ -9,7 +9,12 @@ namespace Diocles.Ui;
 
 public sealed partial class ToDoTreeViewModel : ViewModelBase, IInit
 {
-    public ToDoTreeViewModel(IToDoUiCache toDoUiCache, IToDoUiService toDoUiService)
+    public ToDoTreeViewModel(
+        IToDoUiCache toDoUiCache,
+        IToDoUiService toDoUiService,
+        ISafeExecuteWrapper safeExecuteWrapper
+    )
+        : base(safeExecuteWrapper)
     {
         _toDoUiService = toDoUiService;
         Roots = toDoUiCache.Roots;

@@ -7,7 +7,11 @@ namespace Diocles.Ui;
 
 public sealed partial class AddBarcodeFileViewModel : ViewModelBase
 {
-    public AddBarcodeFileViewModel(IInannaViewModelFactory factory)
+    public AddBarcodeFileViewModel(
+        IInannaViewModelFactory factory,
+        ISafeExecuteWrapper safeExecuteWrapper
+    )
+        : base(safeExecuteWrapper)
     {
         LinearBarcodeGenerator = factory.CreateLinearBarcodeGenerator();
         _fileName = "barcode";

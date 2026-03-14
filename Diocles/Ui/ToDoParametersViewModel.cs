@@ -49,9 +49,11 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
         IDialogService dialogService,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        ISafeExecuteWrapper safeExecuteWrapper,
+        ICommandFactory commandFactory
     )
-        : base(validationMode, isShowEdit)
+        : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
         _filesDir = string.Empty;
         _files = new();
@@ -62,6 +64,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         _stringFormater = stringFormater;
         _dialogService = dialogService;
         _toDoUiService = toDoUiService;
+        _commandFactory = commandFactory;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -102,9 +105,11 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         IAppResourceService appResourceService,
         IStringFormater stringFormater,
         IDialogService dialogService,
-        IToDoUiService toDoUiService
+        IToDoUiService toDoUiService,
+        ISafeExecuteWrapper safeExecuteWrapper,
+        ICommandFactory commandFactory
     )
-        : base(validationMode, isShowEdit)
+        : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
         _filesDir = $"{item.Id}/ToDo";
         _files = fileStorageUiCache.GetFiles(_filesDir);
@@ -115,6 +120,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         _stringFormater = stringFormater;
         _dialogService = dialogService;
         _toDoUiService = toDoUiService;
+        _commandFactory = commandFactory;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -463,6 +469,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
     private readonly IDialogService _dialogService;
     private readonly IDioclesViewModelFactory _factory;
     private readonly IToDoUiService _toDoUiService;
+    private readonly ICommandFactory _commandFactory;
 
     [RelayCommand]
     private async Task EditItemAsync(ToDoNotify item, CancellationToken ct)
@@ -518,9 +525,10 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
                             .GetResource<string>("Lang.GenerateLinearBarcode")
                             .DispatchToDialogHeader(),
                         addBarcodeFile,
+                        SafeExecuteWrapper,
                         new(
                             _appResourceService.GetResource<string>("Lang.AddBarcode"),
-                            UiHelper.CreateCommand(async c =>
+                            _commandFactory.CreateCommand(async c =>
                             {
                                 await using var stream =
                                     addBarcodeFile.LinearBarcodeGenerator.Barcode.GetPngStream();
@@ -541,7 +549,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
                             null,
                             DialogButtonType.Primary
                         ),
-                        UiHelper.CancelButton
+                        _dialogService.CancelButton
                     ),
                     ct
                 );

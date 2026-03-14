@@ -2,7 +2,6 @@
 using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Diocles.Helpers;
 using Diocles.Models;
 using Gaia.Helpers;
 using Gaia.Services;
@@ -12,6 +11,7 @@ using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Diocles.Services;
 
@@ -39,10 +39,14 @@ public sealed class ToDoUiCache
     : UiCache<HestiaPostRequest, HestiaGetResponse, IToDoDbCache, IToDoMemoryCache>,
         IToDoUiCache
 {
-    public ToDoUiCache(IToDoDbCache dbCache, IToDoMemoryCache memoryCache)
+    public ToDoUiCache(
+        IToDoDbCache dbCache,
+        IToDoMemoryCache memoryCache,
+        DioclesCommands dioclesCommands
+    )
         : base(dbCache, memoryCache)
     {
-        RootCommands = DiocleHelper.CreateMultiCommands(Roots);
+        RootCommands = dioclesCommands.CreateMultiCommands(Roots);
     }
 
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => MemoryCache.Roots;
@@ -62,6 +66,9 @@ public sealed class ToDoMemoryCache
     : MemoryCache<ToDoNotify, HestiaPostRequest, HestiaGetResponse>,
         IToDoMemoryCache
 {
+    public ToDoMemoryCache(IServiceProvider serviceProvider)
+        : base(serviceProvider) { }
+
     public ToDoNotify? CurrentActive { get; private set; }
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<ToDoNotify> Favorites => _favorites;

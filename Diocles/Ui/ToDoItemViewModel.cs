@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -24,7 +23,6 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
     public ToDoItemViewModel(
         ToDoNotify item,
         IToDoUiService toDoUiService,
-        IToDoUiCache toDoUiCache,
         IStringFormater stringFormater,
         IDialogService dialogService,
         IAppResourceService appResourceService,
@@ -33,7 +31,9 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
         IFileStorageUiService fileStorageUiService,
         IFileStorageUiCache fileStorageUiCache,
         IWeberViewModelFactory weberFactory,
-        InannaCommands inannaCommands
+        InannaCommands inannaCommands,
+        DioclesCommands dioclesCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
         : base(
             dialogService,
@@ -41,9 +41,9 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
             stringFormater,
             factory,
             toDoUiService,
-            toDoUiCache,
             item.Children,
-            fileStorageUiService
+            fileStorageUiService,
+            safeExecuteWrapper
         )
     {
         Item = item;
@@ -54,13 +54,13 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
             new AvaloniaList<InannaCommand>
             {
                 new(
-                    DioclesCommands.ShowEditToDoCommand,
+                    dioclesCommands.ShowEditToDoCommand,
                     item,
                     appResourceService.GetResource<string>("Lang.Edit"),
                     PackIconMaterialDesignKind.Edit
                 ),
                 new(
-                    DioclesCommands.ShowDeleteToDoCommand,
+                    dioclesCommands.ShowDeleteToDoCommand,
                     item,
                     appResourceService.GetResource<string>("Lang.Delete"),
                     PackIconMaterialDesignKind.Delete,
@@ -72,12 +72,14 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
         _objectStorage = objectStorage;
         _weberFactory = weberFactory;
         InannaCommands = inannaCommands;
+        DioclesCommands = dioclesCommands;
     }
 
     public object Header => _header;
     public ToDoNotify Item { get; }
     public AvaloniaList<FileObjectNotify> Files { get; }
     public InannaCommands InannaCommands { get; }
+    public DioclesCommands DioclesCommands { get; }
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
@@ -136,7 +138,8 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
                                 .DispatchToDialogHeader()
                         ),
                         _weberFactory.CreateFiles(Files, item),
-                        UiHelper.OkButton
+                        SafeExecuteWrapper,
+                        DialogService.OkButton
                     ),
                     ct
                 ),
@@ -214,7 +217,13 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
                     DialogButtonType.Primary
                 );
 
-                var dialog = new DialogViewModel(header, credential, button, UiHelper.CancelButton);
+                var dialog = new DialogViewModel(
+                    header,
+                    credential,
+                    SafeExecuteWrapper,
+                    button,
+                    DialogService.CancelButton
+                );
 
                 await DialogService.ShowMessageBoxAsync(dialog, ct);
             },

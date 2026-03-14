@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -26,7 +25,9 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
         IAppResourceService appResourceService,
         IDioclesViewModelFactory factory,
         IObjectStorage objectStorage,
-        IFileStorageUiService fileStorageUiService
+        IFileStorageUiService fileStorageUiService,
+        DioclesCommands dioclesCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
         : base(
             dialogService,
@@ -34,9 +35,9 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
             stringFormater,
             factory,
             toDoUiService,
-            toDoUiCache,
             toDoUiCache.Roots,
-            fileStorageUiService
+            fileStorageUiService,
+            safeExecuteWrapper
         )
     {
         _objectStorage = objectStorage;
@@ -44,7 +45,7 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
         _header = factory.CreateToDosHeader(
             appResourceService.GetResource<string>("Lang.ToDos"),
             new AvaloniaList<InannaCommand>(),
-            DiocleHelper.CreateMultiCommands(toDoUiCache.Roots)
+            dioclesCommands.CreateMultiCommands(toDoUiCache.Roots)
         );
     }
 
@@ -143,13 +144,14 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
                             )
                             .DispatchToDialogHeader(),
                         parameters,
+                        SafeExecuteWrapper,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
                             CreateCommand,
                             parameters,
                             DialogButtonType.Primary
                         ),
-                        UiHelper.CancelButton
+                        DialogService.CancelButton
                     ),
                     ct
                 );

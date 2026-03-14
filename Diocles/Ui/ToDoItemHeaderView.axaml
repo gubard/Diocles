@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
-             xmlns:h="clr-namespace:Diocles.Helpers"
              xmlns:ui="clr-namespace:Diocles.Ui"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Diocles.Ui.ToDoItemHeaderView"
@@ -13,7 +12,7 @@
             <StackPanel Classes="horizontal">
                 <ToggleButton Content="{ip:MaterialDesign Checklist}" IsChecked="{Binding IsMulti}" />
                 <Button Content="{ip:MaterialDesign ArrowForward}"
-                        Command="{x:Static h:DioclesCommands.OpenCurrentToDoCommand}" />
+                        Command="{Binding DioclesCommands.OpenCurrentToDoCommand}" />
             </StackPanel>
 
             <ScrollViewer Grid.Column="1" Classes="horizontal-scroll">
