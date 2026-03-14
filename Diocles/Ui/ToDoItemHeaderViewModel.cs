@@ -1,4 +1,3 @@
-using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
@@ -11,7 +10,6 @@ namespace Diocles.Ui;
 public sealed partial class ToDoItemHeaderViewModel : ViewModelBase
 {
     public ToDoItemHeaderViewModel(
-        IAvaloniaReadOnlyList<InannaCommand> commands,
         ToDoNotify item,
         IInannaViewModelFactory factory,
         ISafeExecuteWrapper safeExecuteWrapper,
@@ -19,7 +17,7 @@ public sealed partial class ToDoItemHeaderViewModel : ViewModelBase
     )
         : base(safeExecuteWrapper)
     {
-        Commands = factory.CreateAdaptiveButtons(commands);
+        Commands = factory.CreateAdaptiveButtons(item.Commands);
         MultiCommands = factory.CreateAdaptiveButtons(item.MultiCommands);
         Item = item;
         DioclesCommands = dioclesCommands;

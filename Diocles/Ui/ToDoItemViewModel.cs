@@ -48,27 +48,7 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
     {
         Item = item;
         Files = fileStorageUiCache.GetFiles($"{Item.Id}/ToDo");
-
-        _header = factory.CreateToDoItemHeader(
-            item,
-            new AvaloniaList<InannaCommand>
-            {
-                new(
-                    dioclesCommands.ShowEditToDoCommand,
-                    item,
-                    appResourceService.GetResource<string>("Lang.Edit"),
-                    PackIconMaterialDesignKind.Edit
-                ),
-                new(
-                    dioclesCommands.ShowDeleteToDoCommand,
-                    item,
-                    appResourceService.GetResource<string>("Lang.Delete"),
-                    PackIconMaterialDesignKind.Delete,
-                    ButtonType.Danger
-                ),
-            }
-        );
-
+        _header = factory.CreateToDoItemHeader(item);
         _objectStorage = objectStorage;
         _weberFactory = weberFactory;
         InannaCommands = inannaCommands;

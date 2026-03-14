@@ -1,6 +1,8 @@
 ﻿using System.Windows.Input;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Markup.Xaml.MarkupExtensions.CompiledBindings;
 using Avalonia.Threading;
 using Diocles.Models;
 using Gaia.Helpers;
@@ -754,6 +756,30 @@ public sealed class DioclesCommands : Commands
     {
         return new AvaloniaList<InannaCommand>
         {
+            new(
+                ShowEditToDoCommand,
+                parameter,
+                _appResourceService.GetResource<string>("Lang.Edit"),
+                PackIconMaterialDesignKind.Edit
+            ),
+            new(
+                SwitchFavoriteCommand,
+                parameter,
+                _appResourceService.GetResource<string>("Lang.IsFavorite"),
+                PackIconMaterialDesignKind.Favorite
+            ),
+            new(
+                ShowChangeParentCommand,
+                parameter,
+                _appResourceService.GetResource<string>("Lang.ChangeParent"),
+                PackIconMaterialDesignKind.AccountTree
+            ),
+            new(
+                ShowCloneCommand,
+                parameter,
+                _appResourceService.GetResource<string>("Lang.Clone"),
+                PackIconMaterialDesignKind.CopyrightOutline
+            ),
             new(
                 ShowDeleteToDoCommand,
                 parameter,

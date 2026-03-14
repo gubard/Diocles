@@ -23,7 +23,7 @@ public sealed partial class ToDoNotify
         IOrderedItem,
         IIsDrag
 {
-    public ToDoNotify(Guid id, DioclesCommands dioclesCommands)
+    private ToDoNotify(Guid id, DioclesCommands dioclesCommands)
     {
         Id = id;
         _children = [];
@@ -31,11 +31,13 @@ public sealed partial class ToDoNotify
         _weeklyDays = [];
         _monthlyDays = [];
         _annuallyDays = [];
+        Commands = dioclesCommands.CreateCommands(this);
         MultiCommands = dioclesCommands.CreateMultiCommands(_children);
         MarkdownBuilder = new();
     }
 
     public Guid Id { get; }
+    public IAvaloniaReadOnlyList<InannaCommand> Commands { get; }
     public IAvaloniaReadOnlyList<InannaCommand> MultiCommands { get; }
     public IAvaloniaReadOnlyList<ToDoNotify> Children => _children;
     public IEnumerable<object> Parents => _parents;

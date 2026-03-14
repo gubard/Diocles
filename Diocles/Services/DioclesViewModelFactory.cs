@@ -20,11 +20,7 @@ public interface IDioclesViewModelFactory
     ToDoTreeViewModel CreateToDoTree();
     ToDoListViewModel CreateToDoList(IAvaloniaReadOnlyList<ToDoNotify> input);
     SearchToDoViewModel CreSearchToDo();
-
-    ToDoItemHeaderViewModel CreateToDoItemHeader(
-        ToDoNotify item,
-        IAvaloniaReadOnlyList<InannaCommand> commands
-    );
+    ToDoItemHeaderViewModel CreateToDoItemHeader(ToDoNotify item);
 
     ToDoParametersViewModel CreateToDoParameters(
         ToDoParametersSettings settings,
@@ -84,13 +80,9 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
         );
     }
 
-    public ToDoItemHeaderViewModel CreateToDoItemHeader(
-        ToDoNotify item,
-        IAvaloniaReadOnlyList<InannaCommand> commands
-    )
+    public ToDoItemHeaderViewModel CreateToDoItemHeader(ToDoNotify item)
     {
         return new(
-            commands,
             item,
             _serviceProvider.GetService<IInannaViewModelFactory>(),
             _serviceProvider.GetService<ISafeExecuteWrapper>(),
