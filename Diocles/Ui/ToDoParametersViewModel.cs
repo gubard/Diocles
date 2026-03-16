@@ -477,23 +477,31 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         await WrapCommandAsync(
             async () =>
             {
+                var isEdit = IsEdit;
                 var edit = CreateEditToDos(item.Id);
                 var files = CreateNeotomaPostRequest($"{item.Id}/ToDo");
                 await _dialogService.CloseMessageBoxAsync(ct);
 
-                var errors = await TaskHelper.WhenAllAsync(
-                    [
-                        _toDoUiService
-                            .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct)
-                            .ToValidationErrors(),
-                        _fileStorageUiService
-                            .PostAsync(Guid.NewGuid(), files, ct)
-                            .ToValidationErrors(),
-                    ],
-                    ct
-                );
+                if (isEdit)
+                {
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            _toDoUiService
+                                .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, ct)
+                                .ToValidationErrors(),
+                            _fileStorageUiService
+                                .PostAsync(Guid.NewGuid(), files, ct)
+                                .ToValidationErrors(),
+                        ],
+                        ct
+                    );
 
-                return errors.Combine();
+                    return errors.Combine();
+                }
+
+                return await _fileStorageUiService
+                    .PostAsync(Guid.NewGuid(), files, ct)
+                    .ToValidationErrors();
             },
             ct
         );

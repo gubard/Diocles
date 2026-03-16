@@ -127,48 +127,6 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
         );
     }
 
-    private async ValueTask SaveUiCore(CancellationToken ct)
-    {
-        _header.PropertyChanged -= HeaderPropertyChanged;
-
-        await _objectStorage.SaveAsync(
-            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
-            Item.Id,
-            ct
-        );
-
-        await List.SaveAsync(ct);
-    }
-
-    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
-        {
-            IsMulti = _header.IsMulti;
-        }
-    }
-
-    private async ValueTask InitCore(CancellationToken ct)
-    {
-        _header.PropertyChanged += HeaderPropertyChanged;
-
-        await WrapCommandAsync(
-            async () =>
-            {
-                var setting = await _objectStorage.LoadAsync<ToDosSetting>(Item.Id, ct);
-
-                Dispatcher.UIThread.Post(() =>
-                {
-                    List.GroupBy = setting.GroupBy;
-                    List.OrderBy = setting.OrderBy;
-                });
-            },
-            ct
-        );
-
-        await RefreshAsync(ct);
-    }
-
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
@@ -215,6 +173,48 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
     private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct, true);
+    }
+
+    private async ValueTask SaveUiCore(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderPropertyChanged;
+
+        await _objectStorage.SaveAsync(
+            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            Item.Id,
+            ct
+        );
+
+        await List.SaveAsync(ct);
+    }
+
+    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
+        {
+            IsMulti = _header.IsMulti;
+        }
+    }
+
+    private async ValueTask InitCore(CancellationToken ct)
+    {
+        _header.PropertyChanged += HeaderPropertyChanged;
+
+        await WrapCommandAsync(
+            async () =>
+            {
+                var setting = await _objectStorage.LoadAsync<ToDosSetting>(Item.Id, ct);
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    List.GroupBy = setting.GroupBy;
+                    List.OrderBy = setting.OrderBy;
+                });
+            },
+            ct
+        );
+
+        await RefreshAsync(ct);
     }
 
     private async ValueTask<IValidationErrors> CreateCore(
