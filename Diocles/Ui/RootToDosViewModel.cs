@@ -15,7 +15,12 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader, ISave, IInit
+public sealed partial class RootToDosViewModel
+    : ToDosMainViewModelBase,
+        IHeader,
+        ISave,
+        IInit,
+        IRefreshUi
 {
     public RootToDosViewModel(
         IToDoUiService toDoUiService,
@@ -69,7 +74,7 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
             async () =>
             {
                 var response = await ToDoUiService.GetAsync(request, ct);
-                Dispatcher.UIThread.Post(() => List.Refresh());
+                Dispatcher.UIThread.Post(RefreshUi);
 
                 return response;
             },
@@ -77,49 +82,13 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
         );
     }
 
+    public void RefreshUi()
+    {
+        List.RefreshUi();
+    }
+
     private readonly IObjectStorage _objectStorage;
     private readonly ToDosHeaderViewModel _header;
-
-    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
-        {
-            IsMulti = _header.IsMulti;
-        }
-    }
-
-    private async ValueTask SaveUiCore(CancellationToken ct)
-    {
-        _header.PropertyChanged -= HeaderPropertyChanged;
-
-        await _objectStorage.SaveAsync(
-            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
-            ct
-        );
-
-        await List.SaveAsync(ct);
-    }
-
-    private async ValueTask InitCore(CancellationToken ct)
-    {
-        _header.PropertyChanged += HeaderPropertyChanged;
-
-        await WrapCommandAsync(
-            async () =>
-            {
-                var setting = await _objectStorage.LoadAsync<ToDosSetting>(ct);
-
-                Dispatcher.UIThread.Post(() =>
-                {
-                    List.GroupBy = setting.GroupBy;
-                    List.OrderBy = setting.OrderBy;
-                });
-            },
-            ct
-        );
-
-        await RefreshAsync(ct);
-    }
 
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
@@ -164,6 +133,47 @@ public sealed partial class RootToDosViewModel : ToDosMainViewModelBase, IHeader
     private async Task CreateAsync(ToDoParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct, true);
+    }
+
+    private void HeaderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ToDosHeaderViewModel.IsMulti))
+        {
+            IsMulti = _header.IsMulti;
+        }
+    }
+
+    private async ValueTask SaveUiCore(CancellationToken ct)
+    {
+        _header.PropertyChanged -= HeaderPropertyChanged;
+
+        await _objectStorage.SaveAsync(
+            new ToDosSetting { GroupBy = List.GroupBy, OrderBy = List.OrderBy },
+            ct
+        );
+
+        await List.SaveAsync(ct);
+    }
+
+    private async ValueTask InitCore(CancellationToken ct)
+    {
+        _header.PropertyChanged += HeaderPropertyChanged;
+
+        await WrapCommandAsync(
+            async () =>
+            {
+                var setting = await _objectStorage.LoadAsync<ToDosSetting>(ct);
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    List.GroupBy = setting.GroupBy;
+                    List.OrderBy = setting.OrderBy;
+                });
+            },
+            ct
+        );
+
+        await RefreshAsync(ct);
     }
 
     private async ValueTask<DefaultValidationErrors> CreateCore(

@@ -18,7 +18,12 @@ using Weber.Services;
 
 namespace Diocles.Ui;
 
-public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader, ISave, IInit
+public sealed partial class ToDoItemViewModel
+    : ToDosMainViewModelBase,
+        IHeader,
+        ISave,
+        IInit,
+        IRefreshUi
 {
     public ToDoItemViewModel(
         ToDoNotify item,
@@ -90,12 +95,17 @@ public sealed partial class ToDoItemViewModel : ToDosMainViewModelBase, IHeader,
                     ct
                 );
 
-                Dispatcher.UIThread.Post(() => List.Refresh());
+                Dispatcher.UIThread.Post(RefreshUi);
 
                 return errors.Combine();
             },
             ct
         );
+    }
+
+    public void RefreshUi()
+    {
+        List.RefreshUi();
     }
 
     private readonly IObjectStorage _objectStorage;

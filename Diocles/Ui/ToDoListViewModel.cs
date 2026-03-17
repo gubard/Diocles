@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
@@ -43,7 +44,7 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
         _completed = new();
         _miss = new();
         _readyForComplete = new();
-        Refresh();
+        RefreshUi();
     }
 
     public IAvaloniaReadOnlyList<ToDoNotify> Items => _items;
@@ -78,7 +79,7 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public void Refresh()
+    public void RefreshUi()
     {
         _items.UpdateOrder(
             OrderBy switch
@@ -123,7 +124,7 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
 
         if (e.PropertyName == nameof(OrderBy))
         {
-            Refresh();
+            RefreshUi();
         }
     }
 
@@ -152,6 +153,6 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
 
     private void ItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        Refresh();
+        RefreshUi();
     }
 }

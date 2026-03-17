@@ -66,8 +66,11 @@ public sealed class ToDoMemoryCache
     : MemoryCache<ToDoNotify, HestiaPostRequest, HestiaGetResponse>,
         IToDoMemoryCache
 {
-    public ToDoMemoryCache(IServiceProvider serviceProvider)
-        : base(serviceProvider) { }
+    public ToDoMemoryCache(IServiceProvider serviceProvider, INavigator navigator)
+        : base(serviceProvider)
+    {
+        _navigator = navigator;
+    }
 
     public ToDoNotify? CurrentActive { get; private set; }
     public IAvaloniaReadOnlyList<ToDoNotify> Roots => _roots;
@@ -109,6 +112,7 @@ public sealed class ToDoMemoryCache
     private readonly AvaloniaList<ToDoNotify> _favorites = [];
     private readonly AvaloniaList<ToDoNotify> _bookmarks = [];
     private readonly AvaloniaList<ToDoNotify> _search = [];
+    private readonly INavigator _navigator;
 
     private void Update(HestiaGetResponse source)
     {
@@ -565,6 +569,8 @@ public sealed class ToDoMemoryCache
                         );
                 }
             }
+
+            _navigator.RefreshCurrentViewUi();
         });
     }
 
