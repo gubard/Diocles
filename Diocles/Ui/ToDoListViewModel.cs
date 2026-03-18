@@ -88,10 +88,12 @@ public sealed partial class ToDoListViewModel : ViewModelBase, IInit, ISave
                 ToDoOrderBy.Name => _itemsSource
                     .OrderBy(x => x.Name)
                     .ThenBy(x => x.OrderIndex)
+                    .ThenBy(x => x.DueDate)
                     .ToArray(),
                 ToDoOrderBy.DueDate => _itemsSource
                     .OrderBy(x => x.DueDate)
                     .ThenBy(x => x.OrderIndex)
+                    .ThenBy(x => x.Name)
                     .ToArray(),
                 _ => throw new ArgumentOutOfRangeException(nameof(OrderBy), OrderBy, null),
             }

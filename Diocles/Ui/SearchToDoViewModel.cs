@@ -20,7 +20,8 @@ public sealed partial class SearchToDoViewModel
         IHeader,
         IRefresh,
         ISave,
-        IInit
+        IInit,
+        IRefreshUi
 {
     public SearchToDoViewModel(
         IDioclesViewModelFactory factory,
@@ -99,6 +100,11 @@ public sealed partial class SearchToDoViewModel
             },
             ct
         );
+    }
+
+    public void RefreshUi()
+    {
+        List.RefreshUi();
     }
 
     private readonly IObjectStorage _objectStorage;
