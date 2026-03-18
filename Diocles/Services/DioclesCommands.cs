@@ -1,8 +1,6 @@
 ﻿using System.Windows.Input;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml.MarkupExtensions;
-using Avalonia.Markup.Xaml.MarkupExtensions.CompiledBindings;
 using Avalonia.Threading;
 using Diocles.Models;
 using Gaia.Helpers;

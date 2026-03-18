@@ -8,7 +8,6 @@ using Diocles.Services;
 using Gaia.Helpers;
 using Gaia.Services;
 using Hestia.Contract.Models;
-using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;

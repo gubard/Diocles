@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Collections;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Diocles.Models;
 using Diocles.Services;
