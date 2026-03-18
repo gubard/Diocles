@@ -58,7 +58,7 @@ public sealed partial class RootToDosViewModel
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
-        return SaveUiCore(ct).ConfigureAwait(false);
+        return SaveCore(ct).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
@@ -143,7 +143,7 @@ public sealed partial class RootToDosViewModel
         }
     }
 
-    private async ValueTask SaveUiCore(CancellationToken ct)
+    private async ValueTask SaveCore(CancellationToken ct)
     {
         _header.PropertyChanged -= HeaderPropertyChanged;
 
