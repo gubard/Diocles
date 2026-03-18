@@ -180,6 +180,9 @@ public sealed class ToDoMemoryCache
                 _favorites.UpdateOrder(
                     source
                         .Favorites.Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+                        .OrderBy(x => x.Name)
+                        .ThenBy(x => x.OrderIndex)
+                        .ThenBy(x => x.DueDate)
                         .ToArray()
                 );
             }
@@ -298,6 +301,10 @@ public sealed class ToDoMemoryCache
         Dispatcher.UIThread.Post(() =>
         {
             var shortUpdatedIds = new HashSet<Guid>();
+            var deleteFavorites = new HashSet<ToDoNotify>();
+            var addFavorites = new HashSet<ToDoNotify>();
+            var deleteBookmarks = new HashSet<ToDoNotify>();
+            var addBookmarks = new HashSet<ToDoNotify>();
 
             foreach (var create in source.Creates)
             {
@@ -337,6 +344,15 @@ public sealed class ToDoMemoryCache
                     foreach (var item in items)
                     {
                         item.IsBookmark = edit.IsBookmark;
+
+                        if (item.IsBookmark)
+                        {
+                            addBookmarks.Add(item);
+                        }
+                        else
+                        {
+                            deleteBookmarks.Add(item);
+                        }
                     }
                 }
 
@@ -345,6 +361,15 @@ public sealed class ToDoMemoryCache
                     foreach (var item in items)
                     {
                         item.IsFavorite = edit.IsFavorite;
+
+                        if (item.IsFavorite)
+                        {
+                            addFavorites.Add(item);
+                        }
+                        else
+                        {
+                            deleteFavorites.Add(item);
+                        }
                     }
                 }
 
@@ -568,6 +593,40 @@ public sealed class ToDoMemoryCache
                             null
                         );
                 }
+            }
+
+            if (deleteFavorites.Count != 0)
+            {
+                _favorites.RemoveAll(deleteFavorites);
+            }
+
+            if (addFavorites.Count != 0)
+            {
+                _favorites.UpdateOrder(
+                    _favorites
+                        .Concat(addFavorites.Where(x => !_favorites.Contains(x)))
+                        .OrderBy(x => x.Name)
+                        .ThenBy(x => x.OrderIndex)
+                        .ThenBy(x => x.DueDate)
+                        .ToArray()
+                );
+            }
+
+            if (deleteBookmarks.Count != 0)
+            {
+                _bookmarks.RemoveAll(deleteBookmarks);
+            }
+
+            if (addBookmarks.Count != 0)
+            {
+                _bookmarks.UpdateOrder(
+                    _bookmarks
+                        .Concat(addBookmarks.Where(x => !_bookmarks.Contains(x)))
+                        .OrderBy(x => x.Name)
+                        .ThenBy(x => x.OrderIndex)
+                        .ThenBy(x => x.DueDate)
+                        .ToArray()
+                );
             }
 
             _navigator.RefreshCurrentViewUi();
