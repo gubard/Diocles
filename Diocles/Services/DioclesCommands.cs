@@ -24,120 +24,111 @@ public sealed class DioclesCommands : Commands
 
         _openToDosCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
-                ServiceProvider
-                    .GetService<INavigator>()
-                    .NavigateToAsync(
-                        ServiceProvider
-                            .GetService<IDioclesViewModelFactory>()
-                            .CreateToDos(item.ActualItem),
-                        ct
-                    ),
+            {
+                var navigator = ServiceProvider.GetService<INavigator>();
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+
+                return navigator.NavigateToAsync(factory.CreateToDos(item.ActualItem), ct);
+            },
             true
         );
 
         _showDeleteToDoCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
             {
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var stringFormater = ServiceProvider.GetService<IStringFormater>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var navigator = ServiceProvider.GetService<INavigator>();
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var fileStorageUiService = ServiceProvider.GetService<IFileStorageUiService>();
+
                 var header = appResourceService
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<IValidationErrors> DeleteToDoAsync(CancellationToken c)
-                {
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(c);
-
-                    var errors = await TaskHelper.WhenAllAsync(
-                        [
-                            ServiceProvider
-                                .GetService<IToDoUiService>()
-                                .PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, c)
-                                .ToValidationErrors(),
-                            ServiceProvider
-                                .GetService<IFileStorageUiService>()
-                                .PostAsync(
-                                    Guid.NewGuid(),
-                                    new() { DeleteDirs = [$"{item.Id}/ToDo"] },
-                                    c
-                                )
-                                .ToValidationErrors(),
-                        ],
-                        c
-                    );
-
-                    return errors.Combine();
-                }
-
-                async ValueTask<IValidationErrors> OkAsync(CancellationToken c)
-                {
-                    if (item.Parent is null)
-                    {
-                        await ServiceProvider
-                            .GetService<INavigator>()
-                            .NavigateToAsync(
-                                ServiceProvider
-                                    .GetService<IDioclesViewModelFactory>()
-                                    .CreateRootToDos(),
-                                c
-                            );
-                    }
-                    else
-                    {
-                        await ServiceProvider
-                            .GetService<INavigator>()
-                            .NavigateToAsync(
-                                ServiceProvider
-                                    .GetService<IDioclesViewModelFactory>()
-                                    .CreateToDos(item.Parent),
-                                c
-                            );
-                    }
-
-                    return await DeleteToDoAsync(c);
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            header,
-                            Dispatcher.UIThread.Invoke(() =>
-                                new TextBlock
-                                {
-                                    Text = ServiceProvider
-                                        .GetService<IStringFormater>()
-                                        .Format(
-                                            appResourceService.GetResource<string>(
-                                                "Lang.AskDelete"
-                                            ),
-                                            item.Name
-                                        ),
-                                    Classes = { "text-wrap" },
-                                }
-                            ),
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new DialogButton(
-                                appResourceService.GetResource<string>("Lang.Delete"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(c => OkAsync(c).ConfigureAwait(false)),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        Dispatcher.UIThread.Invoke(() =>
+                            new TextBlock
+                            {
+                                Text = stringFormater.Format(
+                                    appResourceService.GetResource<string>("Lang.AskDelete"),
+                                    item.Name
+                                ),
+                                Classes = { "text-wrap" },
+                            }
                         ),
-                        ct
-                    );
+                        safeExecuteWrapper,
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Delete"),
+                            commandFactory.CreateCommand(async c =>
+                            {
+                                if (item.Parent is null)
+                                {
+                                    await navigator.NavigateToAsync(factory.CreateRootToDos(), c);
+                                }
+                                else
+                                {
+                                    await navigator.NavigateToAsync(
+                                        factory.CreateToDos(item.Parent),
+                                        c
+                                    );
+                                }
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                var errors = await TaskHelper.WhenAllAsync(
+                                    [
+                                        toDoUiService
+                                            .PostAsync(
+                                                Guid.NewGuid(),
+                                                new() { DeleteIds = [item.Id] },
+                                                c
+                                            )
+                                            .ToValidationErrors(),
+                                        fileStorageUiService
+                                            .PostAsync(
+                                                Guid.NewGuid(),
+                                                new() { DeleteDirs = [$"{item.Id}/ToDo"] },
+                                                c
+                                            )
+                                            .ToValidationErrors(),
+                                    ],
+                                    c
+                                );
+
+                                return errors.Combine();
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showEditToDosCommand = CreateLazyCommand<IEnumerable<ToDoNotify>>(
             async (items, ct) =>
             {
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var objectStorage = ServiceProvider.GetService<IObjectStorage>();
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var fileStorageUiService = ServiceProvider.GetService<IFileStorageUiService>();
                 var selected = items.Where(x => x.IsSelected).ToArray();
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems();
+                    toDoUiCache.ResetItems();
 
                     foreach (var s in selected)
                     {
@@ -149,180 +140,172 @@ public sealed class DioclesCommands : Commands
                     .GetResource<string>("Lang.Edit")
                     .DispatchToDialogHeader();
 
-                var settings = await ServiceProvider
-                    .GetService<IObjectStorage>()
-                    .LoadAsync<ToDoParametersSettings>(Guid.Empty, ct);
+                var settings = await objectStorage.LoadAsync<ToDoParametersSettings>(
+                    Guid.Empty,
+                    ct
+                );
 
-                var viewModel = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateToDoParameters(settings, ValidationMode.ValidateOnlyEdited, true);
+                var viewModel = factory.CreateToDoParameters(
+                    settings,
+                    ValidationMode.ValidateOnlyEdited,
+                    true
+                );
 
-                async ValueTask<IValidationErrors> EditToDosAsync(CancellationToken c)
-                {
-                    var edit = viewModel.CreateEditToDos(selected.Select(x => x.Id).ToArray());
+                await dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        viewModel,
+                        safeExecuteWrapper,
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Edit"),
+                            commandFactory.CreateCommand(async c =>
+                            {
+                                var edit = viewModel.CreateEditToDos(
+                                    selected.Select(x => x.Id).ToArray()
+                                );
 
-                    var files = viewModel.CreateNeotomaPostRequest(
-                        selected.Select(x => $"{x.Id}/ToDo").ToArray()
-                    );
+                                var files = viewModel.CreateNeotomaPostRequest(
+                                    selected.Select(x => $"{x.Id}/ToDo").ToArray()
+                                );
 
-                    var newSettings = viewModel.CreateSettings();
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(c);
-                    await ServiceProvider
-                        .GetService<IObjectStorage>()
-                        .SaveAsync(newSettings, Guid.Empty, c);
+                                var newSettings = viewModel.CreateSettings();
+                                await dialogService.CloseMessageBoxAsync(c);
+                                await objectStorage.SaveAsync(newSettings, Guid.Empty, c);
 
-                    var errors = await TaskHelper.WhenAllAsync(
-                        [
-                            ServiceProvider
-                                .GetService<IToDoUiService>()
-                                .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c)
-                                .ToValidationErrors(),
-                            ServiceProvider
-                                .GetService<IFileStorageUiService>()
-                                .PostAsync(Guid.NewGuid(), files, ct)
-                                .ToValidationErrors(),
-                        ],
-                        c
-                    );
+                                var errors = await TaskHelper.WhenAllAsync(
+                                    [
+                                        toDoUiService
+                                            .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c)
+                                            .ToValidationErrors(),
+                                        fileStorageUiService
+                                            .PostAsync(Guid.NewGuid(), files, ct)
+                                            .ToValidationErrors(),
+                                    ],
+                                    c
+                                );
 
-                    return errors.Combine();
-                }
-
-                await ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            header,
-                            viewModel,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new DialogButton(
-                                appResourceService.GetResource<string>("Lang.Edit"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(c => EditToDosAsync(c).ConfigureAwait(false)),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                                return errors.Combine();
+                            }),
+                            null,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showDeleteToDosCommand = CreateLazyCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var stringFormater = ServiceProvider.GetService<IStringFormater>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var fileStorageUiService = ServiceProvider.GetService<IFileStorageUiService>();
                 var selected = items.Where(x => x.IsSelected).ToArray();
 
                 var header = appResourceService
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                async ValueTask<IValidationErrors> DeleteToDosAsync(CancellationToken c)
-                {
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(c);
-
-                    var errors = await TaskHelper.WhenAllAsync(
-                        [
-                            ServiceProvider
-                                .GetService<IToDoUiService>()
-                                .PostAsync(
-                                    Guid.NewGuid(),
-                                    new() { DeleteIds = selected.Select(x => x.Id).ToArray() },
-                                    c
-                                )
-                                .ToValidationErrors(),
-                            ServiceProvider
-                                .GetService<IFileStorageUiService>()
-                                .PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        DeleteDirs = selected.Select(x => $"{x.Id}/ToDo").ToArray(),
-                                    },
-                                    c
-                                )
-                                .ToValidationErrors(),
-                        ],
-                        c
-                    );
-
-                    return errors.Combine();
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            header,
-                            Dispatcher.UIThread.Invoke(() =>
-                                new TextBlock
-                                {
-                                    Text = ServiceProvider
-                                        .GetService<IStringFormater>()
-                                        .Format(
-                                            appResourceService.GetResource<string>(
-                                                "Lang.AskDelete"
-                                            ),
-                                            selected.Select(x => x.Name).JoinString(", ")
-                                        ),
-                                    Classes = { "text-wrap" },
-                                }
-                            ),
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new DialogButton(
-                                appResourceService.GetResource<string>("Lang.Delete"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(ct =>
-                                        DeleteToDosAsync(ct).ConfigureAwait(false)
-                                    ),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        Dispatcher.UIThread.Invoke(() =>
+                            new TextBlock
+                            {
+                                Text = stringFormater.Format(
+                                    appResourceService.GetResource<string>("Lang.AskDelete"),
+                                    selected.Select(x => x.Name).JoinString(", ")
+                                ),
+                                Classes = { "text-wrap" },
+                            }
                         ),
-                        ct
-                    );
+                        safeExecuteWrapper,
+                        new DialogButton(
+                            appResourceService.GetResource<string>("Lang.Delete"),
+                            commandFactory.CreateCommand(async c =>
+                            {
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                var errors = await TaskHelper.WhenAllAsync(
+                                    [
+                                        toDoUiService
+                                            .PostAsync(
+                                                Guid.NewGuid(),
+                                                new()
+                                                {
+                                                    DeleteIds = selected
+                                                        .Select(x => x.Id)
+                                                        .ToArray(),
+                                                },
+                                                c
+                                            )
+                                            .ToValidationErrors(),
+                                        fileStorageUiService
+                                            .PostAsync(
+                                                Guid.NewGuid(),
+                                                new()
+                                                {
+                                                    DeleteDirs = selected
+                                                        .Select(x => $"{x.Id}/ToDo")
+                                                        .ToArray(),
+                                                },
+                                                c
+                                            )
+                                            .ToValidationErrors(),
+                                    ],
+                                    c
+                                );
+
+                                return errors.Combine();
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _switchToDoCommand = CreateLazyCommand<ToDoNotify, HestiaPostResponse>(
             (item, ct) =>
-                ServiceProvider
-                    .GetService<IToDoUiService>()
-                    .PostAsync(Guid.NewGuid(), new() { SwitchCompleteIds = [item.Id] }, ct),
+            {
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+
+                return toDoUiService.PostAsync(
+                    Guid.NewGuid(),
+                    new() { SwitchCompleteIds = [item.Id] },
+                    ct
+                );
+            },
             true,
             false
         );
 
         _openCurrentToDoCommand = CreateLazyCommand(async ct =>
         {
-            var response = await ServiceProvider
-                .GetService<IToDoUiService>()
-                .GetAsync(new() { IsCurrentActive = true }, ct);
+            var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+            var navigator = ServiceProvider.GetService<INavigator>();
+            var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+            var response = await toDoUiService.GetAsync(new() { IsCurrentActive = true }, ct);
             var currentActive = ServiceProvider.GetService<IToDoUiCache>().CurrentActive;
 
             if (currentActive?.Parent is null)
             {
-                await ServiceProvider
-                    .GetService<INavigator>()
-                    .NavigateToAsync(
-                        ServiceProvider.GetService<IDioclesViewModelFactory>().CreateRootToDos(),
-                        ct
-                    );
+                await navigator.NavigateToAsync(factory.CreateRootToDos(), ct);
             }
             else
             {
-                await ServiceProvider
-                    .GetService<INavigator>()
-                    .NavigateToAsync(
-                        ServiceProvider
-                            .GetService<IDioclesViewModelFactory>()
-                            .CreateToDos(currentActive.Parent.ActualItem),
-                        ct
-                    );
+                await navigator.NavigateToAsync(
+                    factory.CreateToDos(currentActive.Parent.ActualItem),
+                    ct
+                );
             }
 
             return response;
@@ -330,162 +313,158 @@ public sealed class DioclesCommands : Commands
 
         _openParentCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
-                item.Parent is null
-                    ? ServiceProvider
-                        .GetService<INavigator>()
-                        .NavigateToAsync(
-                            ServiceProvider
-                                .GetService<IDioclesViewModelFactory>()
-                                .CreateRootToDos(),
-                            ct
-                        )
-                    : ServiceProvider
-                        .GetService<INavigator>()
-                        .NavigateToAsync(
-                            ServiceProvider
-                                .GetService<IDioclesViewModelFactory>()
-                                .CreateToDos(item.Parent.ActualItem),
-                            ct
-                        )
+            {
+                var navigator = ServiceProvider.GetService<INavigator>();
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+
+                return item.Parent is null
+                    ? navigator.NavigateToAsync(factory.CreateRootToDos(), ct)
+                    : navigator.NavigateToAsync(factory.CreateToDos(item.Parent.ActualItem), ct);
+            }
         );
 
         _switchFavoriteCommand = CreateLazyCommand<ToDoNotify, HestiaPostResponse>(
             (item, ct) =>
-                ServiceProvider
-                    .GetService<IToDoUiService>()
-                    .PostAsync(
-                        Guid.NewGuid(),
-                        new()
-                        {
-                            Edits =
-                            [
-                                new()
-                                {
-                                    Ids = [item.Id],
-                                    IsFavorite = !item.IsFavorite,
-                                    IsEditIsFavorite = true,
-                                },
-                            ],
-                        },
-                        ct
-                    )
+            {
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+
+                return toDoUiService.PostAsync(
+                    Guid.NewGuid(),
+                    new()
+                    {
+                        Edits =
+                        [
+                            new()
+                            {
+                                Ids = [item.Id],
+                                IsFavorite = !item.IsFavorite,
+                                IsEditIsFavorite = true,
+                            },
+                        ],
+                    },
+                    ct
+                );
+            }
         );
 
         _changeOrderCommand = CreateLazyCommand<ToDoNotify, IValidationErrors>(
             async (item, ct) =>
             {
-                var items = item.Parent is null
-                    ? ServiceProvider.GetService<IToDoUiCache>().Roots
-                    : item.Parent.Children;
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var itemMutationService = ServiceProvider.GetService<IItemMutationService>();
+                var items = item.Parent is null ? toDoUiCache.Roots : item.Parent.Children;
 
-                var changeOrder = await ServiceProvider
-                    .GetService<IItemMutationService>()
-                    .ShowChangeOrderAsync(items.ToArray(), [item], ct);
+                var changeOrder = await itemMutationService.ShowChangeOrderAsync(
+                    items.ToArray(),
+                    [item],
+                    ct
+                );
 
                 if (changeOrder is null)
                 {
                     return new DefaultValidationErrors();
                 }
 
-                return await ServiceProvider
-                    .GetService<IToDoUiService>()
-                    .PostAsync(
-                        Guid.NewGuid(),
-                        new()
-                        {
-                            ChangeOrders =
-                            [
-                                new()
-                                {
-                                    IsAfter = changeOrder.IsAfter,
-                                    StartId = changeOrder.Item.Id,
-                                    InsertIds = [item.Id],
-                                },
-                            ],
-                        },
-                        ct
-                    );
+                return await toDoUiService.PostAsync(
+                    Guid.NewGuid(),
+                    new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                IsAfter = changeOrder.IsAfter,
+                                StartId = changeOrder.Item.Id,
+                                InsertIds = [item.Id],
+                            },
+                        ],
+                    },
+                    ct
+                );
             }
         );
 
         _showChangeParentCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
             {
-                var viewModel = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateChangeParentToDo();
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var stringFormater = ServiceProvider.GetService<IStringFormater>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var viewModel = factory.CreateChangeParentToDo();
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems();
+                    toDoUiCache.ResetItems();
                     item.IsHideOnTree = true;
                 });
 
-                async ValueTask<HestiaPostResponse> ChangeParentAsync(CancellationToken ct)
-                {
-                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
-
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(ct);
-
-                    return await ServiceProvider
-                        .GetService<IToDoUiService>()
-                        .PostAsync(
-                            Guid.NewGuid(),
-                            new()
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        safeExecuteWrapper,
+                        new(
+                            appResourceService.GetResource<string>("Lang.ChangeParent"),
+                            commandFactory.CreateCommand(async c =>
                             {
-                                Edits =
-                                [
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await toDoUiService.PostAsync(
+                                    Guid.NewGuid(),
                                     new()
                                     {
-                                        Ids = [item.Id],
-                                        ParentId = parentId,
-                                        IsEditParentId = true,
+                                        Edits =
+                                        [
+                                            new()
+                                            {
+                                                Ids = [item.Id],
+                                                ParentId = parentId,
+                                                IsEditParentId = true,
+                                            },
+                                        ],
                                     },
-                                ],
-                            },
-                            ct
-                        );
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            ServiceProvider
-                                .GetService<IStringFormater>()
-                                .Format(
-                                    appResourceService.GetResource<string>("Lang.ChangeParentItem"),
-                                    item.Name
-                                )
-                                .DispatchToDialogHeader(),
-                            viewModel,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new(
-                                appResourceService.GetResource<string>("Lang.ChangeParent"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(c => ChangeParentAsync(c).ConfigureAwait(false)),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showChangesParentCommand = CreateLazyCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
                 var selected = items.Where(x => x.IsSelected).ToArray();
-                var viewModel = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateChangeParentToDo();
+                var viewModel = factory.CreateChangeParentToDo();
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems();
+                    toDoUiCache.ResetItems();
 
                     foreach (var item in selected)
                     {
@@ -493,228 +472,216 @@ public sealed class DioclesCommands : Commands
                     }
                 });
 
-                async ValueTask<HestiaPostResponse> ChangesParentAsync(CancellationToken ct)
-                {
-                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
-
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(ct);
-
-                    return await ServiceProvider
-                        .GetService<IToDoUiService>()
-                        .PostAsync(
-                            Guid.NewGuid(),
-                            new()
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        appResourceService
+                            .GetResource<string>("Lang.ChangeParent")
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        safeExecuteWrapper,
+                        new(
+                            appResourceService.GetResource<string>("Lang.ChangeParent"),
+                            commandFactory.CreateCommand(async c =>
                             {
-                                Edits =
-                                [
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await toDoUiService.PostAsync(
+                                    Guid.NewGuid(),
                                     new()
                                     {
-                                        Ids = selected.Select(x => x.Id).ToArray(),
-                                        ParentId = parentId,
-                                        IsEditParentId = true,
+                                        Edits =
+                                        [
+                                            new()
+                                            {
+                                                Ids = selected.Select(x => x.Id).ToArray(),
+                                                ParentId = parentId,
+                                                IsEditParentId = true,
+                                            },
+                                        ],
                                     },
-                                ],
-                            },
-                            ct
-                        );
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            appResourceService
-                                .GetResource<string>("Lang.ChangeParent")
-                                .DispatchToDialogHeader(),
-                            viewModel,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new(
-                                appResourceService.GetResource<string>("Lang.ChangeParent"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(ct =>
-                                        ChangesParentAsync(ct).ConfigureAwait(false)
-                                    ),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showCloneCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
             {
-                var viewModel = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() =>
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems()
-                );
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var stringFormater = ServiceProvider.GetService<IStringFormater>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var viewModel = factory.CreateChangeParentToDo();
+                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
 
-                async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
-                {
-                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
-
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(ct);
-
-                    return await ServiceProvider
-                        .GetService<IToDoUiService>()
-                        .PostAsync(
-                            Guid.NewGuid(),
-                            new()
-                            {
-                                Clones = [new() { ParentId = parentId, CloneIds = [item.Id] }],
-                            },
-                            ct
-                        );
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.CloneItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        safeExecuteWrapper,
                         new(
-                            ServiceProvider
-                                .GetService<IStringFormater>()
-                                .Format(
-                                    appResourceService.GetResource<string>("Lang.CloneItem"),
-                                    item.Name
-                                )
-                                .DispatchToDialogHeader(),
-                            viewModel,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new(
-                                appResourceService.GetResource<string>("Lang.Clone"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(ct => CloneAsync(ct).ConfigureAwait(false)),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                            appResourceService.GetResource<string>("Lang.Clone"),
+                            commandFactory.CreateCommand(async c =>
+                            {
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await toDoUiService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Clones =
+                                        [
+                                            new() { ParentId = parentId, CloneIds = [item.Id] },
+                                        ],
+                                    },
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showClonesCommand = CreateLazyCommand<IEnumerable<ToDoNotify>>(
             (items, ct) =>
             {
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+                var commandFactory = ServiceProvider.GetService<ICommandFactory>();
+                var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
                 var selected = items.Where(x => x.IsSelected).ToArray();
-                var viewModel = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() =>
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems()
-                );
+                var viewModel = factory.CreateChangeParentToDo();
+                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
 
-                async ValueTask<HestiaPostResponse> CloneAsync(CancellationToken ct)
-                {
-                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
-
-                    await ServiceProvider.GetService<IDialogService>().CloseMessageBoxAsync(ct);
-
-                    return await ServiceProvider
-                        .GetService<IToDoUiService>()
-                        .PostAsync(
-                            Guid.NewGuid(),
-                            new()
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        appResourceService
+                            .GetResource<string>("Lang.Clone")
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        safeExecuteWrapper,
+                        new(
+                            appResourceService.GetResource<string>("Lang.Clone"),
+                            commandFactory.CreateCommand(async c =>
                             {
-                                Clones =
-                                [
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await toDoUiService.PostAsync(
+                                    Guid.NewGuid(),
                                     new()
                                     {
-                                        ParentId = parentId,
-                                        CloneIds = selected.Select(x => x.Id).ToArray(),
+                                        Clones =
+                                        [
+                                            new()
+                                            {
+                                                ParentId = parentId,
+                                                CloneIds = selected.Select(x => x.Id).ToArray(),
+                                            },
+                                        ],
                                     },
-                                ],
-                            },
-                            ct
-                        );
-                }
-
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
-                        new(
-                            appResourceService
-                                .GetResource<string>("Lang.Clone")
-                                .DispatchToDialogHeader(),
-                            viewModel,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new(
-                                appResourceService.GetResource<string>("Lang.Clone"),
-                                ServiceProvider
-                                    .GetService<ICommandFactory>()
-                                    .CreateCommand(c => CloneAsync(c).ConfigureAwait(false)),
-                                null,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
 
         _showEditToDoCommand = CreateLazyCommand<ToDoNotify>(
             (item, ct) =>
             {
+                var factory = ServiceProvider.GetService<IDioclesViewModelFactory>();
+                var toDoUiCache = ServiceProvider.GetService<IToDoUiCache>();
+                var dialogService = ServiceProvider.GetService<IDialogService>();
+                var stringFormater = ServiceProvider.GetService<IStringFormater>();
+                var safeExecuteWrapper = ServiceProvider.GetService<ISafeExecuteWrapper>();
+
                 Dispatcher.UIThread.Post(() =>
                 {
-                    ServiceProvider.GetService<IToDoUiCache>().ResetItems();
+                    toDoUiCache.ResetItems();
                     item.IsHideOnTree = true;
                 });
 
-                var edit = ServiceProvider
-                    .GetService<IDioclesViewModelFactory>()
-                    .CreateToDoParameters(item, ValidationMode.ValidateOnlyEdited, false);
+                var edit = factory.CreateToDoParameters(
+                    item,
+                    ValidationMode.ValidateOnlyEdited,
+                    false
+                );
 
-                return ServiceProvider
-                    .GetService<IDialogService>()
-                    .ShowMessageBoxAsync(
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.EditItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        edit,
+                        safeExecuteWrapper,
                         new(
-                            ServiceProvider
-                                .GetService<IStringFormater>()
-                                .Format(
-                                    appResourceService.GetResource<string>("Lang.EditItem"),
-                                    item.Name
-                                )
-                                .DispatchToDialogHeader(),
-                            edit,
-                            ServiceProvider.GetService<ISafeExecuteWrapper>(),
-                            new(
-                                appResourceService.GetResource<string>("Lang.Edit"),
-                                edit.EditItemCommand,
-                                item,
-                                DialogButtonType.Primary
-                            ),
-                            ServiceProvider.GetService<IDialogService>().CancelButton
+                            appResourceService.GetResource<string>("Lang.Edit"),
+                            edit.EditItemCommand,
+                            item,
+                            DialogButtonType.Primary
                         ),
-                        ct
-                    );
+                        dialogService.CancelButton
+                    ),
+                    ct
+                );
             }
         );
     }
 
     public ICommand ShowCloneCommand => _showCloneCommand.Value;
-    public ICommand ShowClonesCommand => _showClonesCommand.Value;
     public ICommand OpenToDosCommand => _openToDosCommand.Value;
     public ICommand OpenParentCommand => _openParentCommand.Value;
     public ICommand ShowDeleteToDoCommand => _showDeleteToDoCommand.Value;
-    public ICommand ShowDeleteToDosCommand => _showDeleteToDosCommand.Value;
-    public ICommand ShowEditToDosCommand => _showEditToDosCommand.Value;
     public ICommand ShowEditToDoCommand => _showEditToDoCommand.Value;
     public ICommand SwitchToDoCommand => _switchToDoCommand.Value;
     public ICommand OpenCurrentToDoCommand => _openCurrentToDoCommand.Value;
     public ICommand SwitchFavoriteCommand => _switchFavoriteCommand.Value;
     public ICommand ChangeOrderCommand => _changeOrderCommand.Value;
     public ICommand ShowChangeParentCommand => _showChangeParentCommand.Value;
-    public ICommand ShowChangesParentCommand => _showChangesParentCommand.Value;
 
     public IAvaloniaReadOnlyList<InannaCommand> CreateMultiCommands(
         IEnumerable<ToDoNotify> parameter
@@ -723,26 +690,26 @@ public sealed class DioclesCommands : Commands
         return new AvaloniaList<InannaCommand>
         {
             new(
-                ShowDeleteToDosCommand,
+                _showDeleteToDosCommand.Value,
                 parameter,
                 _appResourceService.GetResource<string>("Lang.Delete"),
                 PackIconMaterialDesignKind.Delete,
                 ButtonType.Danger
             ),
             new(
-                ShowEditToDosCommand,
+                _showEditToDosCommand.Value,
                 parameter,
                 _appResourceService.GetResource<string>("Lang.Edit"),
                 PackIconMaterialDesignKind.Edit
             ),
             new(
-                ShowChangesParentCommand,
+                _showChangesParentCommand.Value,
                 parameter,
                 _appResourceService.GetResource<string>("Lang.ChangeParent"),
                 PackIconMaterialDesignKind.AccountTree
             ),
             new(
-                ShowClonesCommand,
+                _showClonesCommand.Value,
                 parameter,
                 _appResourceService.GetResource<string>("Lang.Clone"),
                 PackIconMaterialDesignKind.CopyrightOutline
