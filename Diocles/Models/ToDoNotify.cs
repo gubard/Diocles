@@ -137,7 +137,7 @@ public sealed partial class ToDoNotify
 
     public void UpdateChildren(ToDoNotify[] children)
     {
-        _children.UpdateOrder(children);
+        _children.SetItems(children);
     }
 
     public void UpdateParents(ToDoNotify[] parents)
