@@ -31,9 +31,7 @@ public sealed class ToDoUiService(
     {
         return new()
         {
-            IsGetSelectors = true,
-            IsRoots = true,
-            IsCurrentActive = true,
+            IsFull = true,
             IsBookmarks = true,
             IsFavorites = true,
         };

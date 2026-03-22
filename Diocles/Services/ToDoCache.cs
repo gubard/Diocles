@@ -131,6 +131,14 @@ public sealed class ToDoMemoryCache
         {
             var fullUpdatedIds = new HashSet<Guid>();
 
+            if (source.Full is not null)
+            {
+                foreach (var item in source.Full)
+                {
+                    UpdateFullToDo(item, fullUpdatedIds, shortUpdatedIds);
+                }
+            }
+
             foreach (var (id, items) in source.Children)
             {
                 var notify = GetItem(id);
