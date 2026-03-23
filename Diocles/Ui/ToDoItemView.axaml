@@ -43,9 +43,9 @@
                   IsVisible="{Binding Item.Description, Converter={x:Static s:IsNotNullOrWhiteSpaceConverter.Instance}}"
                   Header="{DynamicResource Lang.Description}">
             <Panel>
-                <TextBlock  Classes="text-wrap" 
-                            IsVisible="{Binding Item.DescriptionType, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:DescriptionType.PlainText}}"
-                            Text="{Binding Item.Description}"/>
+                <TextBox Classes="plain-text"
+                         IsVisible="{Binding Item.DescriptionType, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static hm:DescriptionType.PlainText}}"
+                         Text="{Binding Item.Description}" />
                 <md:MarkdownRenderer MarkdownBuilder="{Binding Item.MarkdownBuilder}" />
             </Panel>
         </Expander>
