@@ -27,7 +27,7 @@ public sealed partial class ToDoNotify
     {
         Id = id;
         _children = [];
-        _parents = [];
+        _parents = [HomeMark.Instance];
         _weeklyDays = [];
         _monthlyDays = [];
         _annuallyDays = [];
