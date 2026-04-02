@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -51,7 +52,8 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         IDialogService dialogService,
         IToDoUiService toDoUiService,
         ISafeExecuteWrapper safeExecuteWrapper,
-        ICommandFactory commandFactory
+        ICommandFactory commandFactory,
+        IHashService<byte[], string> hashService
     )
         : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
@@ -65,6 +67,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         _dialogService = dialogService;
         _toDoUiService = toDoUiService;
         _commandFactory = commandFactory;
+        _hashService = hashService;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -107,7 +110,8 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         IDialogService dialogService,
         IToDoUiService toDoUiService,
         ISafeExecuteWrapper safeExecuteWrapper,
-        ICommandFactory commandFactory
+        ICommandFactory commandFactory,
+        IHashService<byte[], string> hashService
     )
         : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
@@ -121,6 +125,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         _dialogService = dialogService;
         _toDoUiService = toDoUiService;
         _commandFactory = commandFactory;
+        _hashService = hashService;
         _factory = factory;
         InitValidation();
         Tree = factory.CreateToDoTree();
@@ -294,7 +299,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
         }
 
         return WrapCommandAsync(
-            () => _fileStorageUiService.GetAsync(new() { GetFiles = [_filesDir] }, ct),
+            () => _fileStorageUiService.RefreshFileStorageAsync(_filesDir, _files, ct),
             ct
         );
     }
@@ -319,7 +324,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
                 dir,
                 _files
                     .Where(x => x.Status == FileObjectNotifyStatus.Added)
-                    .Select(x => x.ToFileData())
+                    .Select(x => x.ToFileObject())
                     .ToArray()
             );
         }
@@ -470,6 +475,7 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
     private readonly IDioclesViewModelFactory _factory;
     private readonly IToDoUiService _toDoUiService;
     private readonly ICommandFactory _commandFactory;
+    private readonly IHashService<byte[], string> _hashService;
 
     [RelayCommand]
     private async Task EditItemAsync(ToDoNotify item, CancellationToken ct)
@@ -542,14 +548,16 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
                                     addBarcodeFile.LinearBarcodeGenerator.Barcode.GetPngStream();
 
                                 await _dialogService.CloseMessageBoxAsync(c);
+                                var data = stream.ToByteSpan().ToArray();
 
                                 var file = new FileObjectNotify(Guid.NewGuid())
                                 {
                                     Name = $"{addBarcodeFile.FileName}.png",
-                                    Data = stream.ToByteSpan().ToArray(),
+                                    Data = data,
                                     Description = string.Empty,
                                     Dir = _filesDir,
                                     Status = FileObjectNotifyStatus.Added,
+                                    Hash = _hashService.ComputeHash(data),
                                 };
 
                                 Dispatcher.UIThread.Post(() => _files.Add(file));
@@ -611,14 +619,16 @@ public sealed partial class ToDoParametersViewModel : ParametersViewModelBase, I
                 for (var index = 0; index < files.Count; index++)
                 {
                     var file = files[index];
+                    var data = await file.GetDataAsync(ct);
 
                     addFiles[index] = new(Guid.NewGuid())
                     {
                         Name = file.Name,
-                        Data = await file.GetDataAsync(ct),
+                        Data = data,
                         Description = string.Empty,
                         Dir = _filesDir,
                         Status = FileObjectNotifyStatus.Added,
+                        Hash = _hashService.ComputeHash(data),
                     };
                 }
 

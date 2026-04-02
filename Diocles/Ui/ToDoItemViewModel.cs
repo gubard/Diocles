@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Avalonia.Collections;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
+using Diocles.Helpers;
 using Diocles.Models;
 using Diocles.Services;
 using Gaia.Helpers;
@@ -88,7 +89,7 @@ public sealed partial class ToDoItemViewModel
                             .GetAsync(new() { ChildrenIds = [Item.Id], ParentIds = [Item.Id] }, ct)
                             .ToValidationErrors(),
                         FileStorageUiService
-                            .GetAsync(new() { GetFiles = [dir] }, ct)
+                            .RefreshFileStorageAsync(dir, Files, ct)
                             .ToValidationErrors(),
                     ],
                     ct

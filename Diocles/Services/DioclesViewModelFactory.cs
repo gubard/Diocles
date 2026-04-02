@@ -166,7 +166,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _serviceProvider.GetService<IDialogService>(),
             _serviceProvider.GetService<IToDoUiService>(),
             _serviceProvider.GetService<ISafeExecuteWrapper>(),
-            _serviceProvider.GetService<ICommandFactory>()
+            _serviceProvider.GetService<ICommandFactory>(),
+            _serviceProvider.GetService<IHashService<byte[], string>>()
         );
     }
 
@@ -190,7 +191,8 @@ public sealed class DioclesViewModelFactory : IDioclesViewModelFactory
             _serviceProvider.GetService<IDialogService>(),
             _serviceProvider.GetService<IToDoUiService>(),
             _serviceProvider.GetService<ISafeExecuteWrapper>(),
-            _serviceProvider.GetService<ICommandFactory>()
+            _serviceProvider.GetService<ICommandFactory>(),
+            _serviceProvider.GetService<IHashService<byte[], string>>()
         );
     }
 

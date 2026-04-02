@@ -1,4 +1,5 @@
-﻿using Hestia.Contract.Models;
+﻿using Gaia.Services;
+using Hestia.Contract.Models;
 using Hestia.Contract.Services;
 using Inanna.Services;
 
@@ -27,13 +28,18 @@ public sealed class ToDoUiService(
     >(toDoHttpService, toDoDbService, uiCache, navigator, serviceName, statusBarService, factory),
         IToDoUiService
 {
-    protected override HestiaGetRequest CreateGetRequestRefresh()
+    protected override async ValueTask<IValidationErrors> RefreshServiceCore(CancellationToken ct)
     {
-        return new()
+        var request = new HestiaGetRequest
         {
             IsFull = true,
             IsBookmarks = true,
             IsFavorites = true,
         };
+
+        var response = await DbService.GetAsync(request, ct);
+        await UiCache.UpdateAsync(response, ct);
+
+        return response;
     }
 }
