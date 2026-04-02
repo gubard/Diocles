@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveMarkdown.Avalonia" Version="1.9.1" />
+    <PackageReference Include="LiveMarkdown.Avalonia" Version="2.0.0-rc1" />
   </ItemGroup>
 
   <ItemGroup>
