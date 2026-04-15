@@ -4,12 +4,15 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using Diocles.Models;
 using Gaia.Helpers;
+using Gaia.Models;
 using Gaia.Services;
 using Hestia.Contract.Models;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Inanna.Ui;
+using Neotoma.Contract.Models;
 using Weber.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
@@ -49,67 +52,67 @@ public sealed class DioclesCommands : Commands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        header,
-                        Dispatcher.UIThread.Invoke(() =>
-                            new TextBlock
-                            {
-                                Text = stringFormater.Format(
-                                    appResourceService.GetResource<string>("Lang.AskDelete"),
-                                    item.Name
-                                ),
-                                Classes = { "text-wrap" },
-                            }
+                var content = Dispatcher.UIThread.Invoke(() =>
+                    new TextBlock
+                    {
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.AskDelete"),
+                            item.Name
                         ),
-                        safeExecuteWrapper,
-                        new DialogButton(
-                            appResourceService.GetResource<string>("Lang.Delete"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                if (item.Parent is null)
-                                {
-                                    await navigator.NavigateToAsync(factory.CreateRootToDos(), c);
-                                }
-                                else
-                                {
-                                    await navigator.NavigateToAsync(
-                                        factory.CreateToDos(item.Parent),
-                                        c
-                                    );
-                                }
-
-                                await dialogService.CloseMessageBoxAsync(c);
-
-                                var errors = await TaskHelper.WhenAllAsync(
-                                    [
-                                        toDoUiService
-                                            .PostAsync(
-                                                Guid.NewGuid(),
-                                                new() { DeleteIds = [item.Id] },
-                                                c
-                                            )
-                                            .ToValidationErrors(),
-                                        fileStorageUiService
-                                            .PostAsync(
-                                                Guid.NewGuid(),
-                                                new() { DeleteDirs = [$"{item.Id}/ToDo"] },
-                                                c
-                                            )
-                                            .ToValidationErrors(),
-                                    ],
-                                    c
-                                );
-
-                                return errors.Combine();
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                        Classes = { "text-wrap" },
+                    }
                 );
+
+                var commandDelete = commandFactory.CreateCommand(async c =>
+                {
+                    if (item.Parent is null)
+                    {
+                        await navigator.NavigateToAsync(factory.CreateRootToDos(), c);
+                    }
+                    else
+                    {
+                        var itemView = factory.CreateToDos(item.Parent);
+                        await navigator.NavigateToAsync(itemView, c);
+                    }
+
+                    await dialogService.CloseMessageBoxAsync(c);
+
+                    var fileStorageRequest = new NeotomaPostRequest
+                    {
+                        DeleteDirs = [$"{item.Id}/ToDo"],
+                    };
+
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            toDoUiService
+                                .PostAsync(Guid.NewGuid(), new() { DeleteIds = [item.Id] }, c)
+                                .ToValidationErrors(),
+                            fileStorageUiService
+                                .PostAsync(Guid.NewGuid(), fileStorageRequest, c)
+                                .ToValidationErrors(),
+                        ],
+                        c
+                    );
+
+                    return errors.Combine();
+                });
+
+                var deleteButton = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    commandDelete,
+                    null,
+                    DialogButtonType.Primary
+                );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    content,
+                    safeExecuteWrapper,
+                    deleteButton,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -151,48 +154,47 @@ public sealed class DioclesCommands : Commands
                     true
                 );
 
-                await dialogService.ShowMessageBoxAsync(
-                    new(
-                        header,
-                        viewModel,
-                        safeExecuteWrapper,
-                        new DialogButton(
-                            appResourceService.GetResource<string>("Lang.Edit"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                var edit = viewModel.CreateEditToDos(
-                                    selected.Select(x => x.Id).ToArray()
-                                );
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    var ids = selected.Select(x => x.Id).ToArray();
+                    var edit = viewModel.CreateEditToDos(ids);
+                    var dirs = selected.Select(x => $"{x.Id}/ToDo").ToArray();
+                    var files = viewModel.CreateNeotomaPostRequest(dirs);
+                    var newSettings = viewModel.CreateSettings();
+                    await dialogService.CloseMessageBoxAsync(c);
+                    await objectStorage.SaveAsync(newSettings, Guid.Empty, c);
 
-                                var files = viewModel.CreateNeotomaPostRequest(
-                                    selected.Select(x => $"{x.Id}/ToDo").ToArray()
-                                );
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            toDoUiService
+                                .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c)
+                                .ToValidationErrors(),
+                            fileStorageUiService
+                                .PostAsync(Guid.NewGuid(), files, ct)
+                                .ToValidationErrors(),
+                        ],
+                        c
+                    );
 
-                                var newSettings = viewModel.CreateSettings();
-                                await dialogService.CloseMessageBoxAsync(c);
-                                await objectStorage.SaveAsync(newSettings, Guid.Empty, c);
+                    return errors.Combine();
+                });
 
-                                var errors = await TaskHelper.WhenAllAsync(
-                                    [
-                                        toDoUiService
-                                            .PostAsync(Guid.NewGuid(), new() { Edits = [edit] }, c)
-                                            .ToValidationErrors(),
-                                        fileStorageUiService
-                                            .PostAsync(Guid.NewGuid(), files, ct)
-                                            .ToValidationErrors(),
-                                    ],
-                                    c
-                                );
-
-                                return errors.Combine();
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    viewModel,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                await dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -211,65 +213,56 @@ public sealed class DioclesCommands : Commands
                     .GetResource<string>("Lang.Delete")
                     .DispatchToDialogHeader();
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        header,
-                        Dispatcher.UIThread.Invoke(() =>
-                            new TextBlock
-                            {
-                                Text = stringFormater.Format(
-                                    appResourceService.GetResource<string>("Lang.AskDelete"),
-                                    selected.Select(x => x.Name).JoinString(", ")
-                                ),
-                                Classes = { "text-wrap" },
-                            }
-                        ),
-                        safeExecuteWrapper,
-                        new DialogButton(
-                            appResourceService.GetResource<string>("Lang.Delete"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                await dialogService.CloseMessageBoxAsync(c);
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    await dialogService.CloseMessageBoxAsync(c);
+                    var deleteIds = selected.Select(x => x.Id).ToArray();
+                    var deleteDirs = selected.Select(x => $"{x.Id}/ToDo").ToArray();
+                    var toDoRequest = new HestiaPostRequest { DeleteIds = deleteIds };
+                    var fileStorageRequest = new NeotomaPostRequest { DeleteDirs = deleteDirs };
 
-                                var errors = await TaskHelper.WhenAllAsync(
-                                    [
-                                        toDoUiService
-                                            .PostAsync(
-                                                Guid.NewGuid(),
-                                                new()
-                                                {
-                                                    DeleteIds = selected
-                                                        .Select(x => x.Id)
-                                                        .ToArray(),
-                                                },
-                                                c
-                                            )
-                                            .ToValidationErrors(),
-                                        fileStorageUiService
-                                            .PostAsync(
-                                                Guid.NewGuid(),
-                                                new()
-                                                {
-                                                    DeleteDirs = selected
-                                                        .Select(x => $"{x.Id}/ToDo")
-                                                        .ToArray(),
-                                                },
-                                                c
-                                            )
-                                            .ToValidationErrors(),
-                                    ],
-                                    c
-                                );
+                    var errors = await TaskHelper.WhenAllAsync(
+                        [
+                            toDoUiService
+                                .PostAsync(Guid.NewGuid(), toDoRequest, c)
+                                .ToValidationErrors(),
+                            fileStorageUiService
+                                .PostAsync(Guid.NewGuid(), fileStorageRequest, c)
+                                .ToValidationErrors(),
+                        ],
+                        c
+                    );
 
-                                return errors.Combine();
-                            }),
-                            null,
-                            DialogButtonType.Primary
+                    return errors.Combine();
+                });
+
+                var content = Dispatcher.UIThread.Invoke(() =>
+                    new TextBlock
+                    {
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.AskDelete"),
+                            selected.Select(x => x.Name).JoinString(", ")
                         ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                        Classes = { "text-wrap" },
+                    }
                 );
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
+                );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    content,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -277,12 +270,9 @@ public sealed class DioclesCommands : Commands
             (item, ct) =>
             {
                 var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
+                var request = new HestiaPostRequest { SwitchCompleteIds = [item.Id] };
 
-                return toDoUiService.PostAsync(
-                    Guid.NewGuid(),
-                    new() { SwitchCompleteIds = [item.Id] },
-                    ct
-                );
+                return toDoUiService.PostAsync(Guid.NewGuid(), request, ct);
             },
             true,
             false
@@ -302,10 +292,8 @@ public sealed class DioclesCommands : Commands
             }
             else
             {
-                await navigator.NavigateToAsync(
-                    factory.CreateToDos(currentActive.Parent.ActualItem),
-                    ct
-                );
+                var itemView = factory.CreateToDos(currentActive.Parent.ActualItem);
+                await navigator.NavigateToAsync(itemView, ct);
             }
 
             return response;
@@ -328,22 +316,16 @@ public sealed class DioclesCommands : Commands
             {
                 var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
 
-                return toDoUiService.PostAsync(
-                    Guid.NewGuid(),
-                    new()
-                    {
-                        Edits =
-                        [
-                            new()
-                            {
-                                Ids = [item.Id],
-                                IsFavorite = !item.IsFavorite,
-                                IsEditIsFavorite = true,
-                            },
-                        ],
-                    },
-                    ct
-                );
+                var edit = new EditToDos
+                {
+                    Ids = [item.Id],
+                    IsFavorite = !item.IsFavorite,
+                    IsEditIsFavorite = true,
+                };
+
+                var request = new HestiaPostRequest { Edits = [edit] };
+
+                return toDoUiService.PostAsync(Guid.NewGuid(), request, ct);
             }
         );
 
@@ -366,22 +348,16 @@ public sealed class DioclesCommands : Commands
                     return new DefaultValidationErrors();
                 }
 
-                return await toDoUiService.PostAsync(
-                    Guid.NewGuid(),
-                    new()
-                    {
-                        ChangeOrders =
-                        [
-                            new()
-                            {
-                                IsAfter = changeOrder.IsAfter,
-                                StartId = changeOrder.Item.Id,
-                                InsertIds = [item.Id],
-                            },
-                        ],
-                    },
-                    ct
-                );
+                var change = new ChangeOrder
+                {
+                    IsAfter = changeOrder.IsAfter,
+                    StartId = changeOrder.Item.Id,
+                    InsertIds = [item.Id],
+                };
+
+                var request = new HestiaPostRequest { ChangeOrders = [change] };
+
+                return await toDoUiService.PostAsync(Guid.NewGuid(), request, ct);
             }
         );
 
@@ -403,50 +379,46 @@ public sealed class DioclesCommands : Commands
                     item.IsHideOnTree = true;
                 });
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        stringFormater
-                            .Format(
-                                appResourceService.GetResource<string>("Lang.ChangeParentItem"),
-                                item.Name
-                            )
-                            .DispatchToDialogHeader(),
-                        viewModel,
-                        safeExecuteWrapper,
-                        new(
-                            appResourceService.GetResource<string>("Lang.ChangeParent"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
+                var header = stringFormater
+                    .Format(
+                        appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                        item.Name
+                    )
+                    .DispatchToDialogHeader();
 
-                                await dialogService.CloseMessageBoxAsync(c);
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+                    await dialogService.CloseMessageBoxAsync(c);
 
-                                return await toDoUiService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Edits =
-                                        [
-                                            new()
-                                            {
-                                                Ids = [item.Id],
-                                                ParentId = parentId,
-                                                IsEditParentId = true,
-                                            },
-                                        ],
-                                    },
-                                    c
-                                );
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                    var edit = new EditToDos
+                    {
+                        Ids = [item.Id],
+                        ParentId = parentId,
+                        IsEditParentId = true,
+                    };
+
+                    var request = new HestiaPostRequest { Edits = [edit] };
+
+                    return await toDoUiService.PostAsync(Guid.NewGuid(), request, c);
+                });
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.ChangeParent"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    viewModel,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -472,47 +444,43 @@ public sealed class DioclesCommands : Commands
                     }
                 });
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        appResourceService
-                            .GetResource<string>("Lang.ChangeParent")
-                            .DispatchToDialogHeader(),
-                        viewModel,
-                        safeExecuteWrapper,
-                        new(
-                            appResourceService.GetResource<string>("Lang.ChangeParent"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
+                var header = appResourceService
+                    .GetResource<string>("Lang.ChangeParent")
+                    .DispatchToDialogHeader();
 
-                                await dialogService.CloseMessageBoxAsync(c);
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+                    await dialogService.CloseMessageBoxAsync(c);
 
-                                return await toDoUiService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Edits =
-                                        [
-                                            new()
-                                            {
-                                                Ids = selected.Select(x => x.Id).ToArray(),
-                                                ParentId = parentId,
-                                                IsEditParentId = true,
-                                            },
-                                        ],
-                                    },
-                                    c
-                                );
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                    var edit = new EditToDos
+                    {
+                        Ids = selected.Select(x => x.Id).ToArray(),
+                        ParentId = parentId,
+                        IsEditParentId = true,
+                    };
+
+                    var request = new HestiaPostRequest { Edits = [edit] };
+
+                    return await toDoUiService.PostAsync(Guid.NewGuid(), request, c);
+                });
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.ChangeParent"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    viewModel,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -527,47 +495,38 @@ public sealed class DioclesCommands : Commands
                 var commandFactory = ServiceProvider.GetService<ICommandFactory>();
                 var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
                 var viewModel = factory.CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
+                Dispatcher.UIThread.Post(toDoUiCache.ResetItems);
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        stringFormater
-                            .Format(
-                                appResourceService.GetResource<string>("Lang.CloneItem"),
-                                item.Name
-                            )
-                            .DispatchToDialogHeader(),
-                        viewModel,
-                        safeExecuteWrapper,
-                        new(
-                            appResourceService.GetResource<string>("Lang.Clone"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
+                var header = stringFormater
+                    .Format(appResourceService.GetResource<string>("Lang.CloneItem"), item.Name)
+                    .DispatchToDialogHeader();
 
-                                await dialogService.CloseMessageBoxAsync(c);
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+                    await dialogService.CloseMessageBoxAsync(c);
+                    var clone = new CloneToDoItem { ParentId = parentId, CloneIds = [item.Id] };
+                    var request = new HestiaPostRequest { Clones = [clone] };
 
-                                return await toDoUiService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Clones =
-                                        [
-                                            new() { ParentId = parentId, CloneIds = [item.Id] },
-                                        ],
-                                    },
-                                    c
-                                );
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                    return await toDoUiService.PostAsync(Guid.NewGuid(), request, c);
+                });
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Clone"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    viewModel,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -582,48 +541,44 @@ public sealed class DioclesCommands : Commands
                 var toDoUiService = ServiceProvider.GetService<IToDoUiService>();
                 var selected = items.Where(x => x.IsSelected).ToArray();
                 var viewModel = factory.CreateChangeParentToDo();
-                Dispatcher.UIThread.Post(() => toDoUiCache.ResetItems());
+                Dispatcher.UIThread.Post(toDoUiCache.ResetItems);
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        appResourceService
-                            .GetResource<string>("Lang.Clone")
-                            .DispatchToDialogHeader(),
-                        viewModel,
-                        safeExecuteWrapper,
-                        new(
-                            appResourceService.GetResource<string>("Lang.Clone"),
-                            commandFactory.CreateCommand(async c =>
-                            {
-                                var parentId = viewModel.IsRoot
-                                    ? null
-                                    : viewModel.Tree.Selected?.Id;
+                var header = appResourceService
+                    .GetResource<string>("Lang.Clone")
+                    .DispatchToDialogHeader();
 
-                                await dialogService.CloseMessageBoxAsync(c);
+                var command = commandFactory.CreateCommand(async c =>
+                {
+                    var parentId = viewModel.IsRoot ? null : viewModel.Tree.Selected?.Id;
+                    await dialogService.CloseMessageBoxAsync(c);
 
-                                return await toDoUiService.PostAsync(
-                                    Guid.NewGuid(),
-                                    new()
-                                    {
-                                        Clones =
-                                        [
-                                            new()
-                                            {
-                                                ParentId = parentId,
-                                                CloneIds = selected.Select(x => x.Id).ToArray(),
-                                            },
-                                        ],
-                                    },
-                                    c
-                                );
-                            }),
-                            null,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                    var clone = new CloneToDoItem
+                    {
+                        ParentId = parentId,
+                        CloneIds = selected.Select(x => x.Id).ToArray(),
+                    };
+
+                    var request = new HestiaPostRequest { Clones = [clone] };
+
+                    return await toDoUiService.PostAsync(Guid.NewGuid(), request, c);
+                });
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Clone"),
+                    command,
+                    null,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    viewModel,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
 
@@ -648,26 +603,26 @@ public sealed class DioclesCommands : Commands
                     false
                 );
 
-                return dialogService.ShowMessageBoxAsync(
-                    new(
-                        stringFormater
-                            .Format(
-                                appResourceService.GetResource<string>("Lang.EditItem"),
-                                item.Name
-                            )
-                            .DispatchToDialogHeader(),
-                        edit,
-                        safeExecuteWrapper,
-                        new(
-                            appResourceService.GetResource<string>("Lang.Edit"),
-                            edit.EditItemCommand,
-                            item,
-                            DialogButtonType.Primary
-                        ),
-                        dialogService.CancelButton
-                    ),
-                    ct
+                var header = stringFormater
+                    .Format(appResourceService.GetResource<string>("Lang.EditItem"), item.Name)
+                    .DispatchToDialogHeader();
+
+                var button = new DialogButton(
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    edit.EditItemCommand,
+                    item,
+                    DialogButtonType.Primary
                 );
+
+                var dialog = new DialogViewModel(
+                    header,
+                    edit,
+                    safeExecuteWrapper,
+                    button,
+                    dialogService.CancelButton
+                );
+
+                return dialogService.ShowMessageBoxAsync(dialog, ct);
             }
         );
     }
