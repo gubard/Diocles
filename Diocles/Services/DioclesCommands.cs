@@ -156,9 +156,9 @@ public sealed class DioclesCommands : Commands
 
                 var command = commandFactory.CreateCommand(async c =>
                 {
-                    var ids = selected.Select(x => x.Id).ToArray();
+                    var ids = selected.SelectAsSpan(x => x.Id).ToArray();
                     var edit = viewModel.CreateEditToDos(ids);
-                    var dirs = selected.Select(x => $"{x.Id}/ToDo").ToArray();
+                    var dirs = selected.SelectAsSpan(x => $"{x.Id}/ToDo").ToArray();
                     var files = viewModel.CreateNeotomaPostRequest(dirs);
                     var newSettings = viewModel.CreateSettings();
                     await dialogService.CloseMessageBoxAsync(c);
@@ -216,8 +216,8 @@ public sealed class DioclesCommands : Commands
                 var command = commandFactory.CreateCommand(async c =>
                 {
                     await dialogService.CloseMessageBoxAsync(c);
-                    var deleteIds = selected.Select(x => x.Id).ToArray();
-                    var deleteDirs = selected.Select(x => $"{x.Id}/ToDo").ToArray();
+                    var deleteIds = selected.SelectAsSpan(x => x.Id).ToArray();
+                    var deleteDirs = selected.SelectAsSpan(x => $"{x.Id}/ToDo").ToArray();
                     var toDoRequest = new HestiaPostRequest { DeleteIds = deleteIds };
                     var fileStorageRequest = new NeotomaPostRequest { DeleteDirs = deleteDirs };
 
@@ -241,7 +241,7 @@ public sealed class DioclesCommands : Commands
                     {
                         Text = stringFormater.Format(
                             appResourceService.GetResource<string>("Lang.AskDelete"),
-                            selected.Select(x => x.Name).JoinString(", ")
+                            selected.SelectAsSpan(x => x.Name).JoinString(", ")
                         ),
                         Classes = { "text-wrap" },
                     }
@@ -455,7 +455,7 @@ public sealed class DioclesCommands : Commands
 
                     var edit = new EditToDos
                     {
-                        Ids = selected.Select(x => x.Id).ToArray(),
+                        Ids = selected.SelectAsSpan(x => x.Id).ToArray(),
                         ParentId = parentId,
                         IsEditParentId = true,
                     };
@@ -555,7 +555,7 @@ public sealed class DioclesCommands : Commands
                     var clone = new CloneToDoItem
                     {
                         ParentId = parentId,
-                        CloneIds = selected.Select(x => x.Id).ToArray(),
+                        CloneIds = selected.SelectAsSpan(x => x.Id).ToArray(),
                     };
 
                     var request = new HestiaPostRequest { Clones = [clone] };

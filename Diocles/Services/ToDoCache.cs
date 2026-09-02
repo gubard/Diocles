@@ -164,7 +164,7 @@ public sealed class ToDoMemoryCache
                 var notify = GetItem(id);
 
                 notify.UpdateParents(
-                    items.Select(item => UpdateShortToDo(item, shortUpdatedIds)).ToArray()
+                    items.SelectAsSpan(item => UpdateShortToDo(item, shortUpdatedIds)).ToArray()
                 );
             }
 
@@ -187,7 +187,9 @@ public sealed class ToDoMemoryCache
             {
                 _favorites.UpdateOrder(
                     source
-                        .Favorites.Select(x => UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds))
+                        .Favorites.SelectAsSpan(x =>
+                            UpdateFullToDo(x, fullUpdatedIds, shortUpdatedIds)
+                        )
                         .OrderBy(x => x.Name)
                         .ThenBy(x => x.OrderIndex)
                         .ThenBy(x => x.DueDate)
@@ -321,7 +323,7 @@ public sealed class ToDoMemoryCache
 
             foreach (var edit in source.Edits)
             {
-                var items = edit.Ids.Select(GetItem).ToArray();
+                var items = edit.Ids.SelectAsSpan(GetItem).ToArray();
 
                 if (edit.IsEditName)
                 {
@@ -409,7 +411,7 @@ public sealed class ToDoMemoryCache
 
                 if (edit.IsEditMonthlyDays)
                 {
-                    var days = edit.MonthlyDays.Select(x => (int)x).ToArray();
+                    var days = edit.MonthlyDays.SelectAsSpan(x => (int)x).ToArray();
 
                     foreach (var item in items)
                     {
@@ -556,7 +558,7 @@ public sealed class ToDoMemoryCache
                     continue;
                 }
 
-                var insertItems = changeOrder.InsertIds.Select(GetItem);
+                var insertItems = changeOrder.InsertIds.SelectAsSpan(GetItem);
 
                 foreach (var insertItem in insertItems)
                 {
